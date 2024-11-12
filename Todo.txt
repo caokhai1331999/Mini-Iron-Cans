@@ -1,0 +1,50 @@
+TODO:
+ - Shipping game (separate it to many portable files) (DONE!)
+ - Try writing Platform in Procedure and OOP/OOD styles (DONE!)
+
+TODO:
+
+- Start to use this to make my first tank game :
+- Time adjust the dot mbox size (DONE!)
+
+- First: 1 Create user tank and enemy tank *
+            - Create enemy tank info : + Randomize its position (DONE)
+                                       + Apply those information to Texture
+            - Render (DONE)
+            
+                                       + Resize the sprite to smaller one (DONE!)
+                                       
+                                       + Delve deeper to know how the camera
+                                       way work and apply it to make the camera
+                                       faster.(DONE!)
+
+                                       ** REMEMBER : Object Position subtract to
+                                       camera Pos to create moving effect for
+                                       the background or non main object
+
+                                       ** Camera moving pos based on main object
+                                          moving Pos + object size - camera size
+                                          to make camera follow it
+
+                                       +Arising problem tank move diagonally
+                                       while pressing two arrow buttons (DONE!)
+
+                                       
+                                        next step
+                                       + Use Dijktra algorithm to guide way for
+                                       bot tanks to automatically move them
+                                       around (WORKING)
+                                       + Enable them to shoot **
+                                         . DONE: User and bot tank
+                                       + DONE: Make enemy Tank to shoot whenever
+                                       the user tank is nearby(WORKING)
+** : Time to apply collision box to make them  enable kill each other
+                                       
+         5 Time to redraw the map make the map drawing after the camera moving (WORKING)
+
+- Second: 1 Begin to delve more to create my own map
+          2 I may have to redraw the map to make it bigger.
+          3 Then devle more to understand how to scroll the background map
+
+- Finally: After majority of the game engine, time for shipping code, manage
+  gamestate and specific memory allocation

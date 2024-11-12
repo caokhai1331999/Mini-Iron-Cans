@@ -1,0 +1,7 @@
+    // TODO: *HARD* Turn out the only solution to afoot is just rewrite data on the
+    // previous bullet DONE!
+
++ Bot Tank move one way and stuck in level width or height
+(Solved for userTank by set veclocity to 0 everytime new input is accept )
+
++ Bot Tank stuck to the level height when spawn near them
