@@ -170,15 +170,14 @@ int main( int argc, char* args[] )
 				//Move the dot
                 move(tileSet, touchesWall(&userTank->mBox, tileSet), userTank);
 
-
-                // LATER!: Move Bot tank use little guilder
-                //
                 for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
                     // TODO: Time to consider user tank to make bot tank move
                     littleGuide(&enemyTank[i], userTank);
                     move(tileSet,touchesWall(&enemyTank[i].mBox, tileSet), &enemyTank[i]);
                 }                
 
+                // LATER!: Move Bot tank use little guilder
+                //
 
 				// dot.move( tileSet, touchesWall(dot.GetmBox(), tileSet));
                 setCamera(camera, userTank);

@@ -34,11 +34,15 @@ TODO:
                                        + Use Dijktra algorithm to guide way for
                                        bot tanks to automatically move them
                                        around (WORKING)
+                                       + Rewrite the little guide function
                                        + Enable them to shoot **
                                          . DONE: User and bot tank
                                        + DONE: Make enemy Tank to shoot whenever
                                        the user tank is nearby(WORKING)
+                                      //TODO: Time to remake this little guide function
+
 ** : Time to apply collision box to make them  enable kill each other
+    + Add explosion effect, run the frames animating whenever tank is hit
                                        
          5 Time to redraw the map make the map drawing after the camera moving (WORKING)
 
