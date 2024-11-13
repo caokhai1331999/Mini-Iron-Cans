@@ -117,7 +117,7 @@ void handleEvent(KeyState* CurrentBut, TankInfo* Tank) {
                     // to bind it to equal to Tank vel or 0
                     case SDL_SCANCODE_UP: Tank->face = UP;
                         Tank->mVelY = 0; 
-                        Tank->mVelY = -TANK_VEL;
+                        Tank->mVelY -= TANK_VEL;
                         // printf("TANK FACE is %f \n", Tank->face);
                         // printf("Button %d is being pressed\n", CurrentBut->key);
                         break;
@@ -187,16 +187,20 @@ void move( Tile *tiles[], bool touchesWall, TankInfo* Tank) {
             // And swivel the tank by the way
             //||touchesWall
             Tank->mBox.x += Tank->mVelX;
-            if ((Tank->mBox.x < 0)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH - 50)){
-                Tank->mBox.x -= Tank->mVelX;
-                // Tank stuck at the boundaries because of this line of code
-                // How to solve this ??? TODO: Make the bot tanks be able to move
-                // backward whenever it hit the obstacles
-            }
-    
+           if ((Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH - 50)){
+                    Tank->mBox.x -= Tank->mVelX;
+               }
+                    printf("Tank Pos X is: %d /n", Tank->mBox.x);                    
+                    // Tank stuck at the boundaries because of this line of code
+                    // How to solve this ??? TODO: Make the bot tanks be able to move
+                    // backward whenever it hit the obstacles
+
+            
             Tank->mBox.y += Tank->mVelY;
-            if ((Tank->mBox.y < 0)||(Tank->mBox.y + Tank->mBox.h > LEVEL_HEIGHT - 50)){
-                Tank->mBox.y -= Tank->mVelY;
+            if ((Tank->mBox.y < 10)||(Tank->mBox.y + Tank->mBox.h > LEVEL_HEIGHT - 50))
+            {
+                    Tank->mBox.y -= Tank->mVelY;
+                    printf("Tank Pos Y is: %d /n", Tank->mBox.y);
             }
             
              // Move the bullet
@@ -291,31 +295,34 @@ void littleGuide(TankInfo* botTank, TankInfo* UserTank){
     // NOTE: The idea is simple: moving the bot Tank toward User's one and fire
     // when it is near
     // Prioritize the shorter axis first to shoot if any 
-    //
-  
+    
     if (distance > 250){
-        if (abs(botTank->mBox.x - UserTank->mBox.x) < abs(botTank->mBox.y - UserTank->mBox.y)){
+        if (abs(botTank->mBox.x - UserTank->mBox.x) < abs(botTank->mBox.y - UserTank->mBox.y)) {
         // NOTE: Prioritize which axis is choose to move first
         if(botTank->mVelX != 0){
             botTank->mVelX = 0;            
         }
+        
     if (botTank->mBox.x - UserTank->mBox.x < 250){
             if (botTank->face != LEFT){
             botTank->face = LEFT;
             }
-            if(botTank->mVelY == 0){                
-            botTank->mVelX -= TANK_VEL;
+            if (botTank->mBox.x > 0){                
+                botTank->mVelX -= TANK_VEL;
+                botTank->mVelY = 0;            
             }
         } else if (botTank->mBox.x - UserTank->mBox.x > - 250){
-            if(botTank->face = RIGHT){
+            if(botTank->face != RIGHT){
                 botTank->face = RIGHT;
             }
-            if(botTank->mVelY == 0){
-            botTank->mVelX += TANK_VEL;
+            if (botTank->mBox.x + TANK_WIDTH < LEVEL_WIDTH){                
+                botTank->mVelX += TANK_VEL;
+                botTank->mVelY = 0;
             }
         } else {
             botTank->mVelX = 0;            
-        }        
+        }
+    
     } else if (abs(botTank->mBox.x - UserTank->mBox.x) > abs(botTank->mBox.y - UserTank->mBox.y)) {
         
         if(botTank->mVelY != 0){
@@ -325,16 +332,16 @@ void littleGuide(TankInfo* botTank, TankInfo* UserTank){
             if(botTank->face != UP){                
             botTank->face = UP;
             }
-            if (botTank->mVelX == 0)
-            {
+            if (botTank->mBox.y > 0){                
+                botTank->mVelX = 0;
                 botTank->mVelY -= TANK_VEL;
             }
         } else if (botTank->mBox.y - UserTank->mBox.y > - 100){
             if(botTank->face != DOWN){
             botTank->face = DOWN;                
             }
-            if (botTank->mVelX == 0)            
-            {
+            if (botTank->mVelY + TANK_HEIGHT < LEVEL_HEIGHT){                
+                botTank->mVelX = 0;                
                 botTank->mVelY += TANK_VEL;
             }
         } else {
@@ -348,7 +355,7 @@ void littleGuide(TankInfo* botTank, TankInfo* UserTank){
                             if(botTank->face != LEFT){
                                 botTank->face = LEFT;
                             }                            
-                        } else if (botTank->mBox.x - UserTank->mBox.y < 0){
+                        } else if (botTank->mBox.x - UserTank->mBox.x < 0){
                             if(botTank->face != RIGHT){
                                 botTank->face = RIGHT;
                             }                            
