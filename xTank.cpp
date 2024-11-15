@@ -141,8 +141,7 @@ void handleEvent(KeyState* CurrentBut, TankInfo* Tank) {
                             // printf("TANK FACE is %f \n", Tank->face);
                             // printf("Button %d being pressed\n", CurrentBut->key);
                         break;
-
-                        // TODO: Fix the bullet not showed
+                        
                     case SDL_SCANCODE_SPACE: fire(Tank);
                         // printf("Button space being pressed button%d \n", CurrentBut->key);
                         break;
@@ -176,6 +175,7 @@ void handleEvent(KeyState* CurrentBut, TankInfo* Tank) {
 }
 
 //Moves the Tank and check collision against tiles
+// Add one more tank and user tank to check
 void move( Tile *tiles[], bool touchesWall, TankInfo* Tank) {
 
     // NOTE: Apply dijkstra's algo here to make bot tank'move more smart
@@ -186,15 +186,13 @@ void move( Tile *tiles[], bool touchesWall, TankInfo* Tank) {
         // if (Tank->userBelong){
             // And swivel the tank by the way
             //||touchesWall
+        //
+        //TODO: Add collision code here
             Tank->mBox.x += Tank->mVelX;
            if ((Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH - 50)){
                     Tank->mBox.x -= Tank->mVelX;
                }
                     printf("Tank Pos X is: %d /n", Tank->mBox.x);                    
-                    // Tank stuck at the boundaries because of this line of code
-                    // How to solve this ??? TODO: Make the bot tanks be able to move
-                    // backward whenever it hit the obstacles
-
             
             Tank->mBox.y += Tank->mVelY;
             if ((Tank->mBox.y < 10)||(Tank->mBox.y + Tank->mBox.h > LEVEL_HEIGHT - 50))
@@ -205,12 +203,11 @@ void move( Tile *tiles[], bool touchesWall, TankInfo* Tank) {
             
              // Move the bullet
             for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++){
-                                // TODO: Constantly push the bullet right after the being fired
+                //TODO: Add collision code here
                 if (Tank->Bullets[i].Launched){
 
                     Tank->Bullets[i].blBox.x += Tank->Bullets[i].BlVelX;
                     if ((Tank->Bullets[i].blBox.x < 0)||(Tank->Bullets[i].blBox.x + Tank->Bullets[i].blBox.w > LEVEL_WIDTH)){
-                        printf(" Bullet %d hit the boundaries and being destroyed\n", i);
                         Tank->Bullets[i].Launched = false;
                         Tank->Bullets[i].BlVelX = 0;
                         Tank->Bullets[i].BlVelY = 0;
@@ -221,9 +218,7 @@ void move( Tile *tiles[], bool touchesWall, TankInfo* Tank) {
                     }
                     
                     Tank->Bullets[i].blBox.y += Tank->Bullets[i].BlVelY;
-                    // printf("Bullet position is [%d %d]\n", Tank->Bullets[i].blBox.x, Tank->Bullets[i].blBox.y);
                     if ((Tank->Bullets[i].blBox.y < 0)||(Tank->Bullets[i].blBox.y + Tank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
-                        printf(" Bullet %d hit the boundaries and being destroyed\n", i);                                                
                         Tank->Bullets[i].Launched = false;
                         Tank->Bullets[i].BlVelX = 0;
                         Tank->Bullets[i].BlVelY = 0;
@@ -235,27 +230,6 @@ void move( Tile *tiles[], bool touchesWall, TankInfo* Tank) {
                 }
             // }
         }    
-    // for (int i = 0; i < TOTAL_ENEMY_TANK; i++) {
-
-    //     // TODO: How to properly check moving bullets DONE!
-
-    //     // TODO: Figure out how to constantly check whether it hit any object on the way it move
-    //     // Create aloop collision check for all bullets and tanks in Game    
-    //     for (int j = 0; j < TOTAL_BULLET_PER_TANK; j++){    
-    //         EnemyTank[i]->Bullets[j]->blBox.x += EnemyTank[i]->Bullets[j]->BlVel;    
-    //         if ((EnemyTank[i]->Bullets[j]->mBox.x < 0)||(EnemyTank[i]->Bullets[j]->mBox.x + EnemyTank[i]->Bullets[j]->mBox.w>LEVEL_WIDTH)||checkCollision(EnemyTank[i]->Bullet[i]->mBox, )||(checkCollision())){
-    //             EnemyTank[i]->Bullets[j]->destroyed = true;
-    //             EnemyTank[i]->Bullets[j]->Launched = false;
-    //         }
-
-    //         EnemyTank[i]->Bullets[j]->blBox.y += EnemyTank[i]->Bullets[j]->BlVel;
-    
-    //         if ((EnemyTank[i]->Bullets[j]->mBox.y < 0)||(EnemyTank[i]->Bullets[j]->mBox.x + EnemyTank[i]->Bullets[j]->mBox.h > LEVEL_HEIGHT) || ){
-    //             EnemyTank[i]->Bullets[j]->destroyed = true;
-    //             EnemyTank[i]->Bullets[j]->Launched = false;            
-    //         }        
-    //     }                
-    // }
 }
 }
 
@@ -295,6 +269,20 @@ void littleGuide(TankInfo* botTank, TankInfo* UserTank){
     // NOTE: The idea is simple: moving the bot Tank toward User's one and fire
     // when it is near
     // Prioritize the shorter axis first to shoot if any 
+
+    // NOTE: Wandering mode
+
+    std::srand(std::time(nullptr));
+    if (botTank->mVelX == 0 || botTank->mVelY == 0 || botTank->mBox.x < TANK_WIDTH || botTank->mBox.x + TANK_WIDTH > LEVEL_WIDTH|| botTank->mBox.y < TANK_HEIGHT || botTank->mBox.x + TANK_HEIGHT > LEVEL_HEIGHT){
+    int FaceID = std::rand()%3;
+    switch(FaceID){
+        case 0: botTank->face = UP; botTank->mVelY = 0; botTank->mVelY = -TANK_VEL;
+        case 1: botTank->face = DOWN; botTank->mVelY = 0;botTank->mVelY = TANK_VEL;
+        case 2: botTank->face = RIGHT; botTank->mVelX = 0;botTank->mVelX = TANK_VEL;
+        case 3: botTank->face = LEFT; botTank->mVelX = 0; botTank->mVelX = -TANK_VEL;
+    };        
+    }
+
     
     if (distance > 250){
         if (abs(botTank->mBox.x - UserTank->mBox.x) < abs(botTank->mBox.y - UserTank->mBox.y)) {

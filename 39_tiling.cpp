@@ -171,7 +171,8 @@ int main( int argc, char* args[] )
                 move(tileSet, touchesWall(&userTank->mBox, tileSet), userTank);
 
                 for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
-                    // TODO: Time to consider user tank to make bot tank move
+                    // TODO: Constantly check collision between bot tanks
+                    for (int)
                     littleGuide(&enemyTank[i], userTank);
                     move(tileSet,touchesWall(&enemyTank[i].mBox, tileSet), &enemyTank[i]);
                 }                
