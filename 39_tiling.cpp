@@ -171,8 +171,10 @@ int main( int argc, char* args[] )
                 move(tileSet, touchesWall(&userTank->mBox, tileSet), userTank);
 
                 for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
-                    // TODO: Constantly check collision between bot tanks
-                    for (int)
+                    // TODO: Constantly check collision between bot tanks 
+                    for (int p = 0; p < i; p++){
+                        
+                    }
                     littleGuide(&enemyTank[i], userTank);
                     move(tileSet,touchesWall(&enemyTank[i].mBox, tileSet), &enemyTank[i]);
                 }                
