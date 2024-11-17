@@ -111,10 +111,10 @@ TankInfo InitializeTankInfo(int x, int y);
 void handleEvent(KeyState* CurrentBut, TankInfo* Tank );
 
 // Bot tanks auto find way using dijstra algorithm
-void littleGuide(TankInfo* botTank, TankInfo* UserTank);
+void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided);
     
 //Moves the Tank and check collision against tiles
-void move( Tile *tiles[], bool checkCollsion, TankInfo* Tank);
+void move( Tile *tiles[], bool touchesWall, bool collided, TankInfo* Tank);
 
 // Fire a bullet
 void fire(TankInfo* Tank);

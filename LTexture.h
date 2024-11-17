@@ -23,7 +23,7 @@ const global_variable int LEVEL_HEIGHT = 960;
 //Tile constants
 const global_variable int TILE_WIDTH = 80;
 const global_variable int TILE_HEIGHT = 80;
-const global_variable int TOTAL_TILES = 192;
+const global_variable int TOTAL_TILES = 768;
 const global_variable int TOTAL_TILE_SPRITES = 12;
 
 //Tile constants

@@ -168,15 +168,26 @@ int main( int argc, char* args[] )
 				}
 
 				//Move the dot
-                move(tileSet, touchesWall(&userTank->mBox, tileSet), userTank);
-
+                bool collided = false;
+                move(tileSet, touchesWall(&userTank->mBox, tileSet), collided, userTank);
                 for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
-                    // TODO: Constantly check collision between bot tanks 
+                    // TODO: Constantly check collision between bot tanks
+                    collided = false;
                     for (int p = 0; p < i; p++){
-                        
+                        // NOTE: Collision with each with User Tank and
+                        // with the bullets here
+                        if (i > 1 && p < i){
+                            // NOTE: It did check out the collsion but
+                            // somehow it can not separate these bot tanks
+                            //
+                            //TODO: Separate these bot tank and move on to
+                            //enable bullet to kill userTank
+                            collided = checkCollision(&enemyTank[i].mBox, &enemyTank[p].mBox);
+                            collided?printf("Tank %d collided tank %d \nm ", i, p):printf("checking\n");
+                        }
                     }
-                    littleGuide(&enemyTank[i], userTank);
-                    move(tileSet,touchesWall(&enemyTank[i].mBox, tileSet), &enemyTank[i]);
+                    littleGuide(&enemyTank[i], userTank, collided);
+                    move(tileSet,touchesWall(&enemyTank[i].mBox, tileSet), collided, &enemyTank[i]);
                 }                
 
                 // LATER!: Move Bot tank use little guilder
@@ -218,46 +229,7 @@ int main( int argc, char* args[] )
 				//Render dot
 				// dot.render( Platform.gDotTexture, camera, currentClip,  Platform.gRenderer);
 				// dot.render( Platform.GetgDotTexture(), camera, currentClip,  Platform.GetRenderer());
-
-                // NOTE: The reason that I can not use TTF_OpenFont or TTF_Init is
-                // that I forgot to link ttf.lib in compile link
-                // carefull to link, remember to put dll files in system32 folder
-                
-                char OutPut[256];
-                gFont = TTF_OpenFont( "Roboto-Thin.ttf", 28 );
-                // SDL_Color TextColor = {249 ,166 ,2};
-                SDL_Color TextColor = {0 ,0 ,0};                
-                EndTime = (uint32)SDL_GetTicks();
-                real32 FPS = (real32)(1000.0f*(EndTime - StartTime));
-                // NOTE: Somehow The exe file can't find out the TTF_OpenFont and TTF_Solid_Render which is in the ttf lib. Got to find out and fix
-                
-                sprintf(OutPut ,"FPS: %d \n",int(FPS));
-
-                // printf(OutPut);
-                
-                if (!Platform.gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform.gRenderer)) {
-                            printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
-                } else {                           Platform.gTextTexture->render(Platform.gRenderer, 0, 0);                    
-                        }
-
-                if(userTank->BulletsNumber == 1){
-                    sprintf(OutPut, "Tank Bullets: Loading\n");
-                    //Update screen
-                    if (!Platform.gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform.gRenderer)) {
-                        printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
-                    } else {                           Platform.gTextTexture->render(Platform.gRenderer, SCREEN_WIDTH - 300, 0);                    
-                    }
-                    
-                    // printf(OutPut);
-                } else {                    
-                    sprintf(OutPut, "Tank Bullets :%d \n", int(userTank->BulletsNumber));
-				//Update screen
-                if (!Platform.gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform.gRenderer)) {
-                            printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
-                } else {                           Platform.gTextTexture->render(Platform.gRenderer, SCREEN_WIDTH - 200, 0);                    
-                }                    
-                    // printf(OutPut);
-                }                
+                renderText(StartTime, EndTime, userTank);
 				SDL_RenderPresent( Platform.gRenderer);
 				// SDL_RenderPresent( Platform.GetRenderer());
 		}

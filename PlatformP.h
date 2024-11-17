@@ -16,6 +16,10 @@
 // TODO: Why the PlatformP won't recognize the Platform variable
 // TODO: Try to figure out how the gDotTexture and gTileTexture is nullptr
 
+#define real32 float
+#define uint32 uint32_t
+
+
 struct PlatformP {
     
    SDL_Rect gSpriteClips [ANIMATING_FRAMES];
@@ -31,11 +35,11 @@ struct PlatformP {
 
 //The window we'll be rendering to
     SDL_Window* gWindow;
-
-//The window renderer
     SDL_Renderer* gRenderer;
 
+//The window renderer
     PlatformP(){
+
         gTileTexture = nullptr;
         gTileTexture = new LTexture;
         // gDotTexture = nullptr;
@@ -79,7 +83,7 @@ bool setTiles( Tile *tiles[]);
 bool valid(SDL_Event e, KeyState* previousKey, KeyState* currentKey);
 //Shows the Tank on the screen
 void render(TankInfo* Tank, SDL_Rect& camera);
-
+void renderText(uint32 StartTime, uint32 EndTime, const TankInfo* userTank);
 
 #define PLATFORMP_H
 #endif

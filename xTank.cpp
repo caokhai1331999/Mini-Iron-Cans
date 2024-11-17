@@ -12,8 +12,8 @@
 
 Position GeneratePosition(){
     Position Tem;
-    Tem.X = std::rand()%(LEVEL_WIDTH);
-    Tem.Y = std::rand()%(LEVEL_HEIGHT);
+    Tem.X = std::rand()%(LEVEL_WIDTH*2);
+    Tem.Y = std::rand()%(LEVEL_HEIGHT*2);
     return Tem ;
 }
 
@@ -176,7 +176,7 @@ void handleEvent(KeyState* CurrentBut, TankInfo* Tank) {
 
 //Moves the Tank and check collision against tiles
 // Add one more tank and user tank to check
-void move( Tile *tiles[], bool touchesWall, TankInfo* Tank) {
+void move( Tile *tiles[], bool touchesWall, bool collided, TankInfo* Tank) {
 
     // NOTE: Apply dijkstra's algo here to make bot tank'move more smart
 
@@ -189,16 +189,16 @@ void move( Tile *tiles[], bool touchesWall, TankInfo* Tank) {
         //
         //TODO: Add collision code here
             Tank->mBox.x += Tank->mVelX;
-           if ((Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH - 50)){
+           if ((Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH*2 - 50)|| collided){
                     Tank->mBox.x -= Tank->mVelX;
                }
-                    printf("Tank Pos X is: %d /n", Tank->mBox.x);                    
+                    // printf("Tank Pos X is: %d /n", Tank->mBox.x);                    
             
             Tank->mBox.y += Tank->mVelY;
-            if ((Tank->mBox.y < 10)||(Tank->mBox.y + Tank->mBox.h > LEVEL_HEIGHT - 50))
+            if ((Tank->mBox.y < 10)||(Tank->mBox.y + Tank->mBox.h > LEVEL_HEIGHT *2 - 50) || collided)
             {
                     Tank->mBox.y -= Tank->mVelY;
-                    printf("Tank Pos Y is: %d /n", Tank->mBox.y);
+                    // printf("Tank Pos Y is: %d /n", Tank->mBox.y);
             }
             
              // Move the bullet
@@ -249,18 +249,18 @@ void setCamera( SDL_Rect& camera, TankInfo* UserTank ){
 	{
 		camera.y = 0;
 	}
-	if( camera.x > LEVEL_WIDTH - camera.w )
+	if( camera.x > LEVEL_WIDTH*2 - camera.w )
 	{
-		camera.x = LEVEL_WIDTH - camera.w;
+		camera.x = LEVEL_WIDTH*2 - camera.w;
 	}
-	if( camera.y > LEVEL_HEIGHT - camera.h )
+	if( camera.y > LEVEL_HEIGHT*2 - camera.h )
 	{
-		camera.y = LEVEL_HEIGHT - camera.h;
+		camera.y = LEVEL_HEIGHT*2 - camera.h;
 	}
     
 }
 
-void littleGuide(TankInfo* botTank, TankInfo* UserTank){
+void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided){
     // TODO: This function is a little AI that use Dijktra algorithm to drive every
     // bot tank
 
@@ -273,7 +273,7 @@ void littleGuide(TankInfo* botTank, TankInfo* UserTank){
     // NOTE: Wandering mode
 
     std::srand(std::time(nullptr));
-    if (botTank->mVelX == 0 || botTank->mVelY == 0 || botTank->mBox.x < TANK_WIDTH || botTank->mBox.x + TANK_WIDTH > LEVEL_WIDTH|| botTank->mBox.y < TANK_HEIGHT || botTank->mBox.x + TANK_HEIGHT > LEVEL_HEIGHT){
+    if (botTank->mVelX == 0 || botTank->mVelY == 0 || botTank->mBox.x < TANK_WIDTH || botTank->mBox.x + TANK_WIDTH > LEVEL_WIDTH*2|| botTank->mBox.y < TANK_HEIGHT || botTank->mBox.x + TANK_HEIGHT > LEVEL_HEIGHT*2 || collided){
     int FaceID = std::rand()%3;
     switch(FaceID){
         case 0: botTank->face = UP; botTank->mVelY = 0; botTank->mVelY = -TANK_VEL;
@@ -284,14 +284,14 @@ void littleGuide(TankInfo* botTank, TankInfo* UserTank){
     }
 
     
-    if (distance > 250){
+    if (distance > 250 && !collided){
         if (abs(botTank->mBox.x - UserTank->mBox.x) < abs(botTank->mBox.y - UserTank->mBox.y)) {
         // NOTE: Prioritize which axis is choose to move first
         if(botTank->mVelX != 0){
             botTank->mVelX = 0;            
         }
         
-    if (botTank->mBox.x - UserTank->mBox.x < 250){
+    if (botTank->mBox.x - UserTank->mBox.x < 250*2){
             if (botTank->face != LEFT){
             botTank->face = LEFT;
             }
@@ -299,11 +299,11 @@ void littleGuide(TankInfo* botTank, TankInfo* UserTank){
                 botTank->mVelX -= TANK_VEL;
                 botTank->mVelY = 0;            
             }
-        } else if (botTank->mBox.x - UserTank->mBox.x > - 250){
+        } else if (botTank->mBox.x - UserTank->mBox.x > - 250*2){
             if(botTank->face != RIGHT){
                 botTank->face = RIGHT;
             }
-            if (botTank->mBox.x + TANK_WIDTH < LEVEL_WIDTH){                
+            if (botTank->mBox.x + TANK_WIDTH < LEVEL_WIDTH * 2){                
                 botTank->mVelX += TANK_VEL;
                 botTank->mVelY = 0;
             }
@@ -328,7 +328,7 @@ void littleGuide(TankInfo* botTank, TankInfo* UserTank){
             if(botTank->face != DOWN){
             botTank->face = DOWN;                
             }
-            if (botTank->mVelY + TANK_HEIGHT < LEVEL_HEIGHT){                
+            if (botTank->mVelY + TANK_HEIGHT < LEVEL_HEIGHT * 2){                
                 botTank->mVelX = 0;                
                 botTank->mVelY += TANK_VEL;
             }
