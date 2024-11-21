@@ -1,6 +1,10 @@
-
-/*This source code copyrighted by Lazy Foo' Productions 2004-2023
-and may not be redistributed without written permission.*/
+/* ========================================================================
+   $File: $
+   $Date: $
+   $Revision: $
+   $Creator: Cao Khai(Casey disciple) $
+   $Notice: (C) Copyright 2024 by Cao Khai, Inc. All Rights Reserved. $
+   ======================================================================== */
 
 //Using SDL, SDL_image, standard IO, strings, and file streams
 #include <string>
@@ -154,13 +158,13 @@ int main( int argc, char* args[] )
                                 
                             }
                     }
-                        //Go to next frame
-                        frame++;
-                        //Cycle animation
-                        if( frame / 4 >= ANIMATING_FRAMES)
-                        {
-                            frame = 0;
-                        }
+                        // //Go to next frame
+                        // frame++;
+                        // //Cycle animation
+                        // if( frame / 4 >= ANIMATING_FRAMES)
+                        // {
+                        //     frame = 0;
+                        // }
                     // ==================================================
 					//Handle input for the dot
 					// dot.handleEvent( e );
@@ -169,7 +173,6 @@ int main( int argc, char* args[] )
 
 				//Move the dot
                 bool collided = false;
-                move(tileSet, touchesWall(&userTank->mBox, tileSet), collided, userTank);
                 for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
                     // TODO: Constantly check collision between bot tanks
                     collided = false;
@@ -186,11 +189,14 @@ int main( int argc, char* args[] )
                             collided?printf("Tank %d collided tank %d \nm ", i, p):printf("checking\n");
                         }
                     }
+                    // NOTE: Can I avoid the wasted 2nd time check of bullets
+                    // and tanks
+                    move(tileSet, touchesWall(&userTank->mBox, tileSet), collided, userTank, &enemyTank[i]);
                     littleGuide(&enemyTank[i], userTank, collided);
-                    move(tileSet,touchesWall(&enemyTank[i].mBox, tileSet), collided, &enemyTank[i]);
+                    move(tileSet,touchesWall(&enemyTank[i].mBox, tileSet), collided, &enemyTank[i], userTank);
                 }                
 
-                // LATER!: Move Bot tank use little guilder
+                // LATER!: Move Bot tank use little guilder(DONE!)
                 //
 
 				// dot.move( tileSet, touchesWall(dot.GetmBox(), tileSet));

@@ -46,7 +46,7 @@ const global_variable int TILE_BOTTOMLEFT = 9;
 const global_variable int TILE_LEFT = 10;
 const global_variable int TILE_TOPLEFT = 11;
 
-const int ANIMATING_FRAMES = 5;
+const int ANIMATING_FRAMES = 6;
 
 
 struct KeyState{

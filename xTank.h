@@ -1,5 +1,4 @@
 
-#if !defined(XTANK_H)
 /* ========================================================================
    $File: $
    $Date: $
@@ -8,6 +7,7 @@
    $Notice: (C) Copyright 2024 by Cao Khai, Inc. All Rights Reserved. $
    ======================================================================== */
 
+#if !defined(XTANK_H)
 #include <stdlib.h>
 #include <stdint.h>
 #include <math.h>
@@ -64,6 +64,7 @@ struct TankInfo
     int BulletsNumber;
     int name;
     bool destroyed;
+    bool isHit;
     SDL_Rect mBox;
     int mVelX, mVelY;
     TANKFACE face;
@@ -76,6 +77,7 @@ struct TankInfo
 
         // Initialize the collision box
         destroyed = false;
+        isHit = false;
         BulletsNumber = TOTAL_BULLET_PER_TANK;
         mBox.w = TANK_WIDTH;
         mBox.h = TANK_HEIGHT;
@@ -114,10 +116,12 @@ void handleEvent(KeyState* CurrentBut, TankInfo* Tank );
 void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided);
     
 //Moves the Tank and check collision against tiles
-void move( Tile *tiles[], bool touchesWall, bool collided, TankInfo* Tank);
+void move( Tile *tiles[] = NULL, bool touchesWall = false, bool collided = false, TankInfo* FirstTank = NULL, TankInfo* SecondTank = NULL);
 
 // Fire a bullet
 void fire(TankInfo* Tank);
+
+void WholeMapCheck(TankInfo* ATank, TankInfo* BTank);
 
 //Centers the camera over the Tank
 void setCamera( SDL_Rect& camera ,TankInfo* UserTank);

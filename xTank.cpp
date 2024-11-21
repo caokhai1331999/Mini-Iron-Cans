@@ -176,7 +176,7 @@ void handleEvent(KeyState* CurrentBut, TankInfo* Tank) {
 
 //Moves the Tank and check collision against tiles
 // Add one more tank and user tank to check
-void move( Tile *tiles[], bool touchesWall, bool collided, TankInfo* Tank) {
+void move( Tile *tiles[], bool touchesWall, bool collided, TankInfo* ATank, TankInfo* BTank) {
 
     // NOTE: Apply dijkstra's algo here to make bot tank'move more smart
 
@@ -202,29 +202,30 @@ void move( Tile *tiles[], bool touchesWall, bool collided, TankInfo* Tank) {
             }
             
              // Move the bullet
-            for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++){
-                //TODO: Add collision code here
-                if (Tank->Bullets[i].Launched){
+            //TODO: Time to detach the checking function out of moving one
+            // to avoid unwanted duplicated work (WORKING!)
+            for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
+                if (ATank->Bullets[i].Launched){
 
-                    Tank->Bullets[i].blBox.x += Tank->Bullets[i].BlVelX;
-                    if ((Tank->Bullets[i].blBox.x < 0)||(Tank->Bullets[i].blBox.x + Tank->Bullets[i].blBox.w > LEVEL_WIDTH)){
-                        Tank->Bullets[i].Launched = false;
-                        Tank->Bullets[i].BlVelX = 0;
-                        Tank->Bullets[i].BlVelY = 0;
-                        Tank->BulletsNumber ++;
-                        if (Tank->BulletsNumber > TOTAL_BULLET_PER_TANK){
-                            Tank->BulletsNumber = TOTAL_BULLET_PER_TANK;
+                    ATank->Bullets[i].blBox.x += ATank->Bullets[i].BlVelX;
+                    if ((ATank->Bullets[i].blBox.x < 0)||(ATank->Bullets[i].blBox.x + ATank->Bullets[i].blBox.w > LEVEL_WIDTH||checkCollision(ATank->Bullets[i].blBox,BTank->mBox))){
+                        ATank->Bullets[i].Launched = false;
+                        ATank->Bullets[i].BlVelX = 0;
+                        ATank->Bullets[i].BlVelY = 0;
+                        ATank->BulletsNumber ++;
+                        if (ATank->BulletsNumber > TOTAL_BULLET_PER_TANK){
+                            ATank->BulletsNumber = TOTAL_BULLET_PER_TANK;
                         }
                     }
                     
-                    Tank->Bullets[i].blBox.y += Tank->Bullets[i].BlVelY;
-                    if ((Tank->Bullets[i].blBox.y < 0)||(Tank->Bullets[i].blBox.y + Tank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
-                        Tank->Bullets[i].Launched = false;
-                        Tank->Bullets[i].BlVelX = 0;
-                        Tank->Bullets[i].BlVelY = 0;
-                        Tank->BulletsNumber ++;
-                        if (Tank->BulletsNumber > TOTAL_BULLET_PER_TANK){
-                            Tank->BulletsNumber = TOTAL_BULLET_PER_TANK;
+                    ATank->Bullets[i].blBox.y += ATank->Bullets[i].BlVelY;
+                    if ((ATank->Bullets[i].blBox.y < 0)||(ATank->Bullets[i].blBox.y + ATank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
+                        ATank->Bullets[i].Launched = false;
+                        ATank->Bullets[i].BlVelX = 0;
+                        ATank->Bullets[i].BlVelY = 0;
+                        ATank->BulletsNumber ++;
+                        if (ATank->BulletsNumber > TOTAL_BULLET_PER_TANK){
+                            ATank->BulletsNumber = TOTAL_BULLET_PER_TANK;
                         }                        
                     }                    
                 }
@@ -363,4 +364,36 @@ void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided){
                     }
                         fire(botTank);
 } 
+}
+
+void WholeMapCheck(TankInfo* ATank, TankInfo* BTank){
+    bool collided = checkCollision(ATank->mBox, BTank->mBox);
+    
+    for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
+        if (ATank->Bullets[i].Launched){
+
+            ATank->Bullets[i].blBox.x += ATank->Bullets[i].BlVelX;
+            if ((ATank->Bullets[i].blBox.x < 0)||(ATank->Bullets[i].blBox.x + ATank->Bullets[i].blBox.w > LEVEL_WIDTH||checkCollision(ATank->Bullets[i].blBox,BTank->mBox))){
+                ATank->Bullets[i].Launched = false;
+                ATank->Bullets[i].BlVelX = 0;
+                ATank->Bullets[i].BlVelY = 0;
+                ATank->BulletsNumber ++;
+                if (ATank->BulletsNumber > TOTAL_BULLET_PER_TANK){
+                    ATank->BulletsNumber = TOTAL_BULLET_PER_TANK;
+                }
+            }
+                    
+            ATank->Bullets[i].blBox.y += ATank->Bullets[i].BlVelY;
+            if ((ATank->Bullets[i].blBox.y < 0)||(ATank->Bullets[i].blBox.y + ATank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
+                ATank->Bullets[i].Launched = false;
+                ATank->Bullets[i].BlVelX = 0;
+                ATank->Bullets[i].BlVelY = 0;
+                ATank->BulletsNumber ++;
+                if (ATank->BulletsNumber > TOTAL_BULLET_PER_TANK){
+                    ATank->BulletsNumber = TOTAL_BULLET_PER_TANK;
+                }                        
+            }                    
+        }
+    }    
+    
 }

@@ -22,8 +22,7 @@
 
 struct PlatformP {
     
-   SDL_Rect gSpriteClips [ANIMATING_FRAMES];
-
+   SDL_Rect gExplosionClips [ANIMATING_FRAMES];
    SDL_Rect gTileClips [TOTAL_TILE_SPRITES];
 
     LTexture* gTileTexture;
@@ -32,6 +31,7 @@ struct PlatformP {
     LTexture* gUserBulletTexture;
     LTexture* gEnemyTankTexture;
     LTexture* gEnemyBulletTexture;
+    LTexture* gExplosionTexture;
 
 //The window we'll be rendering to
     SDL_Window* gWindow;
@@ -61,6 +61,9 @@ struct PlatformP {
 
         gTextTexture = nullptr;
         gTextTexture = new LTexture;
+
+        gExplosionTexture = nullptr;
+        gExplosionTexture = new LTexture;
 
         gWindow = NULL;
         gRenderer = NULL;};
