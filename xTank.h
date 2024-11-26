@@ -15,23 +15,25 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "Tile.h"
+#include "GamePhysics.h"
 
 using namespace std;
+
 #define TANKFACE double
 #define UP 0.0
 #define DOWN 180.0
 #define RIGHT 90.0
 #define LEFT 270.0
 
-enum BulletType{userB, enemyB};
+enum BulletType{enemyB, userB};
 
 const global_variable int TANK_VEL = 10 ;
 const global_variable int TANK_WIDTH = 50 ;
 const global_variable int TANK_HEIGHT = 50 ;
 const global_variable int TOTAL_ENEMY_TANK = 3 ;
-const global_variable int TOTAL_BULLET_PER_TANK = 4 ;
+const global_variable int TOTAL_BULLET_PER_TANK = 10 ;
 
-const global_variable int BULLET_VEL = 5 ;
+const global_variable int BULLET_VEL = 10 ;
 const global_variable int BULLET_WIDTH = 10 ;
 const global_variable int BULLET_HEIGHT = 10 ;
 
@@ -116,13 +118,12 @@ void handleEvent(KeyState* CurrentBut, TankInfo* Tank );
 void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided);
     
 //Moves the Tank and check collision against tiles
-void move( Tile *tiles[] = NULL, bool touchesWall = false, bool collided = false, TankInfo* FirstTank = NULL, TankInfo* SecondTank = NULL);
+void move( Tile *tiles[] = NULL, bool touchesWall = false, bool collided = false, TankInfo* Tank = NULL);
 
 // Fire a bullet
 void fire(TankInfo* Tank);
-
-void WholeMapCheck(TankInfo* ATank, TankInfo* BTank);
-
+void resetBullet(Bullet* bullet);
+void BiTankCheck(TankInfo* ATank, TankInfo* BTank);
 //Centers the camera over the Tank
 void setCamera( SDL_Rect& camera ,TankInfo* UserTank);
 

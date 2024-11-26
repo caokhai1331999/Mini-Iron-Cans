@@ -54,10 +54,10 @@ bool checkCollision( SDL_Rect* a, SDL_Rect* b )
 }
 
 // TODO: 
-bool MassCheckCollision(SDL_Rect* BulletBox, TankInfo* EnemyTanks){
-    bool collided = false;
-    return collided;
-}
+// bool MassCheckCollision(SDL_Rect* BulletBox, TankInfo* EnemyTanks){
+//     bool collided = false;
+//     return collided;
+// }
 
 bool touchesWall( SDL_Rect* box, Tile* tiles[] )
 {

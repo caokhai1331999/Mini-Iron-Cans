@@ -154,8 +154,7 @@ int main( int argc, char* args[] )
                                 CurrentBut.pressed = (e.key.state == SDL_PRESSED);
                                 CurrentBut.key = e.key.keysym.scancode;
                                 CurrentBut.repeat = e.key.repeat;
-                                handleEvent(&CurrentBut, userTank);
-                                
+                                handleEvent(&CurrentBut, userTank);                                
                             }
                     }
                         // //Go to next frame
@@ -173,30 +172,39 @@ int main( int argc, char* args[] )
 
 				//Move the dot
                 bool collided = false;
+                move(tileSet, touchesWall(&userTank->mBox, tileSet), collided, userTank);
                 for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
                     // TODO: Constantly check collision between bot tanks
                     collided = false;
-                    for (int p = 0; p < i; p++){
-                        // NOTE: Collision with each with User Tank and
-                        // with the bullets here
-                        if (i > 1 && p < i){
-                            // NOTE: It did check out the collsion but
-                            // somehow it can not separate these bot tanks
-                            //
-                            //TODO: Separate these bot tank and move on to
-                            //enable bullet to kill userTank
-                            collided = checkCollision(&enemyTank[i].mBox, &enemyTank[p].mBox);
-                            collided?printf("Tank %d collided tank %d \nm ", i, p):printf("checking\n");
-                        }
-                    }
+                    // for (int p = 0; p < i; p++){
+                    //     // NOTE: Collision with each with User Tank and
+                    //     // with the bullets here
+                    //     if (i > 1 && p < i){
+                    //         // NOTE: It did check out the collsion but
+                    //         // somehow it can not separate these bot tanks
+                    //         //
+                    //         //TODO: Separate these bot tank and move on to
+                    //         //enable bullet to kill userTank
+                    //         //?printf("Tank %d collided tank %d \nm ", i, p):printf("checking\n")
+                    //         collided = checkCollision(&enemyTank[i].mBox, &enemyTank[p].mBox);
+                    //     }
+                        // NOTE: First attempt: Try to loop check whether bullet
+                        // hit tank or not
+                    // }
+                    //
+
+                    BiTankCheck(&enemyTank[i], userTank);
+                    
                     // NOTE: Can I avoid the wasted 2nd time check of bullets
-                    // and tanks
-                    move(tileSet, touchesWall(&userTank->mBox, tileSet), collided, userTank, &enemyTank[i]);
+                    // and tanks and where to put bullet moving code
+                    //First thing to consider that Can I detach the bullet
+                    //moving piece of code out of the tank moving one
+                    //in order to
                     littleGuide(&enemyTank[i], userTank, collided);
-                    move(tileSet,touchesWall(&enemyTank[i].mBox, tileSet), collided, &enemyTank[i], userTank);
+                    move(tileSet,touchesWall(&enemyTank[i].mBox, tileSet), collided, &enemyTank[i]);
                 }                
 
-                // LATER!: Move Bot tank use little guilder(DONE!)
+                // LATER!: Move Bot tank use little guild(DONE!)
                 //
 
 				// dot.move( tileSet, touchesWall(dot.GetmBox(), tileSet));
@@ -210,7 +218,7 @@ int main( int argc, char* args[] )
 				// SDL_RenderClear( Platform.GetRenderer());
 
 				//Render current frame
-				SDL_Rect* currentClip = &Platform.gSpriteClips[ frame / 7 ];
+				// SDL_Rect* currentClip = &Platform.gSpriteClips[ frame / 7 ];
 				// SDL_Rect* currentClip = &Platform.GetgSpriteClips()[ frame / 7 ];
                 
 				// dot.setCamera( camera );                

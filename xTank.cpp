@@ -58,46 +58,71 @@ TankInfo InitializeTankInfo(int x, int y){
 
 void fire(TankInfo* Tank){
     // TODO: Initialize bullet and send it fly, send signal when hit
+    // && !Tank->isHit
 
     if(!Tank->destroyed) {
-        for(int i = 0; i < TOTAL_BULLET_PER_TANK - 1; i++){
-            printf("Looping through tank bullets\n");
+            if(Tank->userBelong){
+                printf("Looping through tank bullets\n");
+            }
+        for(int i = 0; i < TOTAL_BULLET_PER_TANK ; i++){
             if(Tank->Bullets[i].Launched)
             {
                 continue;
-            } else {
+            } else if (!Tank->Bullets[i].Launched){
 
                 // TODO: Fix bugs right here
-                printf("Bullet chosen\n");
-                Tank->BulletsNumber -- ;
-                Tank->Bullets[i].Launched = true;
+                if(Tank->userBelong){
+                    printf("Bullet chosen\n");
+                }
+
+                Tank->BulletsNumber--;
+                    if(Tank->BulletsNumber < 0){
+                        Tank->BulletsNumber = 0;
+                    }                    
+
                 
                 switch((int)Tank->face)
                 {
-                    printf("Give bullet veclocity\n");                    
                     case (int)UP:
                         Tank->Bullets[i].blBox.x = Tank->mBox.x + Tank->mBox.w/2 + 15;
                         Tank->Bullets[i].blBox.y = Tank->mBox.y + 5;
                         Tank->Bullets[i].BlVelY -= BULLET_VEL;
+                        if(Tank->userBelong){
+                            printf("Give bullet veclocity\n");                    
+                        }                        
                         break; 
                     case (int)DOWN:
                         Tank->Bullets[i].blBox.x = Tank->mBox.x + Tank->mBox.w/2 + 15;
                         Tank->Bullets[i].blBox.y = Tank->mBox.y + Tank->mBox.h + 5;
                         Tank->Bullets[i].BlVelY += BULLET_VEL;
+                        if(Tank->userBelong){
+                            printf("Give bullet veclocity\n");                    
+                        }                                                
                         break; 
                     case (int)RIGHT:
                         Tank->Bullets[i].blBox.x = Tank->mBox.x + Tank->mBox.w + 5;
                         Tank->Bullets[i].blBox.y = Tank->mBox.y + Tank->mBox.h/2 + 15;
                         Tank->Bullets[i].BlVelX += BULLET_VEL;
+                        if(Tank->userBelong){
+                            printf("Give bullet veclocity\n");                    
+                        }                                                
                         break; 
                     case (int)LEFT:
                         Tank->Bullets[i].blBox.x = Tank->mBox.x + 5;
                         Tank->Bullets[i].blBox.y = Tank->mBox.y + Tank->mBox.h/2 + 15;
                         Tank->Bullets[i].BlVelX -= BULLET_VEL;
+                        if(Tank->userBelong){
+                            printf("Give bullet veclocity\n");                    
+                        }                                                
                         break;             
                 }
-                break; 
-                // printf("Out of loop\n");                
+                // if(Tank->userBelong)
+                // {
+                //     printf("Out of loop\n");                
+                // }
+                printf("Out of loop\n");                
+                Tank->Bullets[i].Launched = true;
+                break;
             }
         }
     }
@@ -176,7 +201,7 @@ void handleEvent(KeyState* CurrentBut, TankInfo* Tank) {
 
 //Moves the Tank and check collision against tiles
 // Add one more tank and user tank to check
-void move( Tile *tiles[], bool touchesWall, bool collided, TankInfo* ATank, TankInfo* BTank) {
+void move( Tile *tiles[], bool touchesWall, bool collided, TankInfo* Tank) {
 
     // NOTE: Apply dijkstra's algo here to make bot tank'move more smart
 
@@ -189,12 +214,14 @@ void move( Tile *tiles[], bool touchesWall, bool collided, TankInfo* ATank, Tank
         //
         //TODO: Add collision code here
             Tank->mBox.x += Tank->mVelX;
-           if ((Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH*2 - 50)|| collided){
+            // (Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH*2 - 50)||
+           if ((Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH*2 - 50)||collided){
                     Tank->mBox.x -= Tank->mVelX;
                }
                     // printf("Tank Pos X is: %d /n", Tank->mBox.x);                    
             
             Tank->mBox.y += Tank->mVelY;
+            // (Tank->mBox.y < 10)||(Tank->mBox.y + Tank->mBox.h > LEVEL_HEIGHT *2 - 50) ||
             if ((Tank->mBox.y < 10)||(Tank->mBox.y + Tank->mBox.h > LEVEL_HEIGHT *2 - 50) || collided)
             {
                     Tank->mBox.y -= Tank->mVelY;
@@ -204,30 +231,11 @@ void move( Tile *tiles[], bool touchesWall, bool collided, TankInfo* ATank, Tank
              // Move the bullet
             //TODO: Time to detach the checking function out of moving one
             // to avoid unwanted duplicated work (WORKING!)
-            for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
-                if (ATank->Bullets[i].Launched){
 
-                    ATank->Bullets[i].blBox.x += ATank->Bullets[i].BlVelX;
-                    if ((ATank->Bullets[i].blBox.x < 0)||(ATank->Bullets[i].blBox.x + ATank->Bullets[i].blBox.w > LEVEL_WIDTH||checkCollision(ATank->Bullets[i].blBox,BTank->mBox))){
-                        ATank->Bullets[i].Launched = false;
-                        ATank->Bullets[i].BlVelX = 0;
-                        ATank->Bullets[i].BlVelY = 0;
-                        ATank->BulletsNumber ++;
-                        if (ATank->BulletsNumber > TOTAL_BULLET_PER_TANK){
-                            ATank->BulletsNumber = TOTAL_BULLET_PER_TANK;
-                        }
-                    }
-                    
-                    ATank->Bullets[i].blBox.y += ATank->Bullets[i].BlVelY;
-                    if ((ATank->Bullets[i].blBox.y < 0)||(ATank->Bullets[i].blBox.y + ATank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
-                        ATank->Bullets[i].Launched = false;
-                        ATank->Bullets[i].BlVelX = 0;
-                        ATank->Bullets[i].BlVelY = 0;
-                        ATank->BulletsNumber ++;
-                        if (ATank->BulletsNumber > TOTAL_BULLET_PER_TANK){
-                            ATank->BulletsNumber = TOTAL_BULLET_PER_TANK;
-                        }                        
-                    }                    
+            for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
+                if (Tank->Bullets[i].Launched){
+                    Tank->Bullets[i].blBox.x += Tank->Bullets[i].BlVelX;
+                    Tank->Bullets[i].blBox.y += Tank->Bullets[i].BlVelY;
                 }
             // }
         }    
@@ -284,8 +292,8 @@ void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided){
     };        
     }
 
-    
-    if (distance > 250 && !collided){
+    // distance > 250 && 
+    if (!collided){
         if (abs(botTank->mBox.x - UserTank->mBox.x) < abs(botTank->mBox.y - UserTank->mBox.y)) {
         // NOTE: Prioritize which axis is choose to move first
         if(botTank->mVelX != 0){
@@ -362,38 +370,72 @@ void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided){
                             }
                         }
                     }
-                        fire(botTank);
+            if(!botTank->userBelong){
+                fire(botTank);
+            }
 } 
 }
 
-void WholeMapCheck(TankInfo* ATank, TankInfo* BTank){
-    bool collided = checkCollision(ATank->mBox, BTank->mBox);
-    
+void resetBullet(Bullet* bullet){
+    bullet->Launched = false;
+    bullet->BlVelX = 0;
+    bullet->BlVelY = 0;
+}
+
+void BiTankCheck(TankInfo* ATank, TankInfo* BTank){
+    // NOTE: Put this function in the Moving function
+    // ON WORK and Experiment
+    bool TwoTankcollided = checkCollision(&ATank->mBox, &BTank->mBox);
+
     for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
         if (ATank->Bullets[i].Launched){
-
-            ATank->Bullets[i].blBox.x += ATank->Bullets[i].BlVelX;
-            if ((ATank->Bullets[i].blBox.x < 0)||(ATank->Bullets[i].blBox.x + ATank->Bullets[i].blBox.w > LEVEL_WIDTH||checkCollision(ATank->Bullets[i].blBox,BTank->mBox))){
-                ATank->Bullets[i].Launched = false;
-                ATank->Bullets[i].BlVelX = 0;
-                ATank->Bullets[i].BlVelY = 0;
-                ATank->BulletsNumber ++;
-                if (ATank->BulletsNumber > TOTAL_BULLET_PER_TANK){
-                    ATank->BulletsNumber = TOTAL_BULLET_PER_TANK;
-                }
+            if ((ATank->Bullets[i].blBox.x < 0)||(ATank->Bullets[i].blBox.x + ATank->Bullets[i].blBox.w > LEVEL_WIDTH)){
+                BTank->isHit = true;
+                resetBullet(&ATank->Bullets[i]);
             }
                     
             ATank->Bullets[i].blBox.y += ATank->Bullets[i].BlVelY;
             if ((ATank->Bullets[i].blBox.y < 0)||(ATank->Bullets[i].blBox.y + ATank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
-                ATank->Bullets[i].Launched = false;
-                ATank->Bullets[i].BlVelX = 0;
-                ATank->Bullets[i].BlVelY = 0;
-                ATank->BulletsNumber ++;
-                if (ATank->BulletsNumber > TOTAL_BULLET_PER_TANK){
+                BTank->isHit = true;
+                resetBullet(&ATank->Bullets[i]);                
+            }
+
+            if(checkCollision(&ATank->Bullets[i].blBox,&BTank->mBox)){
+                BTank->isHit = true;
+                ATank->BulletsNumber++;                
+                if(ATank->BulletsNumber > TOTAL_BULLET_PER_TANK){
                     ATank->BulletsNumber = TOTAL_BULLET_PER_TANK;
-                }                        
-            }                    
+                }
+                resetBullet(&ATank->Bullets[i]);                
+            }
         }
+
+        if (BTank->Bullets[i].Launched){
+
+            if ((BTank->Bullets[i].blBox.x < 0)||(BTank->Bullets[i].blBox.x + BTank->Bullets[i].blBox.w > LEVEL_WIDTH)){
+                BTank->BulletsNumber++;
+                if(BTank->BulletsNumber > TOTAL_BULLET_PER_TANK){
+                    BTank->BulletsNumber = TOTAL_BULLET_PER_TANK;
+                }
+                resetBullet(&BTank->Bullets[i]);
+            }
+                    
+            if ((BTank->Bullets[i].blBox.y < 0)||(BTank->Bullets[i].blBox.y + BTank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
+                BTank->BulletsNumber++;                
+                if(BTank->BulletsNumber > TOTAL_BULLET_PER_TANK){
+                    BTank->BulletsNumber = TOTAL_BULLET_PER_TANK;
+                }
+                resetBullet(&BTank->Bullets[i]);                
+            }
+
+            if(checkCollision(&BTank->Bullets[i].blBox,&ATank->mBox)){
+                ATank->isHit = true;
+                BTank->BulletsNumber++;                
+                if(BTank->BulletsNumber > TOTAL_BULLET_PER_TANK){
+                    BTank->BulletsNumber = TOTAL_BULLET_PER_TANK;
+                }
+                resetBullet(&BTank->Bullets[i]);
+            }
+        }        
     }    
-    
 }

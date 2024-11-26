@@ -84,43 +84,7 @@ bool LoadMedia(Tile* tiles[]){
       // Platform.gSpriteClips[ 3 ].h = 170;
 
 
-      Platform.gExplosionClips[ 0 ].x = 0;
-      Platform.gExplosionClips[ 0 ].y = 0;
-      Platform.gExplosionClips[ 0 ].w = 30;
-      Platform.gExplosionClips[ 0 ].h = 30;
 
-      Platform.gExplosionClips[ 1 ].x = 30;
-      Platform.gExplosionClips[ 1 ].y = 0;
-      Platform.gExplosionClips[ 1 ].w = 30;
-      Platform.gExplosionClips[ 1 ].h = 30;
-
-      Platform.gExplosionClips[ 2 ].x = 60;
-      Platform.gExplosionClips[ 2 ].y = 0;
-      Platform.gExplosionClips[ 2 ].w = 30;
-      Platform.gExplosionClips[ 2 ].h = 30;
-
-      Platform.gExplosionClips[ 3 ].x = 90;
-      Platform.gExplosionClips[ 3 ].y = 0;
-      Platform.gExplosionClips[ 3 ].w = 30;
-      Platform.gExplosionClips[ 3 ].h = 30;
-
-      Platform.gExplosionClips[ 4 ].x = 120;
-      Platform.gExplosionClips[ 4 ].y = 0;
-      Platform.gExplosionClips[ 4 ].w = 30;
-      Platform.gExplosionClips[ 4 ].h = 30;
-
-      Platform.gExplosionClips[ 5 ].x = 150;
-      Platform.gExplosionClips[ 5 ].y = 0;
-      Platform.gExplosionClips[ 5 ].w = 30;
-      Platform.gExplosionClips[ 5 ].h = 30;
-
-      Platform.gExplosionClips[ 3 ].x = 180;
-      Platform.gExplosionClips[ 3 ].y = 0;
-      Platform.gExplosionClips[ 3 ].w = 30;
-      Platform.gExplosionClips[ 3 ].h = 30;
-
-      
-      
 //      gSpriteClips[ 4 ].x = 1000;
 //      gSpriteClips[ 4 ].y = 0;
 //      gSpriteClips[ 4 ].w = 250;
@@ -162,7 +126,28 @@ bool LoadMedia(Tile* tiles[]){
 	{
 		printf( "Failed to load explosion texture!\n" );
 		success = false;
-	}
+	} else {
+
+      Platform.gExplosionClips[ 0 ].x = 65;
+      Platform.gExplosionClips[ 0 ].y = 0;
+      Platform.gExplosionClips[ 0 ].w = 30;
+      Platform.gExplosionClips[ 0 ].h = 30;
+
+      Platform.gExplosionClips[ 1 ].x = 95;
+      Platform.gExplosionClips[ 1 ].y = 0;
+      Platform.gExplosionClips[ 1 ].w = 30;
+      Platform.gExplosionClips[ 1 ].h = 30;
+
+      Platform.gExplosionClips[ 2 ].x = 125;
+      Platform.gExplosionClips[ 2 ].y = 0;
+      Platform.gExplosionClips[ 2 ].w = 30;
+      Platform.gExplosionClips[ 2 ].h = 30;
+
+      Platform.gExplosionClips[ 3 ].x = 155;
+      Platform.gExplosionClips[ 3 ].y = 0;
+      Platform.gExplosionClips[ 3 ].w = 30;
+      Platform.gExplosionClips[ 3 ].h = 30;
+    }
 
 	//Load tile map
 	if( !setTiles( tiles ) )
@@ -429,14 +414,8 @@ bool setTiles( Tile *tiles[]){
 
 //Shows the Tank on the screen
 void render(TankInfo* Tank, SDL_Rect& camera) {
+
     if(!Tank->destroyed){
-    if(Tank->isHit){
-        //TODO: Run the destroying clip here and then make the tanks disappear
-        for(int frame=0; frame/4 < ANIMATING_FRAMES; frame++){            
-        Platform.gExplosionTexture->render( Platform.gRenderer ,(Tank->mBox.x - camera.x), (Tank->mBox.y - camera.y), PlatformP.gExplosionClips[frame],0.0);
-        }
-        Tank->destroyed = true;
-    }else{
     //NOTE: Show the tank and bullet here
     if (Tank->userBelong && Platform.gUserTankTexture!=NULL){
         Platform.gUserTankTexture->render( Platform.gRenderer ,(Tank->mBox.x - camera.x), (Tank->mBox.y - camera.y), NULL,Tank->face);
@@ -447,7 +426,7 @@ void render(TankInfo* Tank, SDL_Rect& camera) {
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){                
                 Platform.gUserBulletTexture->render(Platform.gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), NULL, Tank->face);
-                // printf("Bullets %d image is being rendered\n", i);
+                printf("Bullets %d image is being rendered\n", i);
             }
         }
     }
@@ -461,14 +440,23 @@ else if (!Tank->userBelong && Platform.gEnemyTankTexture!=NULL) {
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){                
                 Platform.gEnemyBulletTexture->render(Platform.gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), NULL, Tank->face);
-                printf("Enemy tanks and Bullets %d image is being rendered\n", i);
+                // printf("Enemy tanks and Bullets %d image is being rendered\n", i);
             }
         }
     }        
         // }
     }        
-    }        
-    } 
+    }
+
+    if(Tank->isHit && !Tank->userBelong){
+        //TODO: Run the destroying clip here and then make the tanks disappear
+        for(int frame=0; frame/10 < ANIMATING_FRAMES; frame++){            
+            Platform.gExplosionTexture->render( Platform.gRenderer ,(Tank->mBox.x - camera.x), (Tank->mBox.y - camera.y), &Platform.gExplosionClips[frame]);
+        }
+        Tank->destroyed = true;
+        Tank->isHit = false;
+    }
+    
 }
 
 void renderText(uint32 StartTime, uint32 EndTime, const TankInfo* userTank){
