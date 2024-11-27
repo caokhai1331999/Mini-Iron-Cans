@@ -116,15 +116,9 @@ int main( int argc, char* args[] )
                             // }  else {
                             //     printf("Next Arrow is released\n");
                             // } 
-                        // NOTE: Keep the arrow input stream on single key
-                        //
                         // NOTE: || (e.key.keysym.scancode == CurrentArrow.key)
                         // || e.key.keysym.scancode == SDL_SCANCODE_SPACE
-                        //
-                        //NOTE: The meaning of these condition is to filter out
-                        // the next arrow key when the previous one still not
-                        // released
-                        //
+                        //                        //
                                 // printf("Current Button :%d ", CurrentBut.key);
                                 // CurrentBut.pressed?printf("is pressed \n"):printf("is released\n");
                                 
@@ -134,12 +128,6 @@ int main( int argc, char* args[] )
                         //
                                 if((!CurrentBut.pressed && e.key.state == SDL_PRESSED && CurrentBut.key != e.key.keysym.scancode) || (e.key.keysym.scancode == CurrentBut.key && CurrentBut.pressed != (e.key.state == SDL_PRESSED))|| CurrentBut.init == 0 || e.key.keysym.scancode == SDL_SCANCODE_SPACE)
 
-                                // PreviousBut.pressed?printf("is pressed \n"):printf("is released\n");
-                            // if (valid(e, &PreviousBut, &CurrentBut))
-                            //Previous Button :81 is pressed
-                            // Current Button :44 is released
-                            // Next Button : 79 is released
-                            // Fixed it with !(&& (!((e.key.state == SDL_PRESSED) && (!CurrentBut.pressed))))
                         //TODO: How about pressing Space and 2 arrow key at the same
                         //time and then hit different arrow
                             {
@@ -157,18 +145,20 @@ int main( int argc, char* args[] )
                                 handleEvent(&CurrentBut, userTank);                                
                             }
                     }
-                        // //Go to next frame
-                        // frame++;
-                        // //Cycle animation
-                        // if( frame / 4 >= ANIMATING_FRAMES)
-                        // {
-                        //     frame = 0;
-                        // }
                     // ==================================================
-					//Handle input for the dot
+					//handle input for the dot
 					// dot.handleEvent( e );
                     // }
 				}
+                // TODO: Time to Fix !!!
+                //
+                        //Go to next frame
+                        frame++;
+                        //Cycle animation
+                        if( frame / 4 > ANIMATING_FRAMES)
+                        {
+                            frame = 0;
+                        }
 
 				//Move the dot
                 bool collided = false;
@@ -180,26 +170,16 @@ int main( int argc, char* args[] )
                     //     // NOTE: Collision with each with User Tank and
                     //     // with the bullets here
                     //     if (i > 1 && p < i){
-                    //         // NOTE: It did check out the collsion but
-                    //         // somehow it can not separate these bot tanks
-                    //         //
                     //         //TODO: Separate these bot tank and move on to
                     //         //enable bullet to kill userTank
                     //         //?printf("Tank %d collided tank %d \nm ", i, p):printf("checking\n")
                     //         collided = checkCollision(&enemyTank[i].mBox, &enemyTank[p].mBox);
                     //     }
-                        // NOTE: First attempt: Try to loop check whether bullet
-                        // hit tank or not
                     // }
                     //
 
                     BiTankCheck(&enemyTank[i], userTank);
                     
-                    // NOTE: Can I avoid the wasted 2nd time check of bullets
-                    // and tanks and where to put bullet moving code
-                    //First thing to consider that Can I detach the bullet
-                    //moving piece of code out of the tank moving one
-                    //in order to
                     littleGuide(&enemyTank[i], userTank, collided);
                     move(tileSet,touchesWall(&enemyTank[i].mBox, tileSet), collided, &enemyTank[i]);
                 }                
@@ -234,10 +214,10 @@ int main( int argc, char* args[] )
 				}
 
 
-                render(userTank, camera);
+                render(userTank, frame, camera);
 
                 for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
-                    render(&enemyTank[i], camera);
+                    render(&enemyTank[i], frame, camera);
                 }
                 
 				//Render dot

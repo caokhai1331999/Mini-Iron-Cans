@@ -17,8 +17,8 @@ global_variable int SCREEN_HEIGHT = 480;
 global_variable TTF_Font* gFont = NULL;
 
 //The dimensions of the level
-const global_variable int LEVEL_WIDTH = 1280;
-const global_variable int LEVEL_HEIGHT = 960;
+const global_variable int LEVEL_WIDTH = 2560;
+const global_variable int LEVEL_HEIGHT = 1920;
 
 //Tile constants
 const global_variable int TILE_WIDTH = 80;

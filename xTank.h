@@ -33,7 +33,7 @@ const global_variable int TANK_HEIGHT = 50 ;
 const global_variable int TOTAL_ENEMY_TANK = 3 ;
 const global_variable int TOTAL_BULLET_PER_TANK = 10 ;
 
-const global_variable int BULLET_VEL = 10 ;
+const global_variable int BULLET_VEL = 20 ;
 const global_variable int BULLET_WIDTH = 10 ;
 const global_variable int BULLET_HEIGHT = 10 ;
 
@@ -123,6 +123,7 @@ void move( Tile *tiles[] = NULL, bool touchesWall = false, bool collided = false
 // Fire a bullet
 void fire(TankInfo* Tank);
 void resetBullet(Bullet* bullet);
+void resetTank(TankInfo* Tank);
 void BiTankCheck(TankInfo* ATank, TankInfo* BTank);
 //Centers the camera over the Tank
 void setCamera( SDL_Rect& camera ,TankInfo* UserTank);

@@ -85,7 +85,7 @@ bool IsArrow(SDL_Scancode KeyCode);
 bool setTiles( Tile *tiles[]);
 bool valid(SDL_Event e, KeyState* previousKey, KeyState* currentKey);
 //Shows the Tank on the screen
-void render(TankInfo* Tank, SDL_Rect& camera);
+void render(TankInfo* Tank, int frame, SDL_Rect& camera);
 void renderText(uint32 StartTime, uint32 EndTime, const TankInfo* userTank);
 
 #define PLATFORMP_H

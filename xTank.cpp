@@ -12,8 +12,8 @@
 
 Position GeneratePosition(){
     Position Tem;
-    Tem.X = std::rand()%(LEVEL_WIDTH*2);
-    Tem.Y = std::rand()%(LEVEL_HEIGHT*2);
+    Tem.X = std::rand()%(LEVEL_WIDTH);
+    Tem.Y = std::rand()%(LEVEL_HEIGHT);
     return Tem ;
 }
 
@@ -68,7 +68,7 @@ void fire(TankInfo* Tank){
             if(Tank->Bullets[i].Launched)
             {
                 continue;
-            } else if (!Tank->Bullets[i].Launched){
+            } else if (!Tank->Bullets[i].Launched) {
 
                 // TODO: Fix bugs right here
                 if(Tank->userBelong){
@@ -120,8 +120,8 @@ void fire(TankInfo* Tank){
                 // {
                 //     printf("Out of loop\n");                
                 // }
-                printf("Out of loop\n");                
                 Tank->Bullets[i].Launched = true;
+                // Tank->Bullets[i].Launched?printf("Bullet Launched\n"):printf("Bullet wasn't launched\n");                
                 break;
             }
         }
@@ -214,15 +214,15 @@ void move( Tile *tiles[], bool touchesWall, bool collided, TankInfo* Tank) {
         //
         //TODO: Add collision code here
             Tank->mBox.x += Tank->mVelX;
-            // (Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH*2 - 50)||
-           if ((Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH*2 - 50)||collided){
+            // (Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH - 50)||
+           if ((Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH - 50)||collided){
                     Tank->mBox.x -= Tank->mVelX;
                }
                     // printf("Tank Pos X is: %d /n", Tank->mBox.x);                    
             
             Tank->mBox.y += Tank->mVelY;
-            // (Tank->mBox.y < 10)||(Tank->mBox.y + Tank->mBox.h > LEVEL_HEIGHT *2 - 50) ||
-            if ((Tank->mBox.y < 10)||(Tank->mBox.y + Tank->mBox.h > LEVEL_HEIGHT *2 - 50) || collided)
+            // (Tank->mBox.y < 10)||(Tank->mBox.y + Tank->mBox.h > LEVEL_HEIGHT  - 50) ||
+            if ((Tank->mBox.y < 10)||(Tank->mBox.y + Tank->mBox.h > LEVEL_HEIGHT  - 50) || collided)
             {
                     Tank->mBox.y -= Tank->mVelY;
                     // printf("Tank Pos Y is: %d /n", Tank->mBox.y);
@@ -236,6 +236,13 @@ void move( Tile *tiles[], bool touchesWall, bool collided, TankInfo* Tank) {
                 if (Tank->Bullets[i].Launched){
                     Tank->Bullets[i].blBox.x += Tank->Bullets[i].BlVelX;
                     Tank->Bullets[i].blBox.y += Tank->Bullets[i].BlVelY;
+                    // TODO: Figure out first DONE!
+                    // if(Tank->Bullets[i].Launched)
+                    // {
+                    //     printf("Bullet %d is moving after Launched\n", i);
+                    // } else {
+                    //     printf("Bullet %d is moving even when wasn't Launched\n", i);                        
+                    // }
                 }
             // }
         }    
@@ -258,13 +265,13 @@ void setCamera( SDL_Rect& camera, TankInfo* UserTank ){
 	{
 		camera.y = 0;
 	}
-	if( camera.x > LEVEL_WIDTH*2 - camera.w )
+	if( camera.x > LEVEL_WIDTH - camera.w )
 	{
-		camera.x = LEVEL_WIDTH*2 - camera.w;
+		camera.x = LEVEL_WIDTH - camera.w;
 	}
-	if( camera.y > LEVEL_HEIGHT*2 - camera.h )
+	if( camera.y > LEVEL_HEIGHT - camera.h )
 	{
-		camera.y = LEVEL_HEIGHT*2 - camera.h;
+		camera.y = LEVEL_HEIGHT - camera.h;
 	}
     
 }
@@ -282,7 +289,7 @@ void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided){
     // NOTE: Wandering mode
 
     std::srand(std::time(nullptr));
-    if (botTank->mVelX == 0 || botTank->mVelY == 0 || botTank->mBox.x < TANK_WIDTH || botTank->mBox.x + TANK_WIDTH > LEVEL_WIDTH*2|| botTank->mBox.y < TANK_HEIGHT || botTank->mBox.x + TANK_HEIGHT > LEVEL_HEIGHT*2 || collided){
+    if (botTank->mVelX == 0 || botTank->mVelY == 0 || botTank->mBox.x < TANK_WIDTH || botTank->mBox.x + TANK_WIDTH > LEVEL_WIDTH|| botTank->mBox.y < TANK_HEIGHT || botTank->mBox.x + TANK_HEIGHT > LEVEL_HEIGHT || collided){
     int FaceID = std::rand()%3;
     switch(FaceID){
         case 0: botTank->face = UP; botTank->mVelY = 0; botTank->mVelY = -TANK_VEL;
@@ -300,7 +307,7 @@ void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided){
             botTank->mVelX = 0;            
         }
         
-    if (botTank->mBox.x - UserTank->mBox.x < 250*2){
+    if (botTank->mBox.x - UserTank->mBox.x < 250){
             if (botTank->face != LEFT){
             botTank->face = LEFT;
             }
@@ -308,11 +315,11 @@ void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided){
                 botTank->mVelX -= TANK_VEL;
                 botTank->mVelY = 0;            
             }
-        } else if (botTank->mBox.x - UserTank->mBox.x > - 250*2){
+        } else if (botTank->mBox.x - UserTank->mBox.x > - 250){
             if(botTank->face != RIGHT){
                 botTank->face = RIGHT;
             }
-            if (botTank->mBox.x + TANK_WIDTH < LEVEL_WIDTH * 2){                
+            if (botTank->mBox.x + TANK_WIDTH < LEVEL_WIDTH){                
                 botTank->mVelX += TANK_VEL;
                 botTank->mVelY = 0;
             }
@@ -337,7 +344,7 @@ void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided){
             if(botTank->face != DOWN){
             botTank->face = DOWN;                
             }
-            if (botTank->mVelY + TANK_HEIGHT < LEVEL_HEIGHT * 2){                
+            if (botTank->mVelY + TANK_HEIGHT < LEVEL_HEIGHT ){                
                 botTank->mVelX = 0;                
                 botTank->mVelY += TANK_VEL;
             }
@@ -386,20 +393,13 @@ void BiTankCheck(TankInfo* ATank, TankInfo* BTank){
     // NOTE: Put this function in the Moving function
     // ON WORK and Experiment
     bool TwoTankcollided = checkCollision(&ATank->mBox, &BTank->mBox);
-
+    // printf("Start checking the whether tank or bullet is collided\n");
     for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
         if (ATank->Bullets[i].Launched){
-            if ((ATank->Bullets[i].blBox.x < 0)||(ATank->Bullets[i].blBox.x + ATank->Bullets[i].blBox.w > LEVEL_WIDTH)){
-                BTank->isHit = true;
+            if ((ATank->Bullets[i].blBox.x < 0)||(ATank->Bullets[i].blBox.x + ATank->Bullets[i].blBox.w > LEVEL_WIDTH||ATank->Bullets[i].blBox.y < 0)||(ATank->Bullets[i].blBox.y + ATank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
                 resetBullet(&ATank->Bullets[i]);
             }
                     
-            ATank->Bullets[i].blBox.y += ATank->Bullets[i].BlVelY;
-            if ((ATank->Bullets[i].blBox.y < 0)||(ATank->Bullets[i].blBox.y + ATank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
-                BTank->isHit = true;
-                resetBullet(&ATank->Bullets[i]);                
-            }
-
             if(checkCollision(&ATank->Bullets[i].blBox,&BTank->mBox)){
                 BTank->isHit = true;
                 ATank->BulletsNumber++;                
@@ -412,7 +412,7 @@ void BiTankCheck(TankInfo* ATank, TankInfo* BTank){
 
         if (BTank->Bullets[i].Launched){
 
-            if ((BTank->Bullets[i].blBox.x < 0)||(BTank->Bullets[i].blBox.x + BTank->Bullets[i].blBox.w > LEVEL_WIDTH)){
+            if ((BTank->Bullets[i].blBox.x < 0)||(BTank->Bullets[i].blBox.x + BTank->Bullets[i].blBox.w > LEVEL_WIDTH||BTank->Bullets[i].blBox.y < 0)||(BTank->Bullets[i].blBox.y + BTank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
                 BTank->BulletsNumber++;
                 if(BTank->BulletsNumber > TOTAL_BULLET_PER_TANK){
                     BTank->BulletsNumber = TOTAL_BULLET_PER_TANK;
@@ -420,14 +420,6 @@ void BiTankCheck(TankInfo* ATank, TankInfo* BTank){
                 resetBullet(&BTank->Bullets[i]);
             }
                     
-            if ((BTank->Bullets[i].blBox.y < 0)||(BTank->Bullets[i].blBox.y + BTank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
-                BTank->BulletsNumber++;                
-                if(BTank->BulletsNumber > TOTAL_BULLET_PER_TANK){
-                    BTank->BulletsNumber = TOTAL_BULLET_PER_TANK;
-                }
-                resetBullet(&BTank->Bullets[i]);                
-            }
-
             if(checkCollision(&BTank->Bullets[i].blBox,&ATank->mBox)){
                 ATank->isHit = true;
                 BTank->BulletsNumber++;                

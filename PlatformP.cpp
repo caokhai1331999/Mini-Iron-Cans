@@ -283,7 +283,7 @@ bool setTiles( Tile *tiles[]){
 			x += TILE_WIDTH;
 
 			//If we've gone too far
-			if( x >= LEVEL_WIDTH *2 )
+			if( x >= LEVEL_WIDTH)
 			{
 				//Move back
 				x = 0;
@@ -413,7 +413,7 @@ bool setTiles( Tile *tiles[]){
 // }
 
 //Shows the Tank on the screen
-void render(TankInfo* Tank, SDL_Rect& camera) {
+void render(TankInfo* Tank, int frame, SDL_Rect& camera) {
 
     if(!Tank->destroyed){
     //NOTE: Show the tank and bullet here
@@ -422,11 +422,12 @@ void render(TankInfo* Tank, SDL_Rect& camera) {
 
         // NOTE: Now the bullets
         // TODO: The bullet not show, Time to check this one
+        // The bullet stuck with number 0 while get near bot Tank
         if(Platform.gUserBulletTexture!=NULL) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){                
-                Platform.gUserBulletTexture->render(Platform.gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), NULL, Tank->face);
                 printf("Bullets %d image is being rendered\n", i);
+                Platform.gUserBulletTexture->render(Platform.gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), NULL, Tank->face);
             }
         }
     }
@@ -450,11 +451,11 @@ else if (!Tank->userBelong && Platform.gEnemyTankTexture!=NULL) {
 
     if(Tank->isHit && !Tank->userBelong){
         //TODO: Run the destroying clip here and then make the tanks disappear
-        for(int frame=0; frame/10 < ANIMATING_FRAMES; frame++){            
             Platform.gExplosionTexture->render( Platform.gRenderer ,(Tank->mBox.x - camera.x), (Tank->mBox.y - camera.y), &Platform.gExplosionClips[frame]);
+        if(frame/4 == ANIMATING_FRAMES){
+            Tank->isHit = false;
+            Tank->destroyed = true;
         }
-        Tank->destroyed = true;
-        Tank->isHit = false;
     }
     
 }
@@ -482,7 +483,7 @@ void renderText(uint32 StartTime, uint32 EndTime, const TankInfo* userTank){
                 } else {                           Platform.gTextTexture->render(Platform.gRenderer, 0, 0);                    
                         }
 
-                if(userTank->BulletsNumber == 1){
+                if(userTank->BulletsNumber == 0){
                     sprintf(OutPut, "Tank Bullets: Loading\n");
                     //Update screen
                     if (!Platform.gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform.gRenderer)) {
