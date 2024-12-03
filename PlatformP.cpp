@@ -122,31 +122,61 @@ bool LoadMedia(Tile* tiles[]){
 
 
 	//Load explosion texture
-	if( !Platform.gExplosionTexture->loadFromFile( "media/explosion.png", Platform.gRenderer, (int)100, (int)100) )
+	if( !Platform.gExplosionTexture->loadFromFile( "media/explosion3(background removed).png", Platform.gRenderer, (int)100, (int)100) )
 	{
 		printf( "Failed to load explosion texture!\n" );
 		success = false;
 	} else {
 
-      Platform.gExplosionClips[ 0 ].x = 65;
+      Platform.gExplosionClips[ 0 ].x = 0;
       Platform.gExplosionClips[ 0 ].y = 0;
-      Platform.gExplosionClips[ 0 ].w = 30;
-      Platform.gExplosionClips[ 0 ].h = 30;
+      Platform.gExplosionClips[ 0 ].w = 90;
+      Platform.gExplosionClips[ 0 ].h = 90;
 
       Platform.gExplosionClips[ 1 ].x = 95;
       Platform.gExplosionClips[ 1 ].y = 0;
-      Platform.gExplosionClips[ 1 ].w = 30;
-      Platform.gExplosionClips[ 1 ].h = 30;
+      Platform.gExplosionClips[ 1 ].w = 90;
+      Platform.gExplosionClips[ 1 ].h = 90;
 
-      Platform.gExplosionClips[ 2 ].x = 125;
+      Platform.gExplosionClips[ 2 ].x = 185;
       Platform.gExplosionClips[ 2 ].y = 0;
-      Platform.gExplosionClips[ 2 ].w = 30;
-      Platform.gExplosionClips[ 2 ].h = 30;
+      Platform.gExplosionClips[ 2 ].w = 90;
+      Platform.gExplosionClips[ 2 ].h = 90;
 
-      Platform.gExplosionClips[ 3 ].x = 155;
+      Platform.gExplosionClips[ 3 ].x = 275;
       Platform.gExplosionClips[ 3 ].y = 0;
-      Platform.gExplosionClips[ 3 ].w = 30;
-      Platform.gExplosionClips[ 3 ].h = 30;
+      Platform.gExplosionClips[ 3 ].w = 90;
+      Platform.gExplosionClips[ 3 ].h = 90;
+
+      Platform.gExplosionClips[ 4 ].x = 365;
+      Platform.gExplosionClips[ 4 ].y = 0;
+      Platform.gExplosionClips[ 4 ].w = 90;
+      Platform.gExplosionClips[ 4 ].h = 90;
+
+      Platform.gExplosionClips[ 5 ].x = 0;
+      Platform.gExplosionClips[ 5 ].y = 90;
+      Platform.gExplosionClips[ 5 ].w = 90;
+      Platform.gExplosionClips[ 5 ].h = 90;
+
+      Platform.gExplosionClips[ 6 ].x = 95;
+      Platform.gExplosionClips[ 6 ].y = 90;
+      Platform.gExplosionClips[ 6 ].w = 90;
+      Platform.gExplosionClips[ 6 ].h = 90;      
+
+      Platform.gExplosionClips[ 7 ].x = 185;
+      Platform.gExplosionClips[ 7 ].y = 90;
+      Platform.gExplosionClips[ 7 ].w = 90;
+      Platform.gExplosionClips[ 7 ].h = 90;      
+
+      Platform.gExplosionClips[ 8 ].x = 275;
+      Platform.gExplosionClips[ 8 ].y = 90;
+      Platform.gExplosionClips[ 8 ].w = 90;
+      Platform.gExplosionClips[ 8 ].h = 90;      
+
+      Platform.gExplosionClips[ 9 ].x = 365;
+      Platform.gExplosionClips[ 9 ].y = 90;
+      Platform.gExplosionClips[ 9 ].w = 90;
+      Platform.gExplosionClips[ 9 ].h = 90;      
     }
 
 	//Load tile map
@@ -415,9 +445,10 @@ bool setTiles( Tile *tiles[]){
 //Shows the Tank on the screen
 void render(TankInfo* Tank, int frame, SDL_Rect& camera) {
 
-    if(!Tank->destroyed){
+    if(!Tank->destroyed && !Tank->isHit) {
     //NOTE: Show the tank and bullet here
-    if (Tank->userBelong && Platform.gUserTankTexture!=NULL){
+    if (Tank->userBelong && Platform.gUserTankTexture!=NULL) {
+        // printf("User Tank image is being rendered\n");
         Platform.gUserTankTexture->render( Platform.gRenderer ,(Tank->mBox.x - camera.x), (Tank->mBox.y - camera.y), NULL,Tank->face);
 
         // NOTE: Now the bullets
@@ -426,16 +457,17 @@ void render(TankInfo* Tank, int frame, SDL_Rect& camera) {
         if(Platform.gUserBulletTexture!=NULL) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){                
-                printf("Bullets %d image is being rendered\n", i);
+                // printf("Bullets %d image is being rendered\n", i);
                 Platform.gUserBulletTexture->render(Platform.gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), NULL, Tank->face);
             }
         }
     }
 
   }
-else if (!Tank->userBelong && Platform.gEnemyTankTexture!=NULL) {
+else if (!Tank->userBelong && Platform.gEnemyTankTexture != NULL) {
         // SOMEHOW the enemy tank positions changed to keep in bound while the text one is not
-        // if (((Tank->mBox.x >= camera.x) && (Tank->mBox.x <= camera.x + camera.w)) &&((Tank->mBox.y >= camera.y) && (Tank->mBox.y <= camera.y + camera.w)) ){            
+        // if (((Tank->mBox.x >= camera.x) && (Tank->mBox.x <= camera.x + camera.w)) &&((Tank->mBox.y >= camera.y) && (Tank->mBox.y <= camera.y + camera.w)) ){
+    // printf("Tank is being rendered\n");
         Platform.gEnemyTankTexture->render( Platform.gRenderer ,Tank->mBox.x - camera.x,Tank->mBox.y - camera.y, NULL, Tank->face);
         if(Platform.gEnemyBulletTexture!=NULL) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
@@ -447,20 +479,18 @@ else if (!Tank->userBelong && Platform.gEnemyTankTexture!=NULL) {
     }        
         // }
     }        
+    } else {
+        Tank->userBelong?printf("user Tank "):printf("Bot Tank ");
+        printf("is hit and destroyed\n");
     }
 
-    if(Tank->isHit && !Tank->userBelong){
-        //TODO: Run the destroying clip here and then make the tanks disappear
-            Platform.gExplosionTexture->render( Platform.gRenderer ,(Tank->mBox.x - camera.x), (Tank->mBox.y - camera.y), &Platform.gExplosionClips[frame]);
-        if(frame/4 == ANIMATING_FRAMES){
-            Tank->isHit = false;
-            Tank->destroyed = true;
-        }
-    }
+    // if(Tank->isHit && !Tank->userBelong){
+    //     //TODO: Run the destroying clip here and then make the tanks disappear
+    // }
     
 }
 
-void renderText(uint32 StartTime, uint32 EndTime, const TankInfo* userTank){
+void renderText(real32 FPS, const TankInfo* userTank){
     
                 // NOTE: The reason that I can not use TTF_OpenFont or TTF_Init is
                 // that I forgot to link ttf.lib in compile link
@@ -470,8 +500,6 @@ void renderText(uint32 StartTime, uint32 EndTime, const TankInfo* userTank){
                 gFont = TTF_OpenFont( "Roboto-Thin.ttf", 28 );
                 // SDL_Color TextColor = {249 ,166 ,2};
                 SDL_Color TextColor = {0 ,0 ,0};                
-                EndTime = (uint32)SDL_GetTicks();
-                real32 FPS = (real32)(1000.0f*(EndTime - StartTime));
                 // NOTE: Somehow The exe file can't find out the TTF_OpenFont and TTF_Solid_Render which is in the ttf lib. Got to find out and fix
                 
                 sprintf(OutPut ,"FPS: %d \n",int(FPS));
