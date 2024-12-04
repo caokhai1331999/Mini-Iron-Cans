@@ -37,7 +37,7 @@ global_variable real32 TimeElapsed = 0;
 global_variable real32 FPS = 0;
 const global_variable real32 StandardFPS = 60.0f;
 
-const global_variable uint32 FRAME_DELAY = 1000/12;
+const global_variable uint32 FRAME_DELAY = 1000/60;
 // const global_variable int KEY_COUNT = SDL_NUM_SCANCODES;
 
 int main( int argc, char* args[] )
@@ -95,6 +95,7 @@ int main( int argc, char* args[] )
             real32 Startframe = 0;
             real32 Endframe = 0;
             real32 FrameElapse = 0;
+            uint32 LastFrameTime[TOTAL_ENEMY_TANK] ={};
             int k;
 			while( !quit )
 			{
@@ -211,34 +212,42 @@ int main( int argc, char* args[] )
                     }
                 }
                render(userTank, Uframe, camera);
-
+               
                // NOTE: Bugs lied here
                 k = 0;
                 while(k < TOTAL_ENEMY_TANK)
                 {
                     if(enemyTank[k].isHit){
-                        if (!enemyTank[k].userBelong && !enemyTank[k].destroyed && frame[k] != -1 )
+                        if (!enemyTank[k].userBelong && !enemyTank[k].destroyed)
                         {
                             // NOTE: Because of the interupt of the loop caused
                             // Frame scrolling not fast enough to make animation
                             //
                             //But This one is like too fast for nake eye to see
                             //the animation
-                            SDL_Delay(1000/60);
-                            for(int j = 0; j/12 < ANIMATING_FRAMES;j++)
-                            {
+                            //
+                            // Uint32 CurrentFrameTime = SDL_GetTicks();
+                            
                                 //     //Cycle animation
                                 // {                                
-                                    if (frame[k]/12 > ANIMATING_FRAMES){
-                                        frame[k] = -1;
+                                    if (frame[k]/12 == ANIMATING_FRAMES+1){
                                         resetTank(&enemyTank[k]);
+                                        frame[k] = -1;
                                     }
-                                    frame[k]==0?printf("Tank %d is hit and start to display\n", j):printf("Tank %d explosion at frame %d\n", k, frame[k]);
                                     //Go to next frame
-                                    Platform.gExplosionTexture->render( Platform.gRenderer ,(enemyTank[k].mBox.x - camera.x), (enemyTank[k].mBox.y - camera.y), &Platform.gExplosionClips[frame[k]]);
-                                    frame[k]++;
-                             }
-                            // }
+                                    //NOTE: Why the first explosion animation just
+
+
+                                    // SDL_Delay(16);
+                                    if(frame[k]!=-1){
+                                        // if(CurrentFrameTime > LastFrameTime[k] + FRAME_DELAY)                            {
+                                            // printf("Last frame time is :%d, and Current frame Time is: %d\n", LastFrameTime[k], CurrentFrameTime);
+                                        // LastFrameTime[k] = CurrentFrameTime;
+                                        Platform.gExplosionTexture->render( Platform.gRenderer ,(enemyTank[k].mBox.x - camera.x), (enemyTank[k].mBox.y - camera.y), &Platform.gExplosionClips[frame[k]]);
+                                        frame[k]==0?printf("Tank %d is hit and start to display\n", k):printf("Tank %d explosion at frame %d\n", k, frame[k]);
+                                        frame[k]++;
+                                        // }
+                                    }
                         }
                     } else {
                         render(&enemyTank[k], frame[k], camera);                        
