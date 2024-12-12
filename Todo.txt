@@ -34,20 +34,41 @@ TODO:
                                        + Use Dijktra algorithm to guide way for
                                        bot tanks to automatically move them
                                        around (WORKING)
-                                       + Rewrite the little guide function
-                                       + Enable them to shoot **
+                                       + Rewrite the little guide function(May
+                                       be we don't need this function(CLOSED))
+                                       + Enable them to shoot ** (DONE!)
                                          . DONE: User and bot tank
                                        + DONE: Make enemy Tank to shoot whenever
-                                       the user tank is nearby(WORKING)
-                                      //TODO: Time to remake this little guide function
+                                       the user tank is nearby(DONE!)
+                                      //TODO: Time to remake this little guide
+                                       function DONE!
+                                       ** : Time to apply collision box to make
+                                       them  enable kill each other
+                                        + : Make a destroy effect (WORKING)
+                                        + : Figure out the loop check for
+                                       collistion between: + tanks ()
+                                                           + between tanks and
+                                       bullet (WORKING)
+                                       + Stuck at collision looping check
+                                       betweeen bullets and tanks. Should I
+                                       separate it from move function or not and
+                                       If it should how can I send a signal from
+                                       checking function to moving one
+                                       effeciently (DONE)
 
-** : Time to apply collision box to make them  enable kill each other
-    + Add explosion effect, run the frames animating whenever tank is hit
-                                       
-         5 Time to redraw the map make the map drawing after the camera moving (WORKING)
+`                                      + Add explosion effect, run the frames
+                                       animating whenever tank is hit (DONE!)
 
-- Second: 1 Begin to delve more to create my own map
-          2 I may have to redraw the map to make it bigger.
+                                       + Time to fine tune the destroy effect
+                                       and reset the tank every time it is
+                                       destroyed (DONE)
+
+                                       + To frame run to fast and not to the end
+                                      try to delay it (NEARLY DONE - let aside
+                                      it to solve later)
+
+                                       + Begin to delve more to create my own map
+
           3 Then devle more to understand how to scroll the background map
 
 - Finally: After majority of the game engine, time for shipping code, manage

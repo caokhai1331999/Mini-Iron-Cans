@@ -5,3 +5,21 @@
 (Solved for userTank by set veclocity to 0 everytime new input is accept )
 
 + Bot Tank stuck to the level height when spawn near them
+
++ UserTank can not fire when get near bot tank????? Don't know why It auto run
+fire() everytime userTank get near botTank (FIXED)
+
++ UserTank can not fire when getting near the bottom of the level (fixed bugs
+happened when I forgot to synthesize the LEVEL_WIDTH in whole and LEVEL_WIDTH in
+BULLET check function)
+
++ First hit tank display the 2nd frame of image then stuck there, the rest
+didn't even show anything related to explosion effect and disappear
+after was hit (!done)
+
++ An idea spark in my mind recently. Should I use the loop through the enemyTank
+to track and render the explosion every time it hit. Or I just need to send a
+signal every time a tank is hit to render an explosion to the pointed
+accordinates???? (On the way to check and fix)
+
++ The Animation is too fast to track
