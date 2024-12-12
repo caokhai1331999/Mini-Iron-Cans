@@ -12,8 +12,8 @@
 
 Position GeneratePosition(){
     Position Tem;
-    Tem.X = std::rand()%(LEVEL_WIDTH - TANK_WIDTH);
-    Tem.Y = std::rand()%(LEVEL_HEIGHT - TANK_HEIGHT);
+    Tem.x = std::rand()%(LEVEL_WIDTH - TANK_WIDTH);
+    Tem.y = std::rand()%(LEVEL_HEIGHT - TANK_HEIGHT);
     return Tem ;
 }
 
@@ -24,13 +24,13 @@ Position* InitializeTankPos(){
     Position* TankPos = new Position[TOTAL_ENEMY_TANK];
     TankPos[0] = GeneratePosition();
     Position* TempPos = new Position;
-    for (int i= 1; i < TOTAL_ENEMY_TANK; i++){
         // Loop comparing newly created pos to the previous valid one
+    for (int i= 1; i < TOTAL_ENEMY_TANK; i++){
         valid = false;
         while (!valid) {
             *TempPos = GeneratePosition();
             for (int p = 0; p < i; p++) {
-                if (((TempPos->X - TankPos[p].X) > ( 200)) || (abs(TempPos->Y - TankPos[p].Y) > (150))) {
+                if (((TempPos->x - TankPos[p].x) > ( 200)) || (abs(TempPos->y - TankPos[p].y) > (150))) {
                     if ( i - p > 1) {
                         continue;
                     } else {
@@ -41,6 +41,7 @@ Position* InitializeTankPos(){
                 }                
             }
         }
+        // printf("Position x: %d, y: %d", TempPos->x, TempPos->y);
         TankPos[i] = *TempPos;
     }
 
@@ -396,10 +397,11 @@ void resetBullet(Bullet* bullet){
     bullet->BlVelY = 0;
 }
 
-void BiTankCheck(TankInfo* ATank, TankInfo* BTank){
+IndexAndHit BiTankCheck(TankInfo* ATank, TankInfo* BTank, Position* HitTankPos){
     // NOTE: Put this function in the Moving function
     // ON WORK and Experiment
     bool TwoTankcollided = checkCollision(&ATank->mBox, &BTank->mBox);
+    IndexAndHit Indicator;
     // printf("Start checking the whether tank or bullet is collided\n");
     for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
         if (ATank->Bullets[i].Launched && !BTank->destroyed){
@@ -409,11 +411,14 @@ void BiTankCheck(TankInfo* ATank, TankInfo* BTank){
                     
             if(checkCollision(&ATank->Bullets[i].blBox,&BTank->mBox) && !BTank->isHit){
                 BTank->isHit = true;
+                Indicator.hit = true;                
+                Indicator.index = CollectHitTankPos(BTank->mBox.x, BTank->mBox.y, HitTankPos);
                 ATank->BulletsNumber++;                
                 if(ATank->BulletsNumber > TOTAL_BULLET_PER_TANK){
                     ATank->BulletsNumber = TOTAL_BULLET_PER_TANK;
                 }
-                resetBullet(&ATank->Bullets[i]);                
+                resetBullet(&ATank->Bullets[i]);
+                return Indicator;
             }
         }
 
@@ -429,12 +434,28 @@ void BiTankCheck(TankInfo* ATank, TankInfo* BTank){
                     
             if(checkCollision(&BTank->Bullets[i].blBox,&ATank->mBox) && !ATank->isHit){
                 ATank->isHit = true;
+                Indicator.hit = true;
+                Indicator.index = CollectHitTankPos(ATank->mBox.x, ATank->mBox.y, HitTankPos);                
                 BTank->BulletsNumber++;                
                 if(BTank->BulletsNumber > TOTAL_BULLET_PER_TANK){
                     BTank->BulletsNumber = TOTAL_BULLET_PER_TANK;
                 }
                 resetBullet(&BTank->Bullets[i]);
+                return Indicator;
             }
         }        
     }    
+}
+
+int CollectHitTankPos(int X, int Y, Position* HitTankPos){
+    int index;
+    for(int i = 0; i < 4; i++){
+        if(HitTankPos[i].empty){
+            HitTankPos[i].x = X;
+            HitTankPos[i].y = Y;
+            index = i;
+            break;
+        }
+    }
+            return index;
 }

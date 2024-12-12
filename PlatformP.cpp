@@ -479,10 +479,10 @@ else if (!Tank->userBelong && Platform.gEnemyTankTexture != NULL) {
     }        
         // }
     }        
-    } else {
-        Tank->userBelong?printf("user Tank "):printf("Bot Tank ");
-        printf("is hit and destroyed\n");
-    }
+    }//  else {
+    //     Tank->userBelong?printf("user Tank "):printf("Bot Tank ");
+    //     printf("is hit and destroyed\n");
+    // }
 
     // if(Tank->isHit && !Tank->userBelong){
     //     //TODO: Run the destroying clip here and then make the tanks disappear

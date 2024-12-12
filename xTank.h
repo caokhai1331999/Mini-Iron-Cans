@@ -38,8 +38,19 @@ const global_variable int BULLET_WIDTH = 10 ;
 const global_variable int BULLET_HEIGHT = 10 ;
 
 struct Position{
-    int X = 0;
-    int Y = 0;
+    int x;
+    int y;
+    bool empty;
+    Position(){
+        x = 0;
+        y = 0;
+        empty = true;
+    }
+};
+
+struct IndexAndHit{
+    int index;
+    bool hit;
 };
 
 struct Bullet{
@@ -124,9 +135,11 @@ void move( Tile *tiles[] = NULL, bool touchesWall = false, bool collided = false
 void fire(TankInfo* Tank);
 void resetBullet(Bullet* bullet);
 void resetTank(TankInfo* Tank);
-void BiTankCheck(TankInfo* ATank, TankInfo* BTank);
+IndexAndHit BiTankCheck(TankInfo* ATank, TankInfo* BTank, Position* HitTankPos);
 //Centers the camera over the Tank
 void setCamera( SDL_Rect& camera ,TankInfo* UserTank);
+
+int CollectHitTankPos (int X = 0, int Y = 0, Position* HitTankPos = NULL);
 
 #define XTANK_H
 #endif
