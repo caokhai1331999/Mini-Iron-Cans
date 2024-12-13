@@ -96,10 +96,6 @@ int main( int argc, char* args[] )
             real32 Endframe = 0;
             real32 FrameElapse = 0;
             // uint32 LastFrameTime[TOTAL_ENEMY_TANK] ={};
-
-            Position* HitTankPos  = new Position[TOTAL_ENEMY_TANK];
-
-            IndexAndHit Indicator;
             int k;
 			while( !quit )
 			{
@@ -177,7 +173,7 @@ int main( int argc, char* args[] )
                     }
                     //
 
-                    Indicator = BiTankCheck(&enemyTank[i], userTank, HitTankPos);
+                    BiTankCheck(&enemyTank[i], userTank);
                     littleGuide(&enemyTank[i], userTank, collided);
                     move(tileSet,touchesWall(&enemyTank[i].mBox, tileSet), collided, &enemyTank[i]);
                 }                                
@@ -206,90 +202,54 @@ int main( int argc, char* args[] )
 					tileSet[ i ]->render( camera, Platform.gRenderer,  Platform.gTileTexture,  Platform.gTileClips, checkCollision(&camera, tileSet[ i ]->getBox()));
 					// tileSet[ i ]->render( camera, Platform.GetRenderer(),  Platform.GetgTileTexture(),  Platform.GetgTileClips(), checkCollision(&camera, tileSet[ i ]->getBox()));
 				}
-
-                if (Indicator.hit && Indicator.index != -1){                    
-                for(int i = 0; i < ANIMATING_FRAMES; i++){
-                    testFrame ++;
-                    Platform.gExplosionTexture->render( Platform.gRenderer ,HitTankPos[Indicator.index].x - camera.x, HitTankPos[Indicator.index].y - camera.y, &Platform.gExplosionClips[testFrame/12]);
-                    if(testFrame/12 > ANIMATING_FRAMES-1){
-                        testFrame = 0;
-                    }
-                }
-                Indicator = {-1, false};
-                }
-               render(userTank, Uframe, camera);
                
+               render(userTank, Uframe, camera);
                // NOTE: Bugs lied here
-                // k = 0;
-                // while(k < TOTAL_ENEMY_TANK)
-                // {
-                //     if(enemyTank[k].isHit){
-                //         if (!enemyTank[k].userBelong && !enemyTank[k].destroyed)
-                //         {
-                //             // NOTE: Because of the interupt of the loop caused
-                //             // Frame scrolling not fast enough to make animation
-                //             //
-                //             //But This one is like too fast for nake eye to see
-                //             //the animation
-                //             //
-                //             // Uint32 CurrentFrameTime = SDL_GetTicks();
+                k = 0;
+                while(k < TOTAL_ENEMY_TANK)
+                {
+                    if(enemyTank[k].isHit){
+                        if (!enemyTank[k].userBelong && !enemyTank[k].destroyed)
+                        {
+                            // NOTE: Because of the interupt of the loop caused
+                            // Frame scrolling not fast enough to make animation
+                            //
+                            //But This one is like too fast for nake eye to see
+                            //the animation
+                            //
+                            // Uint32 CurrentFrameTime = SDL_GetTicks();
                             
-                //                 //     //Cycle animation
-                //                 // {                                
-                //                     if (frame[k]/12 == ANIMATING_FRAMES+1){
-                //                         resetTank(&enemyTank[k]);
-                //                         frame[k] = -1;
-                //                     }
-                //                     //Go to next frame
-                //                     //NOTE: Why the first explosion animation just
+                                //     //Cycle animation
+                                // {                                
+                                    if (frame[k]/12 == ANIMATING_FRAMES+1){
+                                        resetTank(&enemyTank[k]);
+                                        frame[k] = -1;
+                                    }
+                                    //Go to next frame
+                                    //NOTE: Why the first explosion animation just
 
 
-                //                     // SDL_Delay(16);
-                //                     if(frame[k]!=-1){
-                //                         // if(CurrentFrameTime > LastFrameTime[k] + FRAME_DELAY)                            {
-                //                             // printf("Last frame time is :%d, and Current frame Time is: %d\n", LastFrameTime[k], CurrentFrameTime);
-                //                         // LastFrameTime[k] = CurrentFrameTime;
-                //                         Platform.gExplosionTexture->render( Platform.gRenderer ,(enemyTank[k].mBox.x - camera.x), (enemyTank[k].mBox.y - camera.y), &Platform.gExplosionClips[frame[k]]);
-                //                         frame[k]==0?printf("Tank %d is hit and start to display\n", k):printf("Tank %d explosion at frame %d\n", k, frame[k]);
-                //                         frame[k]++;
-                //                         // }
-                //                     }
-                //         }
-                //     } else {
-                //         render(&enemyTank[k], frame[k], camera);                        
-                //     }
-                //     if (frame[k] == -1 || !enemyTank[k].isHit){
-                //         k++;
-                //     }
-                // };
-               for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
-                        render(&enemyTank[i], frame[i], camera);                        
-               }
+                                    // SDL_Delay(16);
+                                    if(frame[k]!=-1){
+                                        // if(CurrentFrameTime > LastFrameTime[k] + FRAME_DELAY)                            {
+                                            // printf("Last frame time is :%d, and Current frame Time is: %d\n", LastFrameTime[k], CurrentFrameTime);
+                                        // LastFrameTime[k] = CurrentFrameTime;
+                                        Platform.gExplosionTexture->render( Platform.gRenderer ,(enemyTank[k].mBox.x - camera.x), (enemyTank[k].mBox.y - camera.y), &Platform.gExplosionClips[frame[k]]);
+                                        SDL_Delay(0.016);
+                                        frame[k]==0?printf("Tank %d is hit and start to display\n", k):printf("Tank %d explosion at frame %d\n", k, frame[k]);
+                                        frame[k]++;
+                                        // }
+                                    }
+                        }
+                    } else {
+                        render(&enemyTank[k], frame[k], camera);                        
+                    }
+                    if (frame[k] == -1 || !enemyTank[k].isHit){
+                        k++;
+                    }
+                };
                    
-
-               // for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
-               //      if(enemyTank[i].isHit){
-               //          //NOTE: Delay time everyframe to make the animation smoother
-               //          if (enemyTank[i].isHit && !enemyTank[i].userBelong && !enemyTank[i].destroyed && frame[i] != -1 )
-               //          {
-               //          // if (StartTime > EndTime + FRAME_DELAY)
-               //          //Go to next frame
-               //              // NOTE: Because of the interupt of the loop caused
-               //              // Frame scrolling not fast enough to make animation
-               //          frame[i]++;
-               //          //Cycle animation
-               //          frame[i]==0?printf("Tank %d is hit and start to display\n", i):printf("Tank %d explosion at frame %d\n", i, frame[i]);
-               //          Platform.gExplosionTexture->render( Platform.gRenderer ,(enemyTank[i].mBox.x - camera.x), (enemyTank[i].mBox.y - camera.y), &Platform.gExplosionClips[frame[i]]);
-               //          if (frame[i] / 12 > ANIMATING_FRAMES - 1){
-               //              frame[i] = -1;
-               //              resetTank(&enemyTank[i]);
-               //          }
-               //          }
-               //      }
-               //      else {
-               //      render(&enemyTank[i], frame[i], camera);
-               //      }
-               //  }
+                
                 renderText(FPS, userTank);
 				SDL_RenderPresent( Platform.gRenderer);
                 TimeElapsed = EndTime - StartTime;

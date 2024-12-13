@@ -397,11 +397,10 @@ void resetBullet(Bullet* bullet){
     bullet->BlVelY = 0;
 }
 
-IndexAndHit BiTankCheck(TankInfo* ATank, TankInfo* BTank, Position* HitTankPos){
+void BiTankCheck(TankInfo* ATank, TankInfo* BTank){
     // NOTE: Put this function in the Moving function
     // ON WORK and Experiment
     bool TwoTankcollided = checkCollision(&ATank->mBox, &BTank->mBox);
-    IndexAndHit Indicator;
     // printf("Start checking the whether tank or bullet is collided\n");
     for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
         if (ATank->Bullets[i].Launched && !BTank->destroyed){
@@ -411,14 +410,11 @@ IndexAndHit BiTankCheck(TankInfo* ATank, TankInfo* BTank, Position* HitTankPos){
                     
             if(checkCollision(&ATank->Bullets[i].blBox,&BTank->mBox) && !BTank->isHit){
                 BTank->isHit = true;
-                Indicator.hit = true;                
-                Indicator.index = CollectHitTankPos(BTank->mBox.x, BTank->mBox.y, HitTankPos);
                 ATank->BulletsNumber++;                
                 if(ATank->BulletsNumber > TOTAL_BULLET_PER_TANK){
                     ATank->BulletsNumber = TOTAL_BULLET_PER_TANK;
                 }
                 resetBullet(&ATank->Bullets[i]);
-                return Indicator;
             }
         }
 
@@ -434,28 +430,12 @@ IndexAndHit BiTankCheck(TankInfo* ATank, TankInfo* BTank, Position* HitTankPos){
                     
             if(checkCollision(&BTank->Bullets[i].blBox,&ATank->mBox) && !ATank->isHit){
                 ATank->isHit = true;
-                Indicator.hit = true;
-                Indicator.index = CollectHitTankPos(ATank->mBox.x, ATank->mBox.y, HitTankPos);                
                 BTank->BulletsNumber++;                
                 if(BTank->BulletsNumber > TOTAL_BULLET_PER_TANK){
                     BTank->BulletsNumber = TOTAL_BULLET_PER_TANK;
                 }
                 resetBullet(&BTank->Bullets[i]);
-                return Indicator;
             }
         }        
     }    
-}
-
-int CollectHitTankPos(int X, int Y, Position* HitTankPos){
-    int index;
-    for(int i = 0; i < 4; i++){
-        if(HitTankPos[i].empty){
-            HitTankPos[i].x = X;
-            HitTankPos[i].y = Y;
-            index = i;
-            break;
-        }
-    }
-            return index;
 }
