@@ -21,30 +21,62 @@ const global_variable int LEVEL_WIDTH = 2560;
 const global_variable int LEVEL_HEIGHT = 1920;
 
 //Tile constants
-const global_variable int TILE_WIDTH = 80;
-const global_variable int TILE_HEIGHT = 80;
+const global_variable int TILE_WIDTH = 100;
+const global_variable int TILE_HEIGHT = 100;
 const global_variable int TOTAL_TILES = 768;
-const global_variable int TOTAL_TILE_SPRITES = 12;
+const global_variable int TOTAL_TILE_SPRITES = 14;
 
 //Tile constants
-const global_variable int BIG_TILE_WIDTH = 360;
-const global_variable int BIG_TILE_HEIGHT = 360;
-const global_variable int SMALL_TILE_WIDTH = 40;
-const global_variable int SMALL_TILE_HEIGHT = 40;
+const global_variable int BIG_TILE_WIDTH = 90;
+const global_variable int BIG_TILE_HEIGHT = 90;
+const global_variable int SMALL_TILE_WIDTH = 30;
+const global_variable int SMALL_TILE_HEIGHT = 30;
 
-//The different tile sprites
-const global_variable int TILE_RED = 0;
-const global_variable int TILE_GREEN = 1;
-const global_variable int TILE_BLUE = 2;
-const global_variable int TILE_CENTER = 3;
-const global_variable int TILE_TOP = 4;
-const global_variable int TILE_TOPRIGHT = 5;
-const global_variable int TILE_RIGHT = 6;
-const global_variable int TILE_BOTTOMRIGHT = 7;
-const global_variable int TILE_BOTTOM = 8;
-const global_variable int TILE_BOTTOMLEFT = 9;
-const global_variable int TILE_LEFT = 10;
-const global_variable int TILE_TOPLEFT = 11;
+//The different tile sprites(LAZYFOO's map)
+// const global_variable int TILE_RED = 0;
+// const global_variable int TILE_GREEN = 1;
+// const global_variable int TILE_BLUE = 2;
+// const global_variable int TILE_CENTER = 3;
+// const global_variable int TILE_TOP = 4;
+// const global_variable int TILE_TOPRIGHT = 5;
+// const global_variable int TILE_RIGHT = 6;
+// const global_variable int TILE_BOTTOMRIGHT = 7;
+// const global_variable int TILE_BOTTOM = 8;
+// const global_variable int TILE_BOTTOMLEFT = 9;
+// const global_variable int TILE_LEFT = 10;
+// const global_variable int TILE_TOPLEFT = 11;
+
+
+//The different tile sprites(Different map)
+const global_variable int BIG_GRASS_TILE = 0;
+const global_variable int SMALL_GRASS_TILE_1 = 1;
+const global_variable int SMALL_GRASS_TILE_2 = 2;
+const global_variable int SMALL_GRASS_TILE_3 = 3;
+const global_variable int SMALL_GRASS_TILE_4 = 4;
+const global_variable int SMALL_GRASS_TILE_5 = 5;
+const global_variable int SMALL_GRASS_TILE_6 = 6;
+
+const global_variable int SMALL_STUMP_TILE_1 = 7;
+const global_variable int SMALL_STUMP_TILE_2 = 8;
+const global_variable int SMALL_STUMP_TILE_3 = 9;
+const global_variable int SMALL_STUMP_TILE_4 = 10;
+
+const global_variable int SMALL_WATER_1 = 11;
+const global_variable int SMALL_WATER_2 = 12;
+
+const global_variable int SMALL_WOOD_PATH_1 = 13;
+
+// const global_variable int TILE_GREEN = 1;
+// const global_variable int TILE_BLUE = 2;
+// const global_variable int TILE_CENTER = 3;
+// const global_variable int TILE_TOP = 4;
+// const global_variable int TILE_TOPRIGHT = 5;
+// const global_variable int TILE_RIGHT = 6;
+// const global_variable int TILE_BOTTOMRIGHT = 7;
+// const global_variable int TILE_BOTTOM = 8;
+// const global_variable int TILE_BOTTOMLEFT = 9;
+// const global_variable int TILE_LEFT = 10;
+// const global_variable int TILE_TOPLEFT = 11;
 
 const int ANIMATING_FRAMES = 10;
 

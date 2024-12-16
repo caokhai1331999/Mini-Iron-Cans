@@ -160,10 +160,11 @@ int main( int argc, char* args[] )
 					// dot.handleEvent( e );
                     // }
 				}
-
 				//Move the dot
                 bool collided = false;
+                // NOTE: Bugs lied here
                 move(tileSet, touchesWall(&userTank->mBox, tileSet), collided, userTank);
+
                 for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
                     collided = false;
                     for (int p = 0; p < i; p++){
@@ -193,13 +194,13 @@ int main( int argc, char* args[] )
                 
 				// dot.setCamera( camera );                
                 
-				//Render level
+				//Render evel
 				for( int i = 0; i < TOTAL_TILES; ++i )
 				{
                     // NOTE: The tile position must subtract for the camera
                     // pos to created moving illusiion
-                    
-					tileSet[ i ]->render( camera, Platform.gRenderer,  Platform.gTileTexture,  Platform.gTileClips, checkCollision(&camera, tileSet[ i ]->getBox()));
+                    // printf("tile %d is rendered\n", i);
+					tileSet[ i ]->render( camera, Platform.gRenderer,  Platform.gTileTexture,  Platform.gTileClips, touchesWall(&userTank->mBox, tileSet));
 					// tileSet[ i ]->render( camera, Platform.GetRenderer(),  Platform.GetgTileTexture(),  Platform.GetgTileClips(), checkCollision(&camera, tileSet[ i ]->getBox()));
 				}
                
@@ -235,7 +236,7 @@ int main( int argc, char* args[] )
                                             // printf("Last frame time is :%d, and Current frame Time is: %d\n", LastFrameTime[k], CurrentFrameTime);
                                         // LastFrameTime[k] = CurrentFrameTime;
                                         Platform.gExplosionTexture->render( Platform.gRenderer ,(enemyTank[k].mBox.x - camera.x), (enemyTank[k].mBox.y - camera.y), &Platform.gExplosionClips[frame[k]]);
-                                        SDL_Delay(0.016);
+                                        SDL_Delay(0.032);
                                         frame[k]==0?printf("Tank %d is hit and start to display\n", k):printf("Tank %d explosion at frame %d\n", k, frame[k]);
                                         frame[k]++;
                                         // }

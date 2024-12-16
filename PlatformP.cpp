@@ -100,7 +100,7 @@ bool LoadMedia(Tile* tiles[]){
 
 
 	//Load tile texture
-        if( !Platform.gTileTexture->loadFromFile( "tiles.png", Platform.gRenderer, (int)100, (int)100) )
+        if( !Platform.gTileTexture->loadFromFile( "media/32x32_map_tile v3.1 [MARGINLESS].png", Platform.gRenderer, (int)100, (int)100) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
@@ -298,7 +298,11 @@ bool setTiles( Tile *tiles[]){
 			//If the number is a valid tile number
 			if( ( tileType >= 0 ) && ( tileType < TOTAL_TILE_SPRITES ) )
 			{
-				tiles[ i ] = new Tile( x, y, tileType );
+                if (tileType < 11 && tileType > 6)
+                {
+                    tiles[ i ] = new Tile( x - 1 , y, tileType);
+                }
+                tiles[ i ] = new Tile( x , y, tileType);
 			}
 			//If we don't recognize the tile type
 			else
@@ -327,65 +331,71 @@ bool setTiles( Tile *tiles[]){
 		if( tilesLoaded )
 		{
             // NOTE: TILE_RED or TILE_GREEN is TileTypes
-			Platform.gTileClips[ TILE_RED ].x = 0;
-			Platform.gTileClips[ TILE_RED ].y = 0;
-			Platform.gTileClips[ TILE_RED ].w = TILE_WIDTH;
-			Platform.gTileClips[ TILE_RED ].h = TILE_HEIGHT;
+            printf("Loading Map\n");
+			Platform.gTileClips[ BIG_GRASS_TILE ].x = 0;
+			Platform.gTileClips[ BIG_GRASS_TILE ].y = 30;
+			Platform.gTileClips[ BIG_GRASS_TILE ].w = BIG_TILE_WIDTH;
+			Platform.gTileClips[ BIG_GRASS_TILE ].h = BIG_TILE_HEIGHT;
 
-			Platform.gTileClips[ TILE_GREEN ].x = 0;
-			Platform.gTileClips[ TILE_GREEN ].y = 80;
-			Platform.gTileClips[ TILE_GREEN ].w = TILE_WIDTH;
-			Platform.gTileClips[ TILE_GREEN ].h = TILE_HEIGHT;
+			Platform.gTileClips[SMALL_GRASS_TILE_1].x = 0;
+			Platform.gTileClips[SMALL_GRASS_TILE_1].y = 130;
+			Platform.gTileClips[SMALL_GRASS_TILE_1].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[SMALL_GRASS_TILE_1].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ TILE_BLUE ].x = 0;
-			Platform.gTileClips[ TILE_BLUE ].y = 160;
-			Platform.gTileClips[ TILE_BLUE ].w = TILE_WIDTH;
-			Platform.gTileClips[ TILE_BLUE ].h = TILE_HEIGHT;
+			Platform.gTileClips[SMALL_GRASS_TILE_2].x = 30;
+			Platform.gTileClips[SMALL_GRASS_TILE_2].y = 130;
+			Platform.gTileClips[SMALL_GRASS_TILE_2].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[SMALL_GRASS_TILE_2].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ TILE_TOPLEFT ].x = 80;
-			Platform.gTileClips[ TILE_TOPLEFT ].y = 0;
-			Platform.gTileClips[ TILE_TOPLEFT ].w = TILE_WIDTH;
-			Platform.gTileClips[ TILE_TOPLEFT ].h = TILE_HEIGHT;
+			Platform.gTileClips[ SMALL_GRASS_TILE_3 ].x = 60;
+			Platform.gTileClips[ SMALL_GRASS_TILE_3 ].y = 130;
+			Platform.gTileClips[ SMALL_GRASS_TILE_3 ].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[ SMALL_GRASS_TILE_3 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ TILE_LEFT ].x = 80;
-			Platform.gTileClips[ TILE_LEFT ].y = 80;
-			Platform.gTileClips[ TILE_LEFT ].w = TILE_WIDTH;
-			Platform.gTileClips[ TILE_LEFT ].h = TILE_HEIGHT;
+			Platform.gTileClips[ SMALL_GRASS_TILE_4 ].x = 60;
+			Platform.gTileClips[ SMALL_GRASS_TILE_4 ].y = 160;
+			Platform.gTileClips[ SMALL_GRASS_TILE_4 ].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[ SMALL_GRASS_TILE_4 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ TILE_BOTTOMLEFT ].x = 80;
-			Platform.gTileClips[ TILE_BOTTOMLEFT ].y = 160;
-			Platform.gTileClips[ TILE_BOTTOMLEFT ].w = TILE_WIDTH;
-			Platform.gTileClips[ TILE_BOTTOMLEFT ].h = TILE_HEIGHT;
+			Platform.gTileClips[ SMALL_GRASS_TILE_5 ].x = 60;
+			Platform.gTileClips[ SMALL_GRASS_TILE_5 ].y = 160;
+			Platform.gTileClips[ SMALL_GRASS_TILE_5 ].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[ SMALL_GRASS_TILE_5 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ TILE_TOP ].x = 160;
-			Platform.gTileClips[ TILE_TOP ].y = 0;
-			Platform.gTileClips[ TILE_TOP ].w = TILE_WIDTH;
-			Platform.gTileClips[ TILE_TOP ].h = TILE_HEIGHT;
+			Platform.gTileClips[ SMALL_GRASS_TILE_6 ].x = 30;
+			Platform.gTileClips[ SMALL_GRASS_TILE_6 ].y = 190;
+			Platform.gTileClips[ SMALL_GRASS_TILE_6 ].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[ SMALL_GRASS_TILE_6 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ TILE_CENTER ].x = 160;
-			Platform.gTileClips[ TILE_CENTER ].y = 80;
-			Platform.gTileClips[ TILE_CENTER ].w = TILE_WIDTH;
-			Platform.gTileClips[ TILE_CENTER ].h = TILE_HEIGHT;
+			Platform.gTileClips[ SMALL_STUMP_TILE_1 ].x = 0;
+			Platform.gTileClips[ SMALL_STUMP_TILE_1 ].y = 190;
+			Platform.gTileClips[ SMALL_STUMP_TILE_1 ].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[ SMALL_STUMP_TILE_1 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ TILE_BOTTOM ].x = 160;
-			Platform.gTileClips[ TILE_BOTTOM ].y = 160;
-			Platform.gTileClips[ TILE_BOTTOM ].w = TILE_WIDTH;
-			Platform.gTileClips[ TILE_BOTTOM ].h = TILE_HEIGHT;
+			Platform.gTileClips[ SMALL_STUMP_TILE_2 ].x = 0;
+			Platform.gTileClips[ SMALL_STUMP_TILE_2 ].y = 220;
+			Platform.gTileClips[ SMALL_STUMP_TILE_2 ].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[ SMALL_STUMP_TILE_2 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ TILE_TOPRIGHT ].x = 240;
-			Platform.gTileClips[ TILE_TOPRIGHT ].y = 0;
-			Platform.gTileClips[ TILE_TOPRIGHT ].w = TILE_WIDTH;
-			Platform.gTileClips[ TILE_TOPRIGHT ].h = TILE_HEIGHT;
+			Platform.gTileClips[ SMALL_STUMP_TILE_3 ].x = 0;
+			Platform.gTileClips[ SMALL_STUMP_TILE_3 ].y = 250;
+			Platform.gTileClips[ SMALL_STUMP_TILE_3 ].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[ SMALL_STUMP_TILE_3 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ TILE_RIGHT ].x = 240;
-			Platform.gTileClips[ TILE_RIGHT ].y = 80;
-			Platform.gTileClips[ TILE_RIGHT ].w = TILE_WIDTH;
-			Platform.gTileClips[ TILE_RIGHT ].h = TILE_HEIGHT;
+			Platform.gTileClips[ SMALL_WATER_1].x = 0;
+			Platform.gTileClips[ SMALL_WATER_1].y = 510;
+			Platform.gTileClips[ SMALL_WATER_1].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[ SMALL_WATER_1].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ TILE_BOTTOMRIGHT ].x = 240;
-			Platform.gTileClips[ TILE_BOTTOMRIGHT ].y = 160;
-			Platform.gTileClips[ TILE_BOTTOMRIGHT ].w = TILE_WIDTH;
-			Platform.gTileClips[ TILE_BOTTOMRIGHT ].h = TILE_HEIGHT;
+			Platform.gTileClips[ SMALL_WATER_2].x = 0;
+			Platform.gTileClips[ SMALL_WATER_2].y = 540;
+			Platform.gTileClips[ SMALL_WATER_2].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[ SMALL_WATER_2].h = SMALL_TILE_HEIGHT;
+
+			Platform.gTileClips[ SMALL_WOOD_PATH_1].x = 320;
+			Platform.gTileClips[ SMALL_WOOD_PATH_1].y = 30;
+			Platform.gTileClips[ SMALL_WOOD_PATH_1].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[ SMALL_WOOD_PATH_1].h = SMALL_TILE_HEIGHT;
 		}
 	}
 

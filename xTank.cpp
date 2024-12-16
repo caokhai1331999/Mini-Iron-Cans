@@ -207,7 +207,6 @@ void move( Tile *tiles[], bool touchesWall, bool collided, TankInfo* Tank) {
     // NOTE: Apply dijkstra's algo here to make bot tank'move more smart
 
     // checkCollision(Tank->mBox, all current active bullets boxes)
-   
     if(!Tank->destroyed && !Tank->isHit){
         // if (Tank->userBelong){
             // And swivel the tank by the way
