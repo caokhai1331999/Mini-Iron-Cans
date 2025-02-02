@@ -94,7 +94,6 @@ bool setTiles( Tile *tiles[]);
 bool valid(SDL_Event e, KeyState* previousKey, KeyState* currentKey);
 //Shows the Tank on the screen
 void render(TankInfo* Tank, int frame, SDL_Rect& camera );
-void displayMenu();
 void renderText(real32 FPS, const TankInfo* userTank);
 
 #define PLATFORMP_H

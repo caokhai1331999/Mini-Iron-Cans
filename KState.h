@@ -14,11 +14,11 @@
 
 // NOTE: Using FSM (in this case the easiest and simplest is SWITCH CASE method)
 enum STATE{
-    MENU_IDLE, IN_GAME, PAUSE
+    EMPTY, MENU_IDLE, IN_GAME, PAUSE, 
 };
 
 enum OPTION{
-    NEW_GAME, RESUME, OPTIONS, EXIT
+    NONE, NEW_GAME, RESUME, OPTIONS, EXIT
 };
 
 #define KSTATE_H

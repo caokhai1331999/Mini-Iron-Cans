@@ -6,6 +6,10 @@
    $Notice: (C) Copyright 2024 by Cao Khai, Inc. All Rights Reserved. $
    ======================================================================== */
 
+void displayMenu(Game* g){
+    
+}
+
 bool Start(Game* g){
     if(!g->platform.init()){
         return false;
@@ -69,33 +73,33 @@ void ProcessInput(Game* g){
 }    
 
 void Update(Game* g){
-    move( false, Ucollided, userTank);
+    move( false, Ucollided, g->userTank);
     for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
-        BiTankCheck(&enemyTank[i], userTank);
+        BiTankCheck(&g->enemyTank[i], g->userTank);
 
         for (int p = 0; p < i; p++){
             if (i > 1 && p < i){
 
-                Ecollided = checkCollision(&enemyTank[i].mBox, &enemyTank[p].mBox) | checkCollision(&userTank->mBox, &enemyTank[i].mBox);
+                Ecollided = checkCollision(&g->enemyTank[i].mBox, &g->enemyTank[p].mBox) | checkCollision(&g->userTank->mBox, &g->enemyTank[i].mBox);
                             
                 // printf(Ecollided?"EnemyTank collide each other in minor loop\n":"No collision detected\n");                            
             }
-            // littleGuide(&enemyTank[i], userTank, collided);
-            // move(false, collided, &enemyTank[p]);
+            // littleGuide(&g->enemyTank[i], g->userTank, collided);
+            // move(false, collided, &g->enemyTank[p]);
         }
 
-        Ucollided = checkCollision(&userTank->mBox, &enemyTank[i].mBox);
-        littleGuide(&enemyTank[i], userTank, Ecollided);
+        Ucollided = checkCollision(&g->userTank->mBox, &g->enemyTank[i].mBox);
+        littleGuide(&g->enemyTank[i], g->userTank, Ecollided);
 
         // NOTE: Temporary not use touchwall here
 
-        move(false, Ecollided, &enemyTank[i]);
+        move(false, Ecollided, &g->enemyTank[i]);
         // printf(Ucollided?"EnemyTank collide each other out of minor loop\n":"No collision detected\n");
 
     }
                 
     // NOTE: If user Tank is destroyed add spawnTank here                
-    if(userTank->isHit){
+    if(g->userTank->isHit){
         // NOTE: The SDL_GetTicks() give the current time output
         // So how to calculate right spawn time every time user Tank
         // is hit
@@ -105,12 +109,12 @@ void Update(Game* g){
         }
         if(respawnEndTime - respawnStartTime > 1000.0f){
             printf("Wait Time: %f\n", respawnTime - StartTime);
-            respawn(userTank);
+            respawn(g->userTank);
             respawnTime = StartTime;
         }                
     };
 
-    setCamera(camera, userTank);    
+    setCamera(camera, g->userTank);    
 }
 
 void Render(Game* g){

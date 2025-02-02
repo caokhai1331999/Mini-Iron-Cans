@@ -39,10 +39,12 @@ struct Game{
     };
 };
 
+void displayMenu(Game* g);
 bool Start(Game* g);
 void ProcessInput(Game* g);
 void Update(Game* g);
 void Render(Game* g);
+void Close(Game* g);
 
 #define GAME_H
 #endif
