@@ -10,25 +10,28 @@
 #define local_persist static
 #define global_variable static
 
+#define uint32 uint32_t
+#define uint8 uint8_t
+#define real32 float
+
 
 //Screen dimension constants
-global_variable int SCREEN_WIDTH = 640;
-global_variable int SCREEN_HEIGHT = 480;
+global_variable int SCREEN_WIDTH = 450;
+global_variable int SCREEN_HEIGHT = 300;
 global_variable TTF_Font* gFont = NULL;
 
 //The dimensions of the level
-const global_variable int LEVEL_WIDTH = 2560;
-const global_variable int LEVEL_HEIGHT = 1920;
+const global_variable int LEVEL_WIDTH = 1800;
+const global_variable int LEVEL_HEIGHT = 1200;
 
 //Tile constants
-const global_variable int TILE_WIDTH = 100;
-const global_variable int TILE_HEIGHT = 100;
-const global_variable int TOTAL_TILES = 768;
-const global_variable int TOTAL_TILE_SPRITES = 14;
+const global_variable int TOTAL_TILES = 2400;
+const global_variable int TOTAL_TILE_SPRITES = 13;
 
 //Tile constants
-const global_variable int BIG_TILE_WIDTH = 90;
-const global_variable int BIG_TILE_HEIGHT = 90;
+const global_variable int BIG_TILE_WIDTH = 80;
+const global_variable int BIG_TILE_HEIGHT = 80;
+
 const global_variable int SMALL_TILE_WIDTH = 30;
 const global_variable int SMALL_TILE_HEIGHT = 30;
 
@@ -48,23 +51,23 @@ const global_variable int SMALL_TILE_HEIGHT = 30;
 
 
 //The different tile sprites(Different map)
-const global_variable int BIG_GRASS_TILE = 0;
-const global_variable int SMALL_GRASS_TILE_1 = 1;
-const global_variable int SMALL_GRASS_TILE_2 = 2;
-const global_variable int SMALL_GRASS_TILE_3 = 3;
-const global_variable int SMALL_GRASS_TILE_4 = 4;
-const global_variable int SMALL_GRASS_TILE_5 = 5;
-const global_variable int SMALL_GRASS_TILE_6 = 6;
+// const global_variable int BIG_GRASS_TILE = 0;
+const global_variable int SMALL_GRASS_TILE_1 = 0;
+const global_variable int SMALL_GRASS_TILE_2 = 1;
+const global_variable int SMALL_GRASS_TILE_3 = 2;
+const global_variable int SMALL_GRASS_TILE_4 = 3;
+const global_variable int SMALL_GRASS_TILE_5 = 4;
+const global_variable int SMALL_GRASS_TILE_6 = 5;
 
-const global_variable int SMALL_STUMP_TILE_1 = 7;
-const global_variable int SMALL_STUMP_TILE_2 = 8;
-const global_variable int SMALL_STUMP_TILE_3 = 9;
-const global_variable int SMALL_STUMP_TILE_4 = 10;
+const global_variable int SMALL_STUMP_TILE_1 = 6;
+const global_variable int SMALL_STUMP_TILE_2 = 7;
+const global_variable int SMALL_STUMP_TILE_3 = 8;
+const global_variable int SMALL_STUMP_TILE_4 = 9;
 
-const global_variable int SMALL_WATER_1 = 11;
-const global_variable int SMALL_WATER_2 = 12;
+const global_variable int SMALL_WATER_1 = 10;
+const global_variable int SMALL_WATER_2 = 11;
 
-const global_variable int SMALL_WOOD_PATH_1 = 13;
+const global_variable int SMALL_WOOD_PATH_1 = 12;
 
 // const global_variable int TILE_GREEN = 1;
 // const global_variable int TILE_BLUE = 2;

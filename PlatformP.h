@@ -21,10 +21,13 @@
 
 
 struct PlatformP {
+
+   const char* menuChoices [] = {"NEW GAME","RESUME","OPTIONS","EXIT"}; 
     
    SDL_Rect gExplosionClips [ANIMATING_FRAMES];
    SDL_Rect gTileClips [TOTAL_TILE_SPRITES];
 
+    LTexture* gMenuTexture;
     LTexture* gTileTexture;
     LTexture* gTextTexture;
     LTexture* gUserTankTexture;
@@ -36,12 +39,18 @@ struct PlatformP {
 //The window we'll be rendering to
     SDL_Window* gWindow;
     SDL_Renderer* gRenderer;
-
+    SDL_Event e;
+    
 //The window renderer
     PlatformP(){
 
         gTileTexture = nullptr;
         gTileTexture = new LTexture;
+
+        // NOTE: Menu texture using the image or text string as the main display
+        gMenuTexture = nullptr;
+        gMenuTexture = new LTexture;
+        
         // gDotTexture = nullptr;
         // gDotTexture = new LTexture;
         gTextTexture = nullptr;
@@ -69,12 +78,11 @@ struct PlatformP {
         gRenderer = NULL;};
 };
 
-
-
-#if !defined
-extern PlatformP Platform = {};
-#define PLATFORM
-#endif
+// NOTE: BE CAREFUL this part (This can mess the whole thing up)
+// #if !defined
+// extern PlatformP Platform = {};
+// #define PLATFORM
+// #endif
 
 //Frees media and shuts down SDL
 bool init();    
@@ -86,6 +94,8 @@ bool setTiles( Tile *tiles[]);
 bool valid(SDL_Event e, KeyState* previousKey, KeyState* currentKey);
 //Shows the Tank on the screen
 void render(TankInfo* Tank, int frame, SDL_Rect& camera );
+void displayMenu();
 void renderText(real32 FPS, const TankInfo* userTank);
+
 #define PLATFORMP_H
 #endif

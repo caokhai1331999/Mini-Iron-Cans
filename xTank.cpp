@@ -12,8 +12,8 @@
 
 Position GeneratePosition(){
     Position Tem;
-    Tem.x = std::rand()%(LEVEL_WIDTH - TANK_WIDTH);
-    Tem.y = std::rand()%(LEVEL_HEIGHT - TANK_HEIGHT);
+    Tem.x = std::rand()%(LEVEL_WIDTH - TANK_WIDTH - 50);
+    Tem.y = std::rand()%(LEVEL_HEIGHT - TANK_HEIGHT - 50);
     return Tem ;
 }
 
@@ -62,9 +62,9 @@ void fire(TankInfo* Tank){
     // && !Tank->isHit
 
     if(!Tank->destroyed) {
-            if(Tank->userBelong){
-                printf("Looping through tank bullets\n");
-            }
+            // if(Tank->userBelong){
+            //     printf("Looping through tank bullets\n");
+            // }
         for(int i = 0; i < TOTAL_BULLET_PER_TANK ; i++){
             if(Tank->Bullets[i].Launched)
             {
@@ -72,9 +72,9 @@ void fire(TankInfo* Tank){
             } else if (!Tank->Bullets[i].Launched) {
 
                 // TODO: Fix bugs right here
-                if(Tank->userBelong){
-                    printf("Bullet chosen\n");
-                }
+                // if(Tank->userBelong){
+                //     printf("Bullet chosen\n");
+                // }
 
                 Tank->BulletsNumber--;
                     if(Tank->BulletsNumber < 0){
@@ -128,6 +128,14 @@ void fire(TankInfo* Tank){
         }
     }
             // printf("End function\n");    
+}
+
+void respawn(TankInfo* Tank){
+    if(Tank->isHit){
+            resetTank(Tank);
+            Tank->mBox.x = rand()%LEVEL_WIDTH - Tank->mBox.w - 50;
+            Tank->mBox.y = rand()%LEVEL_HEIGHT - Tank->mBox.h - 50;
+    }
 }
 
 void handleEvent(KeyState* CurrentBut, TankInfo* Tank) {
@@ -201,8 +209,8 @@ void handleEvent(KeyState* CurrentBut, TankInfo* Tank) {
 }
 
 //Moves the Tank and check collision against tiles
-// Add one more tank and user tank to check
-void move( Tile *tiles[], bool touchesWall, bool collided, TankInfo* Tank) {
+// Add one more tank and user tank to check (Tile *tiles[],)
+void move(bool touchesWall, bool collided, TankInfo* Tank) {
 
     // NOTE: Apply dijkstra's algo here to make bot tank'move more smart
 
@@ -215,7 +223,7 @@ void move( Tile *tiles[], bool touchesWall, bool collided, TankInfo* Tank) {
         //TODO: Add collision code here
             Tank->mBox.x += Tank->mVelX;
             // (Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH - 50)||
-           if ((Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH - 50)||collided){
+           if ((Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH - 50) || collided){
                     Tank->mBox.x -= Tank->mVelX;
                }
                     // printf("Tank Pos X is: %d /n", Tank->mBox.x);                    
@@ -236,16 +244,11 @@ void move( Tile *tiles[], bool touchesWall, bool collided, TankInfo* Tank) {
                 if (Tank->Bullets[i].Launched){
                     Tank->Bullets[i].blBox.x += Tank->Bullets[i].BlVelX;
                     Tank->Bullets[i].blBox.y += Tank->Bullets[i].BlVelY;
-                    // TODO: Figure out first DONE!
-                    // if(Tank->Bullets[i].Launched)
-                    // {
-                    //     printf("Bullet %d is moving after Launched\n", i);
-                    // } else {
-                    //     printf("Bullet %d is moving even when wasn't Launched\n", i);                        
-                    // }
                 }
-            // }
         }    
+    }
+    if(collided){
+        
     }
 }
 
@@ -276,11 +279,11 @@ void setCamera( SDL_Rect& camera, TankInfo* UserTank ){
     
 }
 
-void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided){
+void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided){
     // TODO: This function is a little AI that use Dijktra algorithm to drive every
     // bot tank
 
-    int distance = sqrt(pow(botTank->mBox.x - UserTank->mBox.x,2) + pow(botTank->mBox.y - UserTank->mBox.y,2));
+    int distance = sqrt(pow(targetTank->mBox.x - UserTank->mBox.x,2) + pow(targetTank->mBox.y - UserTank->mBox.y,2));
 
     // NOTE: The idea is simple: moving the bot Tank toward User's one and fire
     // when it is near
@@ -289,96 +292,105 @@ void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided){
     // NOTE: Wandering mode
 
     std::srand(std::time(nullptr));
-    if (botTank->mVelX == 0 || botTank->mVelY == 0 || botTank->mBox.x < TANK_WIDTH || botTank->mBox.x + TANK_WIDTH > LEVEL_WIDTH|| botTank->mBox.y < TANK_HEIGHT || botTank->mBox.x + TANK_HEIGHT > LEVEL_HEIGHT || collided){
-    int FaceID = std::rand()%3;
-    switch(FaceID){
-        case 0: botTank->face = UP; botTank->mVelY = 0; botTank->mVelY = -TANK_VEL;
-        case 1: botTank->face = DOWN; botTank->mVelY = 0;botTank->mVelY = TANK_VEL;
-        case 2: botTank->face = RIGHT; botTank->mVelX = 0;botTank->mVelX = TANK_VEL;
-        case 3: botTank->face = LEFT; botTank->mVelX = 0; botTank->mVelX = -TANK_VEL;
-    };        
+    if(targetTank->mVelX == 0 && targetTank->mVelY == 0){        
+        switch((int)targetTank->face){
+            case (int)UP: targetTank->mVelY = 0; targetTank->mVelY = -TANK_VEL;
+            case (int)DOWN: targetTank->mVelY = 0;targetTank->mVelY = TANK_VEL;
+            case (int)RIGHT: targetTank->mVelX = 0;targetTank->mVelX = TANK_VEL;
+            case (int)LEFT: targetTank->mVelX = 0; targetTank->mVelX = -TANK_VEL;
+        }
+    }
+    
+    if (targetTank->mBox.x < TANK_WIDTH || targetTank->mBox.x + TANK_WIDTH + 50 > LEVEL_WIDTH|| targetTank->mBox.y < TANK_HEIGHT + 50 || targetTank->mBox.y + TANK_HEIGHT + 50 > LEVEL_HEIGHT || collided){
+        if(targetTank->face < 180){
+            targetTank->face += 180.0f;
+        } else {
+            targetTank->face -= 180.0f;
+        };        
+        targetTank->mVelX = -targetTank->mVelX;
+        targetTank->mVelY = -targetTank->mVelY;
     }
 
     // distance > 250 && 
     if (!collided){
-        if (abs(botTank->mBox.x - UserTank->mBox.x) < abs(botTank->mBox.y - UserTank->mBox.y)) {
+        if (abs(targetTank->mBox.x - UserTank->mBox.x) < abs(targetTank->mBox.y - UserTank->mBox.y)) {
         // NOTE: Prioritize which axis is choose to move first
-        if(botTank->mVelX != 0){
-            botTank->mVelX = 0;            
+        if(targetTank->mVelX != 0){
+            targetTank->mVelX = 0;            
         }
         
-    if (botTank->mBox.x - UserTank->mBox.x < 250){
-            if (botTank->face != LEFT){
-            botTank->face = LEFT;
+    if (targetTank->mBox.x - UserTank->mBox.x < 250){
+            if (targetTank->face != LEFT){
+            targetTank->face = LEFT;
             }
-            if (botTank->mBox.x > 0){                
-                botTank->mVelX -= TANK_VEL;
-                botTank->mVelY = 0;            
+            if (targetTank->mBox.x > 0){                
+                targetTank->mVelX = -TANK_VEL;
+                targetTank->mVelY = 0;            
             }
-        } else if (botTank->mBox.x - UserTank->mBox.x > - 250){
-            if(botTank->face != RIGHT){
-                botTank->face = RIGHT;
+        } else if (targetTank->mBox.x - UserTank->mBox.x > - 250){
+            if(targetTank->face != RIGHT){
+                targetTank->face = RIGHT;
             }
-            if (botTank->mBox.x + TANK_WIDTH < LEVEL_WIDTH){                
-                botTank->mVelX += TANK_VEL;
-                botTank->mVelY = 0;
+            if (targetTank->mBox.x + TANK_WIDTH < LEVEL_WIDTH){                
+                targetTank->mVelX = TANK_VEL;
+                targetTank->mVelY = 0;
             }
         } else {
-            botTank->mVelX = 0;            
+            targetTank->mVelX = 0;            
         }
     
-    } else if (abs(botTank->mBox.x - UserTank->mBox.x) > abs(botTank->mBox.y - UserTank->mBox.y)) {
+    } else if (abs(targetTank->mBox.x - UserTank->mBox.x) > abs(targetTank->mBox.y - UserTank->mBox.y)) {
         
-        if(botTank->mVelY != 0){
-            botTank->mVelY = 0;            
+        if(targetTank->mVelY != 0){
+            targetTank->mVelY = 0;            
         }        
-        if (botTank->mBox.y - UserTank->mBox.y < 100){
-            if(botTank->face != UP){                
-            botTank->face = UP;
+        if (targetTank->mBox.y - UserTank->mBox.y < 100){
+            if(targetTank->face != UP){                
+            targetTank->face = UP;
             }
-            if (botTank->mBox.y > 0){                
-                botTank->mVelX = 0;
-                botTank->mVelY -= TANK_VEL;
+            if (targetTank->mBox.y > 0){                
+                targetTank->mVelX = 0;
+                targetTank->mVelY = -TANK_VEL;
             }
-        } else if (botTank->mBox.y - UserTank->mBox.y > - 100){
-            if(botTank->face != DOWN){
-            botTank->face = DOWN;                
+        } else if (targetTank->mBox.y - UserTank->mBox.y > - 100){
+            if(targetTank->face != DOWN){
+            targetTank->face = DOWN;                
             }
-            if (botTank->mVelY + TANK_HEIGHT < LEVEL_HEIGHT ){                
-                botTank->mVelX = 0;                
-                botTank->mVelY += TANK_VEL;
+            if (targetTank->mVelY + TANK_HEIGHT < LEVEL_HEIGHT ){                
+                targetTank->mVelX = 0;                
+                targetTank->mVelY = TANK_VEL;
             }
         } else {
-            botTank->mVelY = 0;
+            targetTank->mVelY = 0;
         }   
     }
 }        // NOTE: Seem Like I don't need to use complicate Dijktra algorigthm yet
     else {
-            if (abs(botTank->mBox.x - UserTank->mBox.x) < TANK_WIDTH){
-                        if (botTank->mBox.x - UserTank->mBox.x > 0){                            
-                            if(botTank->face != LEFT){
-                                botTank->face = LEFT;
+            if (abs(targetTank->mBox.x - UserTank->mBox.x) < TANK_WIDTH){
+                        if (targetTank->mBox.x - UserTank->mBox.x > 0){                            
+                            if(targetTank->face != LEFT){
+                                targetTank->face = LEFT;
                             }                            
-                        } else if (botTank->mBox.x - UserTank->mBox.x < 0){
-                            if(botTank->face != RIGHT){
-                                botTank->face = RIGHT;
+                        } else if (targetTank->mBox.x - UserTank->mBox.x < 0){
+                            if(targetTank->face != RIGHT){
+                                targetTank->face = RIGHT;
                             }                            
                         }
-            } else if(abs(botTank->mBox.y - UserTank->mBox.y) < TANK_HEIGHT){
-                        if(botTank->mBox.y - UserTank->mBox.y > 0){                            
-                            if(botTank->face != UP){
-                                botTank->face = UP;
+            } else if(abs(targetTank->mBox.y - UserTank->mBox.y) < TANK_HEIGHT){
+                        if(targetTank->mBox.y - UserTank->mBox.y > 0){                            
+                            if(targetTank->face != UP){
+                                targetTank->face = UP;
                             }
                         }
 
-                        else if(botTank->mBox.y - UserTank->mBox.y < 0){                            
-                        if(botTank->face != DOWN ){
-                                botTank->face =DOWN;
+                        else if(targetTank->mBox.y - UserTank->mBox.y < 0){                            
+                        if(targetTank->face != DOWN ){
+                                targetTank->face =DOWN;
                             }
                         }
                     }
-            if(!botTank->userBelong){
-                fire(botTank);
+            if(!targetTank->userBelong){
+                fire(targetTank);
             }
 } 
 }

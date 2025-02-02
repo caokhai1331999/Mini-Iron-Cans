@@ -7,8 +7,8 @@ Tile::Tile( int x, int y, int tileType )
     mBox.y = y;
 
     //Set the collision box
-    mBox.w = TILE_WIDTH;
-    mBox.h = TILE_HEIGHT;
+    mBox.w = SMALL_TILE_WIDTH;
+    mBox.h = SMALL_TILE_HEIGHT;
 
     //Get the tile type
     mType = tileType;

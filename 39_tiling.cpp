@@ -23,17 +23,13 @@
 // Time to test it with fps DONE!
 // The procedure style seem indeed squeeze way more performace than the OOP style
 // Then Try to search for OpenGl document source  
-
-#define internal static
-#define global_variable static
-#define uint32 uint32_t
-#define real32 float
-
 #include "PlatformP.h"
 
 global_variable real32 StartTime;
 global_variable real32 EndTime;
 global_variable real32 TimeElapsed = 0;
+global_variable real32 respawnStartTime = 0;
+global_variable real32 respawnEndTime = 0;
 global_variable real32 FPS = 0;
 const global_variable real32 StandardFPS = 60.0f;
 
@@ -92,9 +88,13 @@ int main( int argc, char* args[] )
             int testFrame = 0;
             int frame[4] = {} ;
             StartTime =  SDL_GetTicks();
+
             real32 Startframe = 0;
             real32 Endframe = 0;
             real32 FrameElapse = 0;
+
+            bool Ecollided = false;
+            bool Ucollided = false;
             // uint32 LastFrameTime[TOTAL_ENEMY_TANK] ={};
             int k;
 			while( !quit )
@@ -114,70 +114,73 @@ int main( int argc, char* args[] )
                     // Modulize this part to reuse it
                     //===================================================
 
+                    // NOTE: If I have time try to apply FSM to this input filter
                     if ((e.key.state == SDL_PRESSED || e.key.state == SDL_RELEASED) && e.key.keysym.scancode != SDL_SCANCODE_UNKNOWN){                        
-                            // if (!CurrentArrow.pressed){
-                            //     printf("Current Arrow is released\n");
-                            // } else {
-                            //     printf("Current Arrow is pressed\n");                                
-                            // }
 
-                            // if (e.key.state == SDL_PRESSED){
-                            //     printf("Next Arrow is pressed\n");
-                            // }  else {
-                            //     printf("Next Arrow is released\n");
-                            // } 
-                        // NOTE: || (e.key.keysym.scancode == CurrentArrow.key)
-                        // || e.key.keysym.scancode == SDL_SCANCODE_SPACE
-                        //                        //
-                                // printf("Current Button :%d ", CurrentBut.key);
-                                // CurrentBut.pressed?printf("is pressed \n"):printf("is released\n");
-                                
-                                // printf("Next Button to be checked :%d ",e.key.keysym.scancode);
-                                // e.key.state == SDL_PRESSED?printf("is pressed \n"):printf("is released\n");
+                        if((!CurrentBut.pressed && e.key.state == SDL_PRESSED && CurrentBut.key != e.key.keysym.scancode) || (e.key.keysym.scancode == CurrentBut.key && CurrentBut.pressed != (e.key.state == SDL_PRESSED))|| CurrentBut.init == 0 || e.key.keysym.scancode == SDL_SCANCODE_SPACE)
 
-                        //
-                                if((!CurrentBut.pressed && e.key.state == SDL_PRESSED && CurrentBut.key != e.key.keysym.scancode) || (e.key.keysym.scancode == CurrentBut.key && CurrentBut.pressed != (e.key.state == SDL_PRESSED))|| CurrentBut.init == 0 || e.key.keysym.scancode == SDL_SCANCODE_SPACE)
-
-                        //TODO: How about pressing Space and 2 arrow key at the same
-                        //time and then hit different arrow
-                            {
-                                // printf("Previous Button :%d ", PreviousBut.key);
-                                // PreviousBut.pressed?printf("is pressed \n"):printf("is released\n");
                                 
                                 if(CurrentBut.init == 0){
                                     CurrentBut.init = 1;
                                 }
-                                // printf("Current Button init: %d\n", CurrentBut.init);
-                                PreviousBut = CurrentBut;
-                                CurrentBut.pressed = (e.key.state == SDL_PRESSED);
-                                CurrentBut.key = e.key.keysym.scancode;
-                                CurrentBut.repeat = e.key.repeat;
-                                handleEvent(&CurrentBut, userTank);                                
-                            }
+
+                        PreviousBut = CurrentBut;
+                        CurrentBut.pressed = (e.key.state == SDL_PRESSED);
+                        CurrentBut.key = e.key.keysym.scancode;
+                        CurrentBut.repeat = e.key.repeat;
+                        handleEvent(&CurrentBut, userTank);                       
                     }
+                }
                     // ==================================================
 					//handle input for the dot
 					// dot.handleEvent( e );
                     // }
 				}
 				//Move the dot
-                bool collided = false;
                 // NOTE: Bugs lied here
-                move(tileSet, touchesWall(&userTank->mBox, tileSet), collided, userTank);
-
+                // temporary not use toucheswall here
+                move( false, Ucollided, userTank);
                 for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
-                    collided = false;
+                    BiTankCheck(&enemyTank[i], userTank);
+
                     for (int p = 0; p < i; p++){
                         if (i > 1 && p < i){
-                            collided = checkCollision(&enemyTank[i].mBox, &enemyTank[p].mBox);
-                        }
-                    }
-                    //
 
-                    BiTankCheck(&enemyTank[i], userTank);
-                    littleGuide(&enemyTank[i], userTank, collided);
-                    move(tileSet,touchesWall(&enemyTank[i].mBox, tileSet), collided, &enemyTank[i]);
-                }                                
+                            Ecollided = checkCollision(&enemyTank[i].mBox, &enemyTank[p].mBox) | checkCollision(&userTank->mBox, &enemyTank[i].mBox);
+                            
+                            // printf(Ecollided?"EnemyTank collide each other in minor loop\n":"No collision detected\n");                            
+                        }
+                        // littleGuide(&enemyTank[i], userTank, collided);
+                        // move(false, collided, &enemyTank[p]);
+                    }
+
+                    Ucollided = checkCollision(&userTank->mBox, &enemyTank[i].mBox);
+                    littleGuide(&enemyTank[i], userTank, Ecollided);
+
+                    // NOTE: Temporary not use touchwall here
+
+                    move(false, Ecollided, &enemyTank[i]);
+                    // printf(Ucollided?"EnemyTank collide each other out of minor loop\n":"No collision detected\n");
+
+                }
+                
+                if(userTank->isHit){
+                    // NOTE: The SDL_GetTicks() give the current time output
+                    // So how to calculate right spawn time every time user Tank
+                    // is hit
+                    respawnTime = SDL_GetTicks();
+                while (respawnTime - StartTime < 1000.0f){
+                    respawnTime = SDL_GetTicks();
+                }
+                    if(respawnEndTime - respawnStartTime > 1000.0f){
+                        printf("Wait Time: %f\n", respawnTime - StartTime);
+                        respawn(userTank);
+                        respawnTime = StartTime;
+                    }                
+                };
+
+                // If user Tank is destroyed add spawnTank here
+                
 				// dot.move( tileSet, touchesWall(dot.GetmBox(), tileSet));
                 setCamera(camera, userTank);
 
@@ -199,8 +202,9 @@ int main( int argc, char* args[] )
 				{
                     // NOTE: The tile position must subtract for the camera
                     // pos to created moving illusiion
+                    //touchesWall(&userTank->mBox, tileSet)
                     // printf("tile %d is rendered\n", i);
-					tileSet[ i ]->render( camera, Platform.gRenderer,  Platform.gTileTexture,  Platform.gTileClips, touchesWall(&userTank->mBox, tileSet));
+					tileSet[ i ]->render( camera, Platform.gRenderer,  Platform.gTileTexture,  Platform.gTileClips, false);
 					// tileSet[ i ]->render( camera, Platform.GetRenderer(),  Platform.GetgTileTexture(),  Platform.GetgTileClips(), checkCollision(&camera, tileSet[ i ]->getBox()));
 				}
                
@@ -227,8 +231,6 @@ int main( int argc, char* args[] )
                                         frame[k] = -1;
                                     }
                                     //Go to next frame
-                                    //NOTE: Why the first explosion animation just
-
 
                                     // SDL_Delay(16);
                                     if(frame[k]!=-1){
@@ -237,7 +239,7 @@ int main( int argc, char* args[] )
                                         // LastFrameTime[k] = CurrentFrameTime;
                                         Platform.gExplosionTexture->render( Platform.gRenderer ,(enemyTank[k].mBox.x - camera.x), (enemyTank[k].mBox.y - camera.y), &Platform.gExplosionClips[frame[k]]);
                                         SDL_Delay(0.032);
-                                        frame[k]==0?printf("Tank %d is hit and start to display\n", k):printf("Tank %d explosion at frame %d\n", k, frame[k]);
+                                        // frame[k]==0?printf("Tank %d is hit and start to display\n", k):printf("Tank %d explosion at frame %d\n", k, frame[k]);
                                         frame[k]++;
                                         // }
                                     }

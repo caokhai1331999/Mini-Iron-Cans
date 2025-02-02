@@ -1,3 +1,4 @@
+#if !defined(XTANK_H)
 
 /* ========================================================================
    $File: $
@@ -7,7 +8,6 @@
    $Notice: (C) Copyright 2024 by Cao Khai, Inc. All Rights Reserved. $
    ======================================================================== */
 
-#if !defined(XTANK_H)
 #include <stdlib.h>
 #include <stdint.h>
 #include <math.h>
@@ -118,10 +118,12 @@ void handleEvent(KeyState* CurrentBut, TankInfo* Tank );
 void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided);
     
 //Moves the Tank and check collision against tiles
-void move( Tile *tiles[] = NULL, bool touchesWall = false, bool collided = false, TankInfo* Tank = NULL);
+void move(bool touchesWall = false, bool collided = false, TankInfo* Tank = NULL);
 
 // Fire a bullet
 void fire(TankInfo* Tank);
+void respawn(TankInfo* Tank);
+
 void resetBullet(Bullet* bullet);
 void resetTank(TankInfo* Tank);
 void BiTankCheck(TankInfo* ATank, TankInfo* BTank);

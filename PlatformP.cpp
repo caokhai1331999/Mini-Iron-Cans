@@ -31,13 +31,13 @@ void close( Tile* tiles[]){
 	//Free loaded images
 	// Platform.gDotTexture->free();
 	Platform.gTileTexture->free();
+	Platform.gMenuTexture->free();
     Platform.gTextTexture->free();
     Platform.gUserTankTexture->free();
     Platform.gEnemyTankTexture->free();
     Platform.gUserBulletTexture->free();
     Platform.gEnemyBulletTexture->free();
     Platform.gExplosionTexture->free();
-
     
 	//Destroy window	
 	SDL_DestroyRenderer( Platform.gRenderer );
@@ -61,7 +61,8 @@ bool LoadMedia(Tile* tiles[]){
 	{
 		printf( "Failed to load User tank texture!\n" );
 		success = false;
-	} // else {
+	}
+// else {
 
       // Platform.gSpriteClips[ 0 ].x = 0;
       // Platform.gSpriteClips[ 0 ].y = 0;
@@ -83,8 +84,6 @@ bool LoadMedia(Tile* tiles[]){
       // Platform.gSpriteClips[ 3 ].w = 256;
       // Platform.gSpriteClips[ 3 ].h = 170;
 
-
-
 //      gSpriteClips[ 4 ].x = 1000;
 //      gSpriteClips[ 4 ].y = 0;
 //      gSpriteClips[ 4 ].w = 250;
@@ -98,9 +97,16 @@ bool LoadMedia(Tile* tiles[]){
 		success = false;
 	} // else {
 
+    // NOTE: Prepare a animated background here
+	if( !Platform.gMenuTexture->loadFromFile( "media/background.png", Platform.gRenderer, (int)100, (int)100))
+	{
+		printf( "Failed to load menu background texture!\n" );
+		success = false;
+	} // else {
+
 
 	//Load tile texture
-        if( !Platform.gTileTexture->loadFromFile( "media/32x32_map_tile v3.1 [MARGINLESS].png", Platform.gRenderer, (int)100, (int)100) )
+        if( !Platform.gTileTexture->loadFromFile( "media/32x32_map_tile v3.1 [MARGINLESS].png", Platform.gRenderer, (int)30, (int)30) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
@@ -255,6 +261,30 @@ bool init()
 }
 
 
+void displayMenu(){
+    // Display background
+    
+    // NOTE: There are 2 way to display menu. One is display one choice( current pointed one) at a time
+    // and move around them using arrow key. The other is display all and
+    // highlight the pointed one (highlight or make it bolder)... (Inclined to the 2nd way)
+    
+    for (uint_8 i = 0; i < (uint_8)sizeof(menuChoices); i++){
+
+        if(i != 0){
+            Platform.gTextTexture->free();
+            Platform.gTextTexture = new LTexture;
+        }
+        
+        if (!Platform.gTextTexture->loadFromRenderedText(menuChoices[i], TextColor, gFont, Platform.gRenderer)) {
+            printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
+        } else {                           Platform.gTextTexture->render(Platform.gRenderer, SCREEN_WIDTH/2 - 20, 30 + 30 * i);                    
+        }        
+
+    }
+    
+    // Display menu
+}
+
 //Sets tiles from tile map
 bool setTiles( Tile *tiles[]){
 
@@ -267,7 +297,7 @@ bool setTiles( Tile *tiles[]){
     int x = 0, y = 0;
 
     //Open the map
-    std::ifstream map( "lazy.map" );
+    std::ifstream map( "smap.map" );
 
     //If the map couldn't be loaded
     if( map.fail() )
@@ -277,20 +307,30 @@ bool setTiles( Tile *tiles[]){
     }
 	else
 	{
+        int i = 0, k = 0;
+        char* TileType = new char [0];
 		//Initialize the tiles
-		for( int i = 0; i < TOTAL_TILES; ++i )
+		for (int i = 0; i < TOTAL_TILES; i ++ )
 		{
+
+            // printf('Current Tile: %c\n');
 			//Determines what kind of tile will be made
-			int tileType = -1;
-
+        	uint8 tileType = -1;
+            
 			//Read tile from map file
-			map >> tileType;
 
+            map >> TileType[0];
+			map >> TileType[1];
+            
+            tileType = (TileType[0] - 48)*10 + (TileType[1] - 48);
+
+            // map >> tileType;
+            
 			//If the was a problem in reading the map
 			if( map.fail() )
 			{
 				//Stop loading map
-				printf( "Error loading map: Unexpected end of file!\n" );
+				printf( "Error loading map: Unexpected end of file at iteration: %d !\n", i);
 				tilesLoaded = false;
 				break;
 			}
@@ -298,11 +338,17 @@ bool setTiles( Tile *tiles[]){
 			//If the number is a valid tile number
 			if( ( tileType >= 0 ) && ( tileType < TOTAL_TILE_SPRITES ) )
 			{
-                if (tileType < 11 && tileType > 6)
-                {
-                    tiles[ i ] = new Tile( x - 1 , y, tileType);
-                }
-                tiles[ i ] = new Tile( x , y, tileType);
+                // if (tileType < 11 && tileType > 6)
+                // {
+                //     if(x == 0){
+                //     tiles[ i ] = new Tile( LEVEL_WIDTH - SMALL_TILE_WIDTH , y - SMALL_TILE_HEIGHT, tileType);
+                //     }else{
+                //     tiles[ i ] = new Tile( x - SMALL_TILE_WIDTH , y, tileType);                        
+                //     }
+                // }else{
+                // tiles[ i ] = new Tile( x , y, tileType);                    
+                // }
+                tiles[ i ] = new Tile( x , y, tileType);                    
 			}
 			//If we don't recognize the tile type
 			else
@@ -314,7 +360,7 @@ bool setTiles( Tile *tiles[]){
 			}
 
 			//Move to next tile spot
-			x += TILE_WIDTH;
+			x += SMALL_TILE_WIDTH;
 
 			//If we've gone too far
 			if( x >= LEVEL_WIDTH)
@@ -322,8 +368,10 @@ bool setTiles( Tile *tiles[]){
 				//Move back
 				x = 0;
 
+                // NOTE: Why when go down there are no tile there any more
+                
 				//Move to the next row
-				y += TILE_HEIGHT;
+				y += SMALL_TILE_HEIGHT;
 			}
 		}
 		
@@ -331,21 +379,21 @@ bool setTiles( Tile *tiles[]){
 		if( tilesLoaded )
 		{
             // NOTE: TILE_RED or TILE_GREEN is TileTypes
-            printf("Loading Map\n");
-			Platform.gTileClips[ BIG_GRASS_TILE ].x = 0;
-			Platform.gTileClips[ BIG_GRASS_TILE ].y = 30;
-			Platform.gTileClips[ BIG_GRASS_TILE ].w = BIG_TILE_WIDTH;
-			Platform.gTileClips[ BIG_GRASS_TILE ].h = BIG_TILE_HEIGHT;
+            // printf("Loading Map\n");
+			// Platform.gTileClips[ SMALL_GRASS_TILE ].x = 0;
+			// Platform.gTileClips[ SMALL_GRASS_TILE ].y = 30;
+			// Platform.gTileClips[ SMALL_GRASS_TILE ].w = SMALL_TILE_WIDTH;
+			// Platform.gTileClips[ SMALL_GRASS_TILE ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[SMALL_GRASS_TILE_1].x = 0;
-			Platform.gTileClips[SMALL_GRASS_TILE_1].y = 130;
-			Platform.gTileClips[SMALL_GRASS_TILE_1].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[SMALL_GRASS_TILE_1].h = SMALL_TILE_HEIGHT;
+			Platform.gTileClips[ SMALL_GRASS_TILE_1 ].x = 0;
+			Platform.gTileClips[ SMALL_GRASS_TILE_1 ].y = 130;
+			Platform.gTileClips[ SMALL_GRASS_TILE_1 ].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[ SMALL_GRASS_TILE_1 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[SMALL_GRASS_TILE_2].x = 30;
-			Platform.gTileClips[SMALL_GRASS_TILE_2].y = 130;
-			Platform.gTileClips[SMALL_GRASS_TILE_2].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[SMALL_GRASS_TILE_2].h = SMALL_TILE_HEIGHT;
+			Platform.gTileClips[ SMALL_GRASS_TILE_2 ].x = 30;
+			Platform.gTileClips[ SMALL_GRASS_TILE_2 ].y = 130;
+			Platform.gTileClips[ SMALL_GRASS_TILE_2 ].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[ SMALL_GRASS_TILE_2 ].h = SMALL_TILE_HEIGHT;
 
 			Platform.gTileClips[ SMALL_GRASS_TILE_3 ].x = 60;
 			Platform.gTileClips[ SMALL_GRASS_TILE_3 ].y = 130;
@@ -382,20 +430,25 @@ bool setTiles( Tile *tiles[]){
 			Platform.gTileClips[ SMALL_STUMP_TILE_3 ].w = SMALL_TILE_WIDTH;
 			Platform.gTileClips[ SMALL_STUMP_TILE_3 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ SMALL_WATER_1].x = 0;
-			Platform.gTileClips[ SMALL_WATER_1].y = 510;
-			Platform.gTileClips[ SMALL_WATER_1].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[ SMALL_WATER_1].h = SMALL_TILE_HEIGHT;
+			Platform.gTileClips[ SMALL_STUMP_TILE_4 ].x = 0;
+			Platform.gTileClips[ SMALL_STUMP_TILE_4 ].y = 280;
+			Platform.gTileClips[ SMALL_STUMP_TILE_4 ].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[ SMALL_STUMP_TILE_4 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ SMALL_WATER_2].x = 0;
-			Platform.gTileClips[ SMALL_WATER_2].y = 540;
-			Platform.gTileClips[ SMALL_WATER_2].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[ SMALL_WATER_2].h = SMALL_TILE_HEIGHT;
+			Platform.gTileClips[ SMALL_WATER_1 ].x = 0;
+			Platform.gTileClips[ SMALL_WATER_1 ].y = 510;
+			Platform.gTileClips[ SMALL_WATER_1 ].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[ SMALL_WATER_1 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ SMALL_WOOD_PATH_1].x = 320;
-			Platform.gTileClips[ SMALL_WOOD_PATH_1].y = 30;
-			Platform.gTileClips[ SMALL_WOOD_PATH_1].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[ SMALL_WOOD_PATH_1].h = SMALL_TILE_HEIGHT;
+			Platform.gTileClips[ SMALL_WATER_2 ].x = 0;
+			Platform.gTileClips[ SMALL_WATER_2 ].y = 540;
+			Platform.gTileClips[ SMALL_WATER_2 ].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[ SMALL_WATER_2 ].h = SMALL_TILE_HEIGHT;
+
+			Platform.gTileClips[ SMALL_WOOD_PATH_1 ].x = 320;
+			Platform.gTileClips[ SMALL_WOOD_PATH_1 ].y = 30;
+			Platform.gTileClips[ SMALL_WOOD_PATH_1 ].w = SMALL_TILE_WIDTH;
+			Platform.gTileClips[ SMALL_WOOD_PATH_1 ].h = SMALL_TILE_HEIGHT;
 		}
 	}
 
@@ -406,56 +459,10 @@ bool setTiles( Tile *tiles[]){
     return tilesLoaded;    
 }
 
-// // NOTE: This function is wrong in somepart, But I don't have time to
-// // figure it out. Let's it aside and move on, comeback when possible
-// bool valid(SDL_Event e, KeyState* previousKey, KeyState* currentKey){
-//     if (!IsArrow(e.key.keysym.scancode)||currentKey->init==0){
-//         return true;
-//     } else {
-//         if (!IsArrow(previousKey->key)){
-//             if (!IsArrow(currentKey->key)){
-//                 return true;
-//             } else {
-//                 if (e.key.keysym.scancode == currentKey->key) {
-//                     return true;
-//                 } else {
-//                     if (e.key.state == SDL_PRESSED && !currentKey->pressed){
-//                         return true;
-//                     } else {
-//                         return false;
-//                     }
-//                 }
-//             }
-//         } else {
-//             if (!IsArrow(currentKey->key)){
-//                 if (e.key.keysym.scancode == previousKey->key) {
-//                     return true;
-//                 } else {
-//                     if (e.key.state == SDL_PRESSED && !previousKey->pressed){
-//                         return true;
-//                     } else {
-//                         return false;
-//                     }
-//                 }               
-//             } else {
-//                 if (previousKey->key == currentKey->key) {
-//                     return true;
-//                 } else {
-//                     if (currentKey->pressed != (e.key.state == SDL_PRESSED) && currentKey->pressed != previousKey->pressed){
-//                         return true;
-//                     } else {
-//                         return false;
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// }
-
 //Shows the Tank on the screen
 void render(TankInfo* Tank, int frame, SDL_Rect& camera) {
 
-    if(!Tank->destroyed && !Tank->isHit) {
+    if(!Tank->destroyed) {
     //NOTE: Show the tank and bullet here
     if (Tank->userBelong && Platform.gUserTankTexture!=NULL) {
         // printf("User Tank image is being rendered\n");
