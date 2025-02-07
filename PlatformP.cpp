@@ -261,34 +261,8 @@ bool init()
 }
 
 
-void displayMenu(){
-    // Display background
-    
-    // NOTE: There are 2 way to display menu. One is display one choice( current pointed one) at a time
-    // and move around them using arrow key. The other is display all and
-    // highlight the pointed one (highlight or make it bolder)... (Inclined to the 2nd way)
-    
-    for (uint_8 i = 0; i < (uint_8)sizeof(menuChoices); i++){
-
-        if(i != 0){
-            Platform.gTextTexture->free();
-            Platform.gTextTexture = new LTexture;
-        }
-        
-        if (!Platform.gTextTexture->loadFromRenderedText(menuChoices[i], TextColor, gFont, Platform.gRenderer)) {
-            printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
-        } else {                           Platform.gTextTexture->render(Platform.gRenderer, SCREEN_WIDTH/2 - 20, 30 + 30 * i);                    
-        }        
-
-    }
-    
-    // Display menu
-}
-
 //Sets tiles from tile map
 bool setTiles( Tile *tiles[]){
-
-    // NOTE: Still don't understand this map creating methodology. Spare time to delve more.
     
 	//Success flag
 	bool tilesLoaded = true;
@@ -509,41 +483,40 @@ else if (!Tank->userBelong && Platform.gEnemyTankTexture != NULL) {
 
 void renderText(real32 FPS, const TankInfo* userTank){
     
-                // NOTE: The reason that I can not use TTF_OpenFont or TTF_Init is
-                // that I forgot to link ttf.lib in compile link
-                // carefull to link, remember to put dll files in system32 folder
+    // NOTE: The reason that I can not use TTF_OpenFont or TTF_Init is
+    // that I forgot to link ttf.lib in compile link
+    // carefull to link, remember to put dll files in system32 folder
                 
-                char OutPut[256];
-                gFont = TTF_OpenFont( "Roboto-Thin.ttf", 28 );
-                // SDL_Color TextColor = {249 ,166 ,2};
-                SDL_Color TextColor = {0 ,0 ,0};                
-                // NOTE: Somehow The exe file can't find out the TTF_OpenFont and TTF_Solid_Render which is in the ttf lib. Got to find out and fix
+    char OutPut[256];
+    gFont = TTF_OpenFont( "Roboto-Thin.ttf", 28 );
+    // SDL_Color TextColor = {249 ,166 ,2};
+    SDL_Color TextColor = {0 ,0 ,0};                
+    // NOTE: Somehow The exe file can't find out the TTF_OpenFont and TTF_Solid_Render which is in the ttf lib. Got to find out and fix
                 
-                sprintf(OutPut ,"FPS: %d \n",int(FPS));
+    sprintf(OutPut ,"FPS: %d \n",int(FPS));
 
-                // printf(OutPut);
+    // printf(OutPut);
                 
-                if (!Platform.gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform.gRenderer)) {
-                            printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
-                } else {                           Platform.gTextTexture->render(Platform.gRenderer, 0, 0);                    
-                        }
+    if (!Platform.gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform.gRenderer)) {
+        printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
+    } else {                           Platform.gTextTexture->render(Platform.gRenderer, 0, 0);                    
+    }
 
-                if(userTank->BulletsNumber == 0){
-                    sprintf(OutPut, "Tank Bullets: Loading\n");
-                    //Update screen
-                    if (!Platform.gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform.gRenderer)) {
-                        printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
-                    } else {                           Platform.gTextTexture->render(Platform.gRenderer, SCREEN_WIDTH - 300, 0);                    
-                    }
-                    
-                    // printf(OutPut);
-                } else {                    
-                    sprintf(OutPut, "Tank Bullets :%d \n", int(userTank->BulletsNumber));
-				//Update screen
-                if (!Platform.gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform.gRenderer)) {
-                            printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
-                } else {                           Platform.gTextTexture->render(Platform.gRenderer, SCREEN_WIDTH - 200, 0);                    
-                }                    
-                    // printf(OutPut);
-                } 
+    if(userTank->BulletsNumber == 0){
+        sprintf(OutPut, "Tank Bullets: Loading\n");
+        //Update screen
+        if (!Platform.gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform.gRenderer)) {
+            printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
+        } else {                           Platform.gTextTexture->render(Platform.gRenderer, SCREEN_WIDTH - 300, 0);                    
+        }                    
+        // printf(OutPut);
+    } else {                    
+        sprintf(OutPut, "Tank Bullets :%d \n", int(userTank->BulletsNumber));
+        //Update screen
+        if (!Platform.gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform.gRenderer)) {
+            printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
+        } else {                           Platform.gTextTexture->render(Platform.gRenderer, SCREEN_WIDTH - 200, 0);                    
+        }                    
+        // printf(OutPut);
+    } 
 }

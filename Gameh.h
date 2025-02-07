@@ -17,7 +17,6 @@
 #include "PlatformP.h"
 #include "KState.h"
 
-struct Game{
     global_variable real32 StartTime;
     global_variable real32 EndTime;
     global_variable real32 TimeElapsed = 0;
@@ -27,22 +26,33 @@ struct Game{
 
     const global_variable real32 StandardFPS = 60.0f;
     const global_variable uint32 FRAME_DELAY = 1000/60;
-    PlatformP* Platform = nullptr;
 
-    userTank = new TankInfo(true);
-    enemyTank = new TankInfo[TOTAL_ENEMY_TANK];            
-            
+struct Game{    
+    const char* Menu[] = {"NEW GAME", "RESUME", "OPTIONS", "EXIT"};
+    KSTATE state;
+    MENUCHOICE pointed_option;
+    MENUCHOICE chosen_option;
     Position* TankPos = nullptr;    
-    
+    PlatformP* Platform = nullptr;
+    TankInfo* userTank = nullptr;
+    TankInfo* enemyTank = nullptr;
     Game(){
         Platform = new PlatformP;
+        userTank = new TankInfo(true);
+        enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
+        state = EMPTY;
+        pointed_option = NEW_GAME;
+        chosen_option = NONE;
     };
 };
 
 void displayMenu(Game* g);
+void get_Menu_choice(Game* g, KeyState* key);
+void changeState(Game* g);
 bool Start(Game* g);
-void ProcessInput(Game* g);
+void ProcessInput(Game* g, bool done);
 void Update(Game* g);
+void runMainScene(Game* g);
 void Render(Game* g);
 void Close(Game* g);
 

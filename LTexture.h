@@ -24,6 +24,9 @@ global_variable TTF_Font* gFont = NULL;
 const global_variable int LEVEL_WIDTH = 1800;
 const global_variable int LEVEL_HEIGHT = 1200;
 
+global_variable int TEXT_W = 200;
+global_variable int TEXT_H = 200;
+
 //Tile constants
 const global_variable int TOTAL_TILES = 2400;
 const global_variable int TOTAL_TILE_SPRITES = 13;
@@ -111,7 +114,7 @@ class LTexture
 		
 		#if defined(SDL_TTF_MAJOR_VERSION)
 		//Creates image from font string
-    bool loadFromRenderedText(char* textureText, SDL_Color textColor, TTF_Font* gFont , SDL_Renderer* gRenderer);
+    bool loadFromRenderedText(char* textureText, float ScaleW, float ScaleH, SDL_Color textColor, TTF_Font* gFont , SDL_Renderer* gRenderer);
 		#endif
 
 		//Deallocates texture

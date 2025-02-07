@@ -31,8 +31,8 @@ global_variable real32 TimeElapsed = 0;
 global_variable real32 respawnStartTime = 0;
 global_variable real32 respawnEndTime = 0;
 global_variable real32 FPS = 0;
-const global_variable real32 StandardFPS = 60.0f;
 
+const global_variable real32 StandardFPS = 60.0f;
 const global_variable uint32 FRAME_DELAY = 1000/60;
 // const global_variable int KEY_COUNT = SDL_NUM_SCANCODES;
 
@@ -182,13 +182,6 @@ int main( int argc, char* args[] )
                 // If user Tank is destroyed add spawnTank here
                 
 				// dot.move( tileSet, touchesWall(dot.GetmBox(), tileSet));
-                setCamera(camera, userTank);
-
-                
-				//Clear screen
-				SDL_SetRenderDrawColor( Platform.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-				// SDL_SetRenderDrawColor( Platform.GetRenderer(), 0xFF, 0xFF, 0xFF, 0xFF );
-				SDL_RenderClear( Platform.gRenderer);
 				// SDL_RenderClear( Platform.GetRenderer());
 
 				//Render current frame
@@ -208,6 +201,13 @@ int main( int argc, char* args[] )
 					// tileSet[ i ]->render( camera, Platform.GetRenderer(),  Platform.GetgTileTexture(),  Platform.GetgTileClips(), checkCollision(&camera, tileSet[ i ]->getBox()));
 				}
                
+                setCamera(camera, userTank);
+
+                
+				//Clear screen
+				SDL_SetRenderDrawColor( Platform.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+				// SDL_SetRenderDrawColor( Platform.GetRenderer(), 0xFF, 0xFF, 0xFF, 0xFF );
+				SDL_RenderClear( Platform.gRenderer);
                render(userTank, Uframe, camera);
                // NOTE: Bugs lied here
                 k = 0;

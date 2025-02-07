@@ -13,11 +13,12 @@
 // TODO: CREATE DISPLAY MENU, CREATE STATES HERE
 
 // NOTE: Using FSM (in this case the easiest and simplest is SWITCH CASE method)
+
 enum STATE{
-    EMPTY, MENU_IDLE, IN_GAME, PAUSE, 
+    EMPTY, MENU_IDLE, IN_GAME, PAUSE
 };
 
-enum OPTION{
+enum MENUCHOICE{
     NONE, NEW_GAME, RESUME, OPTIONS, EXIT
 };
 

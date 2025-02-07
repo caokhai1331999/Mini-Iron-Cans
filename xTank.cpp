@@ -255,8 +255,8 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
 //Centers the camera over the Tank
 void setCamera( SDL_Rect& camera, TankInfo* UserTank ){
     // Initialize the collision box
-
 	camera.x = ( UserTank->mBox.x + TANK_WIDTH / 2 ) - camera.w/2;
+    // Give a fair distance between the camera and the main tank
 	camera.y = ( UserTank->mBox.y + TANK_HEIGHT / 2 ) - camera.h/2;    
         
 	//Keep the camera in bounds

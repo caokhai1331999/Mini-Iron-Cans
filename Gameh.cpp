@@ -7,7 +7,63 @@
    ======================================================================== */
 
 void displayMenu(Game* g){
+    gFont = TTF_OpenFont( "Roboto-Thin.ttf", 28 );
+    // SDL_Color TextColor = {249 ,166 ,2};
+    SDL_Color TextColor = {0 ,0 ,0};
+    float scale = 0.0f;
+
+    for(uint8 i = 0; i < 3; ++i){
+
+        // NOTE: Scale up the text whenever it is pointed to
+        if((uint8)g->pointed_option == i){            
+            scale = 1.5f;   
+        } else {
+            scale = 1.0f;
+        }
+
+        if (!g->Platform.gTextTexture->loadFromRenderedText(Menu[i], scale, scale, TextColor, gFont, Platform.gRenderer)) {
+            printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );
+        } else {                           Platform.gTextTexture->render(Platform.gRenderer, SCREEN_WIDTH - 200, 30 + i*30);
+        }                       
+    }
     
+}
+
+void get_Menu_choice(Game* g, KeyState* currentKey){
+
+    if(g->state == MENU_IDLE || g->state == PAUSE){        
+        if(currentKey->key == SDL_SCANCODE_DOWN && currentKey->pressed){
+            g->pointed_option ++;
+            if(g->pointed_option > MENUCHOICE(3)){
+                g->pointed_option = MENUCHOICE(0);
+            };
+        }
+
+        if(currentKey->key == SDL_SCANCODE_KP_ENTER && currentKey->pressed)
+        {            
+            if(g->chosen_option != g->pointed_option)
+            {
+                g->chosen_option = g->pointed_option;
+            }
+        }
+    }
+    
+};
+
+void Menu(Game* g){
+    // If the the current choice is that option and the input is Enter then we
+    // proces accordingly
+    MENUCHOICE ChoseChoice = NONE;
+    ;
+    currentChoice = get_Menu_choice(g);
+    if();
+    while(currentChoice == NONE){
+        displayMenu(g);
+        switch(currentChoice){
+            case: 
+        }
+    }
+    if();
 }
 
 bool Start(Game* g){
@@ -39,7 +95,12 @@ bool Start(Game* g){
     }
 }
 
-void ProcessInput(Game* g){
+void changeState(Game* g){
+    //NOTE: Now WORK ON THIS
+    switch()
+}
+
+void ProcessInput(Game* g, bool done){
     KeyState PreviousBut = {};
     KeyState CurrentBut = {};
     while( SDL_PollEvent( &g->platform->e ) != 0 )
@@ -47,7 +108,7 @@ void ProcessInput(Game* g){
         //User requests quit
         if( e.type == SDL_QUIT || e.key.keysym.scancode == 41 )
         {
-            quit = true;
+            done = true;
         }
 
         // Modulize this part to reuse it
@@ -62,17 +123,21 @@ void ProcessInput(Game* g){
                 if(CurrentBut.init == 0){
                     CurrentBut.init = 1;
                 }
-
+            
             PreviousBut = CurrentBut;
             CurrentBut.pressed = (e.key.state == SDL_PRESSED);
             CurrentBut.key = e.key.keysym.scancode;
             CurrentBut.repeat = e.key.repeat;
-            handleEvent(&CurrentBut, g->userTank);                       
+            if (g->state  == MENU_IDLE||g->state == PAUSE){
+                get_Menu_choice(g, &CurrentBut);   
+            } else {
+                handleEvent(&CurrentBut, g->userTank);                       
+            } 
         }
     }
 }    
 
-void Update(Game* g){
+void runMainScene(Game* g){
     move( false, Ucollided, g->userTank);
     for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
         BiTankCheck(&g->enemyTank[i], g->userTank);
@@ -114,7 +179,28 @@ void Update(Game* g){
         }                
     };
 
-    setCamera(camera, g->userTank);    
+    setCamera(camera, g->userTank);        
+}
+
+void Update(Game* g){
+    // The fms loop through state is right here
+
+    // Still haven't figure out how to change state right here
+    switch (g->state){
+        case MENU_IDLE:
+            Menu();
+            break;
+
+        case IN_GAME:
+            runMainScene(g);
+            break;
+
+        case PAUSE:
+            // STORE ALL the Game stats here
+            Menu(g);
+            break;            
+    }
+    
 }
 
 void Render(Game* g){
@@ -169,5 +255,5 @@ void Render(Game* g){
  SDL_RenderPresent( Platform.gRenderer);
  TimeElapsed = EndTime - StartTime;
  FPS = 1/(TimeElapsed/1000.0f);
- StartTime = EndTime;
+ StartTime = EndTime; 
 }
