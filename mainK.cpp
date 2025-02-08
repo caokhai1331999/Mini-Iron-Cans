@@ -22,6 +22,9 @@ int main( int argc, char* args[] )
                 Update(&game);
                 Render(&game);
                 }
+            // Clean up
+            close(&game);
             };
-        }        
+        }
+return 0;
 }

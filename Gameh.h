@@ -32,6 +32,7 @@ struct Game{
     KSTATE state;
     MENUCHOICE pointed_option;
     MENUCHOICE chosen_option;
+    Tile* tileSet[ TOTAL_TILES ];
     Position* TankPos = nullptr;    
     PlatformP* Platform = nullptr;
     TankInfo* userTank = nullptr;
@@ -40,7 +41,7 @@ struct Game{
         Platform = new PlatformP;
         userTank = new TankInfo(true);
         enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
-        state = EMPTY;
+        state = MENU_IDLE;
         pointed_option = NEW_GAME;
         chosen_option = NONE;
     };
