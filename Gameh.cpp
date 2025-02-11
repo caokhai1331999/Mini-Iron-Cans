@@ -58,12 +58,12 @@ void Menu(Game* g){
         displayMenu(g);
         get_Menu_choice(g);
         //NOTE: Still on working
-        switch(g->chosen_option){
-            case NEW_GAME: changeState(g); break; // Create game state from scratch
-            case RESUME: changeState(g); break;   // 
-            case OPTIONS: break;  // not decide yet temporary do nothing
-            case EXIT: changeState(g); break;     // kill the game clean the asset
-            default : g->chosen_option = NONE; break;
+        // switch(g->chosen_option){
+        //     case NEW_GAME: changeState(g); break; // Create game state from scratch
+        //     case RESUME: changeState(g); break;   // 
+        //     case OPTIONS: break;  // not decide yet temporary do nothing
+        //     case EXIT: changeState(g); break;     // kill the game clean the asset
+        //     default : g->chosen_option = NONE; break;
     }
 }
 
@@ -103,14 +103,40 @@ bool Start(Game* g){
         }
 }
 
-void changeState(Game* g, KeyState* key){
-    //NOTE: Now WORK ON THIS
-    // HOW!!!!
+void changeState(Game* g, KeyState* key, done){
+
     switch(g->state){
-        case MENU_IDLE: if(key.key == );break;
-        case RESUME: g->state = IN_GAME;break;
-        case EXIT: g->state = EMPTY;break;
-    }
+        case MENU_INIT:
+            if (g->chosen_option == NEW_GAME){
+                g->state = GAME_NEW; 
+            } else if (g->chosen_option == EXIT){
+                g->state = EMPTY;
+            }
+            break;
+        case PAUSE:
+            if(g->chosen_option == NEW_GAME){
+                g->state = GAME_NEW;
+            }else if (g->chosen_option == RESUME){
+                g->state = GAME_RELOADED;
+            }else if (g->chosen_option == EXIT){
+                g->state = EMPTY;
+            };
+            break;
+        case GAME_NEW:
+            if (key->key == SDL_SCANCODE_ESCAPE && key->pressed){
+                g->state = PAUSE;
+            }
+            break;
+
+        case GAME_RELOADED:
+            if (key->key == SDL_SCANCODE_ESCAPE && key->pressed){
+                g->state = PAUSE;
+            }
+            break;
+        case EMPTY: done = (done!=true)?true:false;
+            break;
+    }    
+    
 }
 
 void ProcessInput(Game* g, bool done){
@@ -142,17 +168,26 @@ void ProcessInput(Game* g, bool done){
             CurrentBut.key = e.key.keysym.scancode;
             CurrentBut.repeat = e.key.repeat;
 
-
+            // NOTE: Consider removing this one
+            // (This seemed kind of unproper)
             switch(g->state){
-                case MENU_IDLE: get_Menu_choice(g, &CurrentBut); changeState(g);break;
-                case PAUSE: get_Menu_choice(g, &CurrentBut);changeState(g, &CurrentBut);break;
-                case IN_GAME: changeState(g, &CurrentBut);handleEvent(&CurrentBut, g->userTank);break;
-                case EMPTY: done = (done!=true)?true:false;break;
-            }
-               }
-            }            
+                case MENU_INIT: get_Menu_choice(g, &CurrentBut);
+                    break;
+                case PAUSE: get_Menu_choice(g, &CurrentBut);
+                    break;
+                case GAME_NEW:
+                    handleEvent(&CurrentBut, g->userTank);
+                    break;
+                case GAME_RELOADED:
+                    handleEvent(&CurrentBut, g->userTank);
+                    break;
+                case EMPTY:
+                    break;
+            }    
         }
-    }
+    }            
+  }
+}
 
 void runMainScene(Game* g){
     move( false, Ucollided, g->userTank);
@@ -203,27 +238,34 @@ void Update(Game* g){
     // NOTE: STILL IN WORK HERE
     // The fms loop through state is right here
     // Still haven't figure out how to change state right here
-    changeState(g);
-    switch (g->state){
-        case MENU_IDLE:
-            Menu(g);
-            break;
 
-        case IN_GAME:
-            runMainScene(g);
-            ProcessInput(g);
+    // NOTE: Put the fsm here to loop through states change
+    // Do I need to jam all stuffs into game : update, render, input process    
+    switch (g->state){
+        case MENU_INIT:
+            displayMenu(g);
             break;
 
         case PAUSE:
+            displayMenu(g);
+            break;
+
+        case GAME_NEW:
             // STORE ALL the Game stats here(already in game var)
-            Menu(g);
-            ProcessInput(g);
+            g = new Game;
+            g->state = GAME_NEW;
+            runMainScene(g);
+            break;
+
+        case GAME_RELOADED:
+            // STORE ALL the Game stats here(already in game var)
+            runMainScene(g);
             break;
     }
     
 }
 
-void Render(Game* g){
+void RenderMainScene(Game* g){
 
  //Clear screen
  SDL_RenderClear( Platform.gRenderer);
@@ -262,6 +304,7 @@ void Render(Game* g){
                  SDL_Delay(0.032);
                  frame[k]++;
              }
+
          }
      } else {
          render(&enemyTank[k], frame[k], camera);                        
@@ -277,7 +320,8 @@ void Render(Game* g){
  FPS = 1/(TimeElapsed/1000.0f);
  StartTime = EndTime;         
     } else if (g->state == MENU_IDLE || g->state == PAUSE){
-     Platform.gMenuTexture->render(Platform.gRenderer, SCREEN_WIDTH - 200, 30 + i*30);        
+     // NOTE: The render part is already in the menu fx. So what will I put in this one???
+     Menu(g);
     }
  
 }

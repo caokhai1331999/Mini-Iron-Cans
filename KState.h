@@ -15,7 +15,8 @@
 // NOTE: Using FSM (in this case the easiest and simplest is SWITCH CASE method)
 
 enum STATE{
-    EMPTY, MENU_IDLE, IN_GAME, PAUSE
+    // NOTE: How to tell the new game state apart from the current one
+    EMPTY, MENU_INIT, GAME_NEW, GAME_RELOADED, PAUSE
 };
 
 enum MENUCHOICE{

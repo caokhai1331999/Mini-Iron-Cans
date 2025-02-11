@@ -41,7 +41,7 @@ struct Game{
         Platform = new PlatformP;
         userTank = new TankInfo(true);
         enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
-        state = MENU_IDLE;
+        // state = MENU_IDLE;
         pointed_option = NEW_GAME;
         chosen_option = NONE;
     };
@@ -53,7 +53,11 @@ void changeState(Game* g);
 bool Start(Game* g);
 void ProcessInput(Game* g, bool done);
 void Update(Game* g);
+
+// TODO: Complete this part
 void runMainScene(Game* g);
+void RenderMainScene(Game* g);
+//===========================
 void Render(Game* g);
 void Close(Game* g);
 

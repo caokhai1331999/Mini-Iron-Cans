@@ -27,6 +27,11 @@ struct PlatformP {
    SDL_Rect gExplosionClips [ANIMATING_FRAMES];
    SDL_Rect gTileClips [TOTAL_TILE_SPRITES];
 
+    LTexture* RedTexture;
+    LTexture* GreenTexture;
+    LTexture* BlueTexture;
+    LTexture* ShimmerTexture;
+    
     LTexture* gMenuTexture;
     LTexture* gTileTexture;
     LTexture* gTextTexture;
