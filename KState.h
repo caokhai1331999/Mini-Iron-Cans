@@ -7,8 +7,7 @@
    $Notice: (C) Copyright 2024 by Cao Khai, Inc. All Rights Reserved. $
    ======================================================================== */
 
-#include "Tile.h"
-#include "xTank.h"
+#include "stdint.h"
 
 // TODO: CREATE DISPLAY MENU, CREATE STATES HERE
 

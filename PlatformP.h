@@ -18,11 +18,9 @@
 
 #define real32 float
 #define uint32 uint32_t
-
+const char menuChoices [] = {"NEW GAME","RESUME","OPTIONS","EXIT"}; 
 
 struct PlatformP {
-
-   const char* menuChoices [] = {"NEW GAME","RESUME","OPTIONS","EXIT"}; 
     
    SDL_Rect gExplosionClips [ANIMATING_FRAMES];
    SDL_Rect gTileClips [TOTAL_TILE_SPRITES];
@@ -90,16 +88,16 @@ struct PlatformP {
 // #endif
 
 //Frees media and shuts down SDL
-bool init();    
-bool LoadMedia(Tile* tiles[]);
-void close( Tile* tiles[]);
+bool init(PlatformP* Platform);    
+bool LoadMedia(Tile* tiles[], PlatformP* Platform);
+void close( Tile* tiles[], PlatformP* Platform);
 bool IsArrow(SDL_Scancode KeyCode);
 //Sets tiles from tile map
-bool setTiles( Tile *tiles[]);
+bool setTiles( Tile *tiles[], PlatformP* Platform);
 bool valid(SDL_Event e, KeyState* previousKey, KeyState* currentKey);
 //Shows the Tank on the screen
-void render(TankInfo* Tank, int frame, SDL_Rect& camera );
-void renderText(real32 FPS, const TankInfo* userTank);
+void render(TankInfo* Tank, int frame, SDL_Rect& camera, PlatformP* Platform );
+void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform);
 
 #define PLATFORMP_H
 #endif

@@ -17,7 +17,7 @@ bool IsArrow(SDL_Scancode KeyCode){
 };
 
 //Frees media and shuts down SDL
-void close( Tile* tiles[]){
+void close( Tile* tiles[], PlatformP* Platform){
 	//Deallocate tiles
 	for( int i = 0; i < TOTAL_TILES; ++i )
 	{
@@ -29,21 +29,21 @@ void close( Tile* tiles[]){
 	}
 
 	//Free loaded images
-	// Platform.gDotTexture->free();
-	Platform.gTileTexture->free();
-	Platform.gMenuTexture->free();
-    Platform.gTextTexture->free();
-    Platform.gUserTankTexture->free();
-    Platform.gEnemyTankTexture->free();
-    Platform.gUserBulletTexture->free();
-    Platform.gEnemyBulletTexture->free();
-    Platform.gExplosionTexture->free();
+	// Platform->gDotTexture->free();
+	Platform->gTileTexture->free();
+	Platform->gMenuTexture->free();
+    Platform->gTextTexture->free();
+    Platform->gUserTankTexture->free();
+    Platform->gEnemyTankTexture->free();
+    Platform->gUserBulletTexture->free();
+    Platform->gEnemyBulletTexture->free();
+    Platform->gExplosionTexture->free();
     
 	//Destroy window	
-	SDL_DestroyRenderer( Platform.gRenderer );
-	SDL_DestroyWindow( Platform.gWindow );
-	Platform.gWindow = NULL;
-	Platform.gRenderer = NULL;
+	SDL_DestroyRenderer( Platform->gRenderer );
+	SDL_DestroyWindow( Platform->gWindow );
+	Platform->gWindow = NULL;
+	Platform->gRenderer = NULL;
 
 	//Quit SDL subsystems
     TTF_Quit();
@@ -51,38 +51,38 @@ void close( Tile* tiles[]){
 	SDL_Quit();    
 }
 
-bool LoadMedia(Tile* tiles[]){
+bool LoadMedia(Tile* tiles[],PlatformP* Platform){
 	//Loading success flag
 	bool success = true;
 
 	//Load dot texture
     // NOTE: The Bugs lied here
-	if( !Platform.gUserTankTexture->loadFromFile( "media/myTank.png", Platform.gRenderer, (int)100, (int)100) )
+	if( !Platform->gUserTankTexture->loadFromFile( "media/myTank.png", Platform->gRenderer, (int)100, (int)100) )
 	{
 		printf( "Failed to load User tank texture!\n" );
 		success = false;
 	}
 // else {
 
-      // Platform.gSpriteClips[ 0 ].x = 0;
-      // Platform.gSpriteClips[ 0 ].y = 0;
-      // Platform.gSpriteClips[ 0 ].w = 256;
-      // Platform.gSpriteClips[ 0 ].h = 170;
+      // Platform->gSpriteClips[ 0 ].x = 0;
+      // Platform->gSpriteClips[ 0 ].y = 0;
+      // Platform->gSpriteClips[ 0 ].w = 256;
+      // Platform->gSpriteClips[ 0 ].h = 170;
 
-      // Platform.gSpriteClips[ 1 ].x = 256;
-      // Platform.gSpriteClips[ 1 ].y = 0;
-      // Platform.gSpriteClips[ 1 ].w = 256;
-      // Platform.gSpriteClips[ 1 ].h = 170;
+      // Platform->gSpriteClips[ 1 ].x = 256;
+      // Platform->gSpriteClips[ 1 ].y = 0;
+      // Platform->gSpriteClips[ 1 ].w = 256;
+      // Platform->gSpriteClips[ 1 ].h = 170;
 
-      // Platform.gSpriteClips[ 2 ].x = 512;
-      // Platform.gSpriteClips[ 2 ].y = 0;
-      // Platform.gSpriteClips[ 2 ].w = 256;
-      // Platform.gSpriteClips[ 2 ].h = 170;
+      // Platform->gSpriteClips[ 2 ].x = 512;
+      // Platform->gSpriteClips[ 2 ].y = 0;
+      // Platform->gSpriteClips[ 2 ].w = 256;
+      // Platform->gSpriteClips[ 2 ].h = 170;
 
-      // Platform.gSpriteClips[ 3 ].x = 768;
-      // Platform.gSpriteClips[ 3 ].y = 0;
-      // Platform.gSpriteClips[ 3 ].w = 256;
-      // Platform.gSpriteClips[ 3 ].h = 170;
+      // Platform->gSpriteClips[ 3 ].x = 768;
+      // Platform->gSpriteClips[ 3 ].y = 0;
+      // Platform->gSpriteClips[ 3 ].w = 256;
+      // Platform->gSpriteClips[ 3 ].h = 170;
 
 //      gSpriteClips[ 4 ].x = 1000;
 //      gSpriteClips[ 4 ].y = 0;
@@ -91,14 +91,14 @@ bool LoadMedia(Tile* tiles[]){
      
     // }
 
-	if( !Platform.gEnemyTankTexture->loadFromFile( "media/enemyTank.png", Platform.gRenderer, (int)100, (int)100))
+	if( !Platform->gEnemyTankTexture->loadFromFile( "media/enemyTank.png", Platform->gRenderer, (int)100, (int)100))
 	{
 		printf( "Failed to load Enemy tank texture!\n" );
 		success = false;
 	} // else {
 
     // NOTE: Prepare a animated background here
-	if( !Platform.gMenuTexture->loadFromFile( "media/background.png", Platform.gRenderer, (int)100, (int)100))
+	if( !Platform->gMenuTexture->loadFromFile( "media/background.png", Platform->gRenderer, (int)100, (int)100))
 	{
 		printf( "Failed to load menu background texture!\n" );
 		success = false;
@@ -106,21 +106,21 @@ bool LoadMedia(Tile* tiles[]){
 
 
 	//Load tile texture
-        if( !Platform.gTileTexture->loadFromFile( "media/32x32_map_tile v3.1 [MARGINLESS].png", Platform.gRenderer, (int)30, (int)30) )
+        if( !Platform->gTileTexture->loadFromFile( "media/32x32_map_tile v3.1 [MARGINLESS].png", Platform->gRenderer, (int)30, (int)30) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
 	}
 
 	//Load tile texture
-	if( !Platform.gUserBulletTexture->loadFromFile( "media/myBullet.png", Platform.gRenderer, (int)20, (int)20) )
+	if( !Platform->gUserBulletTexture->loadFromFile( "media/myBullet.png", Platform->gRenderer, (int)20, (int)20) )
 	{
 		printf( "Failed to load user bullet set texture!\n" );
 		success = false;
 	}
 
 	//Load tile texture
-	if( !Platform.gEnemyBulletTexture->loadFromFile( "media/EnemyBullet.png", Platform.gRenderer, (int)20, (int)20) )
+	if( !Platform->gEnemyBulletTexture->loadFromFile( "media/EnemyBullet.png", Platform->gRenderer, (int)20, (int)20) )
 	{
 		printf( "Failed to load enemy bullet set texture!\n" );
 		success = false;
@@ -128,65 +128,65 @@ bool LoadMedia(Tile* tiles[]){
 
 
 	//Load explosion texture
-	if( !Platform.gExplosionTexture->loadFromFile( "media/explosion3(background removed).png", Platform.gRenderer, (int)100, (int)100) )
+	if( !Platform->gExplosionTexture->loadFromFile( "media/explosion3(background removed).png", Platform->gRenderer, (int)100, (int)100) )
 	{
 		printf( "Failed to load explosion texture!\n" );
 		success = false;
 	} else {
 
-      Platform.gExplosionClips[ 0 ].x = 0;
-      Platform.gExplosionClips[ 0 ].y = 0;
-      Platform.gExplosionClips[ 0 ].w = 90;
-      Platform.gExplosionClips[ 0 ].h = 90;
+      Platform->gExplosionClips[ 0 ].x = 0;
+      Platform->gExplosionClips[ 0 ].y = 0;
+      Platform->gExplosionClips[ 0 ].w = 90;
+      Platform->gExplosionClips[ 0 ].h = 90;
 
-      Platform.gExplosionClips[ 1 ].x = 95;
-      Platform.gExplosionClips[ 1 ].y = 0;
-      Platform.gExplosionClips[ 1 ].w = 90;
-      Platform.gExplosionClips[ 1 ].h = 90;
+      Platform->gExplosionClips[ 1 ].x = 95;
+      Platform->gExplosionClips[ 1 ].y = 0;
+      Platform->gExplosionClips[ 1 ].w = 90;
+      Platform->gExplosionClips[ 1 ].h = 90;
 
-      Platform.gExplosionClips[ 2 ].x = 185;
-      Platform.gExplosionClips[ 2 ].y = 0;
-      Platform.gExplosionClips[ 2 ].w = 90;
-      Platform.gExplosionClips[ 2 ].h = 90;
+      Platform->gExplosionClips[ 2 ].x = 185;
+      Platform->gExplosionClips[ 2 ].y = 0;
+      Platform->gExplosionClips[ 2 ].w = 90;
+      Platform->gExplosionClips[ 2 ].h = 90;
 
-      Platform.gExplosionClips[ 3 ].x = 275;
-      Platform.gExplosionClips[ 3 ].y = 0;
-      Platform.gExplosionClips[ 3 ].w = 90;
-      Platform.gExplosionClips[ 3 ].h = 90;
+      Platform->gExplosionClips[ 3 ].x = 275;
+      Platform->gExplosionClips[ 3 ].y = 0;
+      Platform->gExplosionClips[ 3 ].w = 90;
+      Platform->gExplosionClips[ 3 ].h = 90;
 
-      Platform.gExplosionClips[ 4 ].x = 365;
-      Platform.gExplosionClips[ 4 ].y = 0;
-      Platform.gExplosionClips[ 4 ].w = 90;
-      Platform.gExplosionClips[ 4 ].h = 90;
+      Platform->gExplosionClips[ 4 ].x = 365;
+      Platform->gExplosionClips[ 4 ].y = 0;
+      Platform->gExplosionClips[ 4 ].w = 90;
+      Platform->gExplosionClips[ 4 ].h = 90;
 
-      Platform.gExplosionClips[ 5 ].x = 0;
-      Platform.gExplosionClips[ 5 ].y = 90;
-      Platform.gExplosionClips[ 5 ].w = 90;
-      Platform.gExplosionClips[ 5 ].h = 90;
+      Platform->gExplosionClips[ 5 ].x = 0;
+      Platform->gExplosionClips[ 5 ].y = 90;
+      Platform->gExplosionClips[ 5 ].w = 90;
+      Platform->gExplosionClips[ 5 ].h = 90;
 
-      Platform.gExplosionClips[ 6 ].x = 95;
-      Platform.gExplosionClips[ 6 ].y = 90;
-      Platform.gExplosionClips[ 6 ].w = 90;
-      Platform.gExplosionClips[ 6 ].h = 90;      
+      Platform->gExplosionClips[ 6 ].x = 95;
+      Platform->gExplosionClips[ 6 ].y = 90;
+      Platform->gExplosionClips[ 6 ].w = 90;
+      Platform->gExplosionClips[ 6 ].h = 90;      
 
-      Platform.gExplosionClips[ 7 ].x = 185;
-      Platform.gExplosionClips[ 7 ].y = 90;
-      Platform.gExplosionClips[ 7 ].w = 90;
-      Platform.gExplosionClips[ 7 ].h = 90;      
+      Platform->gExplosionClips[ 7 ].x = 185;
+      Platform->gExplosionClips[ 7 ].y = 90;
+      Platform->gExplosionClips[ 7 ].w = 90;
+      Platform->gExplosionClips[ 7 ].h = 90;      
 
-      Platform.gExplosionClips[ 8 ].x = 275;
-      Platform.gExplosionClips[ 8 ].y = 90;
-      Platform.gExplosionClips[ 8 ].w = 90;
-      Platform.gExplosionClips[ 8 ].h = 90;      
+      Platform->gExplosionClips[ 8 ].x = 275;
+      Platform->gExplosionClips[ 8 ].y = 90;
+      Platform->gExplosionClips[ 8 ].w = 90;
+      Platform->gExplosionClips[ 8 ].h = 90;      
 
-      Platform.gExplosionClips[ 9 ].x = 365;
-      Platform.gExplosionClips[ 9 ].y = 90;
-      Platform.gExplosionClips[ 9 ].w = 90;
-      Platform.gExplosionClips[ 9 ].h = 90;      
+      Platform->gExplosionClips[ 9 ].x = 365;
+      Platform->gExplosionClips[ 9 ].y = 90;
+      Platform->gExplosionClips[ 9 ].w = 90;
+      Platform->gExplosionClips[ 9 ].h = 90;      
     }
 
 	//Load tile map
-	if( !setTiles( tiles ) )
+	if( !setTiles( tiles, Platform) )
 	{
 		printf( "Failed to load tile set!\n" );
 		success = false;
@@ -195,13 +195,13 @@ bool LoadMedia(Tile* tiles[]){
 	return success;
 }
 
-bool init()
+bool init(PlatformP* Platform)
 {
 	//Initialization flag
 	bool success = true;
 
-    Platform.gWindow = NULL;
-    Platform.gRenderer = NULL;
+    Platform->gWindow = NULL;
+    Platform->gRenderer = NULL;
     srand(time(nullptr));    
 	//Initialize SDL
 	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
@@ -218,8 +218,8 @@ bool init()
 		}
 
 		//Create window
-		Platform.gWindow = SDL_CreateWindow( "SDL Tank Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE );
-		if( Platform.gWindow == NULL )
+		Platform->gWindow = SDL_CreateWindow( "SDL Tank Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE );
+		if( Platform->gWindow == NULL )
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
 			success = false;
@@ -227,8 +227,8 @@ bool init()
 		else
 		{
 			//Create renderer for window
-			Platform.gRenderer = SDL_CreateRenderer( Platform.gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-			if( Platform.gRenderer == NULL )
+			Platform->gRenderer = SDL_CreateRenderer( Platform->gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+			if( Platform->gRenderer == NULL )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
 				success = false;
@@ -236,7 +236,7 @@ bool init()
 			else
 			{
 				//Initialize renderer color
-				SDL_SetRenderDrawColor( Platform.gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+				SDL_SetRenderDrawColor( Platform->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
 				//Initialize PNG loading
 				int imgFlags = IMG_INIT_PNG;
@@ -262,7 +262,7 @@ bool init()
 
 
 //Sets tiles from tile map
-bool setTiles( Tile *tiles[]){
+bool setTiles( Tile *tiles[],PlatformP* Platform){
     
 	//Success flag
 	bool tilesLoaded = true;
@@ -354,75 +354,75 @@ bool setTiles( Tile *tiles[]){
 		{
             // NOTE: TILE_RED or TILE_GREEN is TileTypes
             // printf("Loading Map\n");
-			// Platform.gTileClips[ SMALL_GRASS_TILE ].x = 0;
-			// Platform.gTileClips[ SMALL_GRASS_TILE ].y = 30;
-			// Platform.gTileClips[ SMALL_GRASS_TILE ].w = SMALL_TILE_WIDTH;
-			// Platform.gTileClips[ SMALL_GRASS_TILE ].h = SMALL_TILE_HEIGHT;
+			// Platform->gTileClips[ SMALL_GRASS_TILE ].x = 0;
+			// Platform->gTileClips[ SMALL_GRASS_TILE ].y = 30;
+			// Platform->gTileClips[ SMALL_GRASS_TILE ].w = SMALL_TILE_WIDTH;
+			// Platform->gTileClips[ SMALL_GRASS_TILE ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ SMALL_GRASS_TILE_1 ].x = 0;
-			Platform.gTileClips[ SMALL_GRASS_TILE_1 ].y = 130;
-			Platform.gTileClips[ SMALL_GRASS_TILE_1 ].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[ SMALL_GRASS_TILE_1 ].h = SMALL_TILE_HEIGHT;
+			Platform->gTileClips[ SMALL_GRASS_TILE_1 ].x = 0;
+			Platform->gTileClips[ SMALL_GRASS_TILE_1 ].y = 130;
+			Platform->gTileClips[ SMALL_GRASS_TILE_1 ].w = SMALL_TILE_WIDTH;
+			Platform->gTileClips[ SMALL_GRASS_TILE_1 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ SMALL_GRASS_TILE_2 ].x = 30;
-			Platform.gTileClips[ SMALL_GRASS_TILE_2 ].y = 130;
-			Platform.gTileClips[ SMALL_GRASS_TILE_2 ].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[ SMALL_GRASS_TILE_2 ].h = SMALL_TILE_HEIGHT;
+			Platform->gTileClips[ SMALL_GRASS_TILE_2 ].x = 30;
+			Platform->gTileClips[ SMALL_GRASS_TILE_2 ].y = 130;
+			Platform->gTileClips[ SMALL_GRASS_TILE_2 ].w = SMALL_TILE_WIDTH;
+			Platform->gTileClips[ SMALL_GRASS_TILE_2 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ SMALL_GRASS_TILE_3 ].x = 60;
-			Platform.gTileClips[ SMALL_GRASS_TILE_3 ].y = 130;
-			Platform.gTileClips[ SMALL_GRASS_TILE_3 ].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[ SMALL_GRASS_TILE_3 ].h = SMALL_TILE_HEIGHT;
+			Platform->gTileClips[ SMALL_GRASS_TILE_3 ].x = 60;
+			Platform->gTileClips[ SMALL_GRASS_TILE_3 ].y = 130;
+			Platform->gTileClips[ SMALL_GRASS_TILE_3 ].w = SMALL_TILE_WIDTH;
+			Platform->gTileClips[ SMALL_GRASS_TILE_3 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ SMALL_GRASS_TILE_4 ].x = 60;
-			Platform.gTileClips[ SMALL_GRASS_TILE_4 ].y = 160;
-			Platform.gTileClips[ SMALL_GRASS_TILE_4 ].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[ SMALL_GRASS_TILE_4 ].h = SMALL_TILE_HEIGHT;
+			Platform->gTileClips[ SMALL_GRASS_TILE_4 ].x = 60;
+			Platform->gTileClips[ SMALL_GRASS_TILE_4 ].y = 160;
+			Platform->gTileClips[ SMALL_GRASS_TILE_4 ].w = SMALL_TILE_WIDTH;
+			Platform->gTileClips[ SMALL_GRASS_TILE_4 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ SMALL_GRASS_TILE_5 ].x = 60;
-			Platform.gTileClips[ SMALL_GRASS_TILE_5 ].y = 160;
-			Platform.gTileClips[ SMALL_GRASS_TILE_5 ].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[ SMALL_GRASS_TILE_5 ].h = SMALL_TILE_HEIGHT;
+			Platform->gTileClips[ SMALL_GRASS_TILE_5 ].x = 60;
+			Platform->gTileClips[ SMALL_GRASS_TILE_5 ].y = 160;
+			Platform->gTileClips[ SMALL_GRASS_TILE_5 ].w = SMALL_TILE_WIDTH;
+			Platform->gTileClips[ SMALL_GRASS_TILE_5 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ SMALL_GRASS_TILE_6 ].x = 30;
-			Platform.gTileClips[ SMALL_GRASS_TILE_6 ].y = 190;
-			Platform.gTileClips[ SMALL_GRASS_TILE_6 ].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[ SMALL_GRASS_TILE_6 ].h = SMALL_TILE_HEIGHT;
+			Platform->gTileClips[ SMALL_GRASS_TILE_6 ].x = 30;
+			Platform->gTileClips[ SMALL_GRASS_TILE_6 ].y = 190;
+			Platform->gTileClips[ SMALL_GRASS_TILE_6 ].w = SMALL_TILE_WIDTH;
+			Platform->gTileClips[ SMALL_GRASS_TILE_6 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ SMALL_STUMP_TILE_1 ].x = 0;
-			Platform.gTileClips[ SMALL_STUMP_TILE_1 ].y = 190;
-			Platform.gTileClips[ SMALL_STUMP_TILE_1 ].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[ SMALL_STUMP_TILE_1 ].h = SMALL_TILE_HEIGHT;
+			Platform->gTileClips[ SMALL_STUMP_TILE_1 ].x = 0;
+			Platform->gTileClips[ SMALL_STUMP_TILE_1 ].y = 190;
+			Platform->gTileClips[ SMALL_STUMP_TILE_1 ].w = SMALL_TILE_WIDTH;
+			Platform->gTileClips[ SMALL_STUMP_TILE_1 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ SMALL_STUMP_TILE_2 ].x = 0;
-			Platform.gTileClips[ SMALL_STUMP_TILE_2 ].y = 220;
-			Platform.gTileClips[ SMALL_STUMP_TILE_2 ].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[ SMALL_STUMP_TILE_2 ].h = SMALL_TILE_HEIGHT;
+			Platform->gTileClips[ SMALL_STUMP_TILE_2 ].x = 0;
+			Platform->gTileClips[ SMALL_STUMP_TILE_2 ].y = 220;
+			Platform->gTileClips[ SMALL_STUMP_TILE_2 ].w = SMALL_TILE_WIDTH;
+			Platform->gTileClips[ SMALL_STUMP_TILE_2 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ SMALL_STUMP_TILE_3 ].x = 0;
-			Platform.gTileClips[ SMALL_STUMP_TILE_3 ].y = 250;
-			Platform.gTileClips[ SMALL_STUMP_TILE_3 ].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[ SMALL_STUMP_TILE_3 ].h = SMALL_TILE_HEIGHT;
+			Platform->gTileClips[ SMALL_STUMP_TILE_3 ].x = 0;
+			Platform->gTileClips[ SMALL_STUMP_TILE_3 ].y = 250;
+			Platform->gTileClips[ SMALL_STUMP_TILE_3 ].w = SMALL_TILE_WIDTH;
+			Platform->gTileClips[ SMALL_STUMP_TILE_3 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ SMALL_STUMP_TILE_4 ].x = 0;
-			Platform.gTileClips[ SMALL_STUMP_TILE_4 ].y = 280;
-			Platform.gTileClips[ SMALL_STUMP_TILE_4 ].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[ SMALL_STUMP_TILE_4 ].h = SMALL_TILE_HEIGHT;
+			Platform->gTileClips[ SMALL_STUMP_TILE_4 ].x = 0;
+			Platform->gTileClips[ SMALL_STUMP_TILE_4 ].y = 280;
+			Platform->gTileClips[ SMALL_STUMP_TILE_4 ].w = SMALL_TILE_WIDTH;
+			Platform->gTileClips[ SMALL_STUMP_TILE_4 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ SMALL_WATER_1 ].x = 0;
-			Platform.gTileClips[ SMALL_WATER_1 ].y = 510;
-			Platform.gTileClips[ SMALL_WATER_1 ].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[ SMALL_WATER_1 ].h = SMALL_TILE_HEIGHT;
+			Platform->gTileClips[ SMALL_WATER_1 ].x = 0;
+			Platform->gTileClips[ SMALL_WATER_1 ].y = 510;
+			Platform->gTileClips[ SMALL_WATER_1 ].w = SMALL_TILE_WIDTH;
+			Platform->gTileClips[ SMALL_WATER_1 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ SMALL_WATER_2 ].x = 0;
-			Platform.gTileClips[ SMALL_WATER_2 ].y = 540;
-			Platform.gTileClips[ SMALL_WATER_2 ].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[ SMALL_WATER_2 ].h = SMALL_TILE_HEIGHT;
+			Platform->gTileClips[ SMALL_WATER_2 ].x = 0;
+			Platform->gTileClips[ SMALL_WATER_2 ].y = 540;
+			Platform->gTileClips[ SMALL_WATER_2 ].w = SMALL_TILE_WIDTH;
+			Platform->gTileClips[ SMALL_WATER_2 ].h = SMALL_TILE_HEIGHT;
 
-			Platform.gTileClips[ SMALL_WOOD_PATH_1 ].x = 320;
-			Platform.gTileClips[ SMALL_WOOD_PATH_1 ].y = 30;
-			Platform.gTileClips[ SMALL_WOOD_PATH_1 ].w = SMALL_TILE_WIDTH;
-			Platform.gTileClips[ SMALL_WOOD_PATH_1 ].h = SMALL_TILE_HEIGHT;
+			Platform->gTileClips[ SMALL_WOOD_PATH_1 ].x = 320;
+			Platform->gTileClips[ SMALL_WOOD_PATH_1 ].y = 30;
+			Platform->gTileClips[ SMALL_WOOD_PATH_1 ].w = SMALL_TILE_WIDTH;
+			Platform->gTileClips[ SMALL_WOOD_PATH_1 ].h = SMALL_TILE_HEIGHT;
 		}
 	}
 
@@ -434,36 +434,36 @@ bool setTiles( Tile *tiles[]){
 }
 
 //Shows the Tank on the screen
-void render(TankInfo* Tank, int frame, SDL_Rect& camera) {
+void render(TankInfo* Tank, int frame, SDL_Rect& camera, PlatformP* Platform) {
 
     if(!Tank->destroyed) {
     //NOTE: Show the tank and bullet here
-    if (Tank->userBelong && Platform.gUserTankTexture!=NULL) {
+    if (Tank->userBelong && Platform->gUserTankTexture!=NULL) {
         // printf("User Tank image is being rendered\n");
-        Platform.gUserTankTexture->render( Platform.gRenderer ,(Tank->mBox.x - camera.x), (Tank->mBox.y - camera.y), NULL,Tank->face);
+        Platform->gUserTankTexture->render( Platform->gRenderer ,(Tank->mBox.x - camera.x), (Tank->mBox.y - camera.y), NULL,Tank->face);
 
         // NOTE: Now the bullets
         // TODO: The bullet not show, Time to check this one
         // The bullet stuck with number 0 while get near bot Tank
-        if(Platform.gUserBulletTexture!=NULL) {             
+        if(Platform->gUserBulletTexture!=NULL) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){                
                 // printf("Bullets %d image is being rendered\n", i);
-                Platform.gUserBulletTexture->render(Platform.gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), NULL, Tank->face);
+                Platform->gUserBulletTexture->render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), NULL, Tank->face);
             }
         }
     }
 
   }
-else if (!Tank->userBelong && Platform.gEnemyTankTexture != NULL) {
+else if (!Tank->userBelong && Platform->gEnemyTankTexture != NULL) {
         // SOMEHOW the enemy tank positions changed to keep in bound while the text one is not
         // if (((Tank->mBox.x >= camera.x) && (Tank->mBox.x <= camera.x + camera.w)) &&((Tank->mBox.y >= camera.y) && (Tank->mBox.y <= camera.y + camera.w)) ){
     // printf("Tank is being rendered\n");
-        Platform.gEnemyTankTexture->render( Platform.gRenderer ,Tank->mBox.x - camera.x,Tank->mBox.y - camera.y, NULL, Tank->face);
-        if(Platform.gEnemyBulletTexture!=NULL) {             
+        Platform->gEnemyTankTexture->render( Platform->gRenderer ,Tank->mBox.x - camera.x,Tank->mBox.y - camera.y, NULL, Tank->face);
+        if(Platform->gEnemyBulletTexture!=NULL) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){                
-                Platform.gEnemyBulletTexture->render(Platform.gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), NULL, Tank->face);
+                Platform->gEnemyBulletTexture->render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), NULL, Tank->face);
                 // printf("Enemy tanks and Bullets %d image is being rendered\n", i);
             }
         }
@@ -481,7 +481,7 @@ else if (!Tank->userBelong && Platform.gEnemyTankTexture != NULL) {
     
 }
 
-void renderText(real32 FPS, const TankInfo* userTank){
+void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
     
     // NOTE: The reason that I can not use TTF_OpenFont or TTF_Init is
     // that I forgot to link ttf.lib in compile link
@@ -497,25 +497,25 @@ void renderText(real32 FPS, const TankInfo* userTank){
 
     // printf(OutPut);
                 
-    if (!Platform.gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform.gRenderer)) {
+    if (!Platform->gTextTexture->loadFromRenderedText(OutPut, 0, 0, TextColor, gFont, Platform->gRenderer)) {
         printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
-    } else {                           Platform.gTextTexture->render(Platform.gRenderer, 0, 0);                    
+    } else {                           Platform->gTextTexture->render(Platform->gRenderer, 0, 0);                    
     }
 
     if(userTank->BulletsNumber == 0){
         sprintf(OutPut, "Tank Bullets: Loading\n");
         //Update screen
-        if (!Platform.gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform.gRenderer)) {
+        if (!Platform->gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform->gRenderer)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
-        } else {                           Platform.gTextTexture->render(Platform.gRenderer, SCREEN_WIDTH - 300, 0);                    
+        } else {                           Platform->gTextTexture->render(Platform->gRenderer, SCREEN_WIDTH - 300, 0);                    
         }                    
         // printf(OutPut);
     } else {                    
         sprintf(OutPut, "Tank Bullets :%d \n", int(userTank->BulletsNumber));
         //Update screen
-        if (!Platform.gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform.gRenderer)) {
+        if (!Platform->gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform->gRenderer)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
-        } else {                           Platform.gTextTexture->render(Platform.gRenderer, SCREEN_WIDTH - 200, 0);                    
+        } else {                           Platform->gTextTexture->render(Platform->gRenderer, SCREEN_WIDTH - 200, 0);                    
         }                    
         // printf(OutPut);
     } 

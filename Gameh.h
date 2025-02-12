@@ -28,8 +28,12 @@
     const global_variable uint32 FRAME_DELAY = 1000/60;
 
 struct Game{    
-    const char* Menu[] = {"NEW GAME", "RESUME", "OPTIONS", "EXIT"};
-    KSTATE state;
+    const char* Menu[4] = {"NEW GAME", "RESUME", "OPTIONS", "EXIT"};
+    STATE state;
+    int frame[4] = {};
+    float startTime = 0.0f;
+    float respawnTime = 0.0f;
+    int k = 0;    
     MENUCHOICE pointed_option;
     MENUCHOICE chosen_option;
     Tile* tileSet[ TOTAL_TILES ];
@@ -41,7 +45,7 @@ struct Game{
         Platform = new PlatformP;
         userTank = new TankInfo(true);
         enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
-        // state = MENU_IDLE;
+        state = MENU_INIT;
         pointed_option = NEW_GAME;
         chosen_option = NONE;
     };
@@ -53,6 +57,7 @@ void changeState(Game* g);
 bool Start(Game* g);
 void ProcessInput(Game* g, bool done);
 void Update(Game* g);
+void resetGame(Game* g);
 
 // TODO: Complete this part
 void runMainScene(Game* g);
