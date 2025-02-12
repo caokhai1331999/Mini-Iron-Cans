@@ -68,20 +68,18 @@ bool Start(Game* g){
                 }
             
                 //Level camera
-                SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-                int Uframe = 0;
-                int testFrame = 0;
-                int frame[4] = {} ;
+                g->camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+                Uframe = 0;
+                frame[4] = {} ;
                 StartTime =  SDL_GetTicks();
 
-                real32 Startframe = 0;
-                real32 Endframe = 0;
-                real32 FrameElapse = 0;
+                Startframe = 0;
+                Endframe = 0;
+                FrameElapse = 0;
 
-                bool Ecollided = false;
-                bool Ucollided = false;
+                Ecollided = false;
+                Ucollided = false;
                 // uint32 LastFrameTime[TOTAL_ENEMY_TANK] ={};
-                int k;        
                 return true;
             }            
         }
@@ -173,8 +171,6 @@ void ProcessInput(Game* g, bool done){
 }
 
 void runMainScene(Game* g){
-    bool Ucollided = false;
-    bool Ecollided = false;
     move( false, Ucollided, g->userTank);
     for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
         BiTankCheck(&g->enemyTank[i], g->userTank);
