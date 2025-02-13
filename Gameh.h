@@ -48,6 +48,7 @@ enum MENUCHOICE{
 
 
 struct Game{    
+
     STATE state;
     float startTime = 0.0f;
     int k = 0;    

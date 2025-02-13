@@ -8,7 +8,7 @@
 #include "Gameh.h"
 
 void displayMenu(Game* g){
-    gFont = TTF_OpenFont( "Roboto-Thin.ttf", 28 );
+    gFont = TTF_OpenFont( "Roboto-Variable.ttf", 28 );
     // SDL_Color TextColor = {249 ,166 ,2};
     SDL_Color TextColor = {0 ,0 ,0};
     float scale = 0.0f;
