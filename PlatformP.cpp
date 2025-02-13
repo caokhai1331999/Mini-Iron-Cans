@@ -98,11 +98,12 @@ bool LoadMedia(Tile* tiles[],PlatformP* Platform){
 	} // else {
 
     // NOTE: Prepare a animated background here
-	if( !Platform->gMenuTexture->loadFromFile( "media/background.png", Platform->gRenderer, (int)100, (int)100))
-	{
-		printf( "Failed to load menu background texture!\n" );
-		success = false;
-	} // else {
+	// if( !Platform->gMenuTexture->loadFromFile( "media/background.png", Platform->gRenderer, (int)100, (int)100))
+	// {
+	// 	printf( "Failed to load menu background texture!\n" );
+	// 	success = false;
+	// } 
+// else {
 
 
 	//Load tile texture
@@ -505,7 +506,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
     if(userTank->BulletsNumber == 0){
         sprintf(OutPut, "Tank Bullets: Loading\n");
         //Update screen
-        if (!Platform->gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform->gRenderer)) {
+        if (!Platform->gTextTexture->loadFromRenderedText(OutPut, 0, 0, TextColor, gFont, Platform->gRenderer)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
         } else {                           Platform->gTextTexture->render(Platform->gRenderer, SCREEN_WIDTH - 300, 0);                    
         }                    
@@ -513,7 +514,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
     } else {                    
         sprintf(OutPut, "Tank Bullets :%d \n", int(userTank->BulletsNumber));
         //Update screen
-        if (!Platform->gTextTexture->loadFromRenderedText(OutPut, TextColor, gFont, Platform->gRenderer)) {
+        if (!Platform->gTextTexture->loadFromRenderedText(OutPut, 0, 0, TextColor, gFont, Platform->gRenderer)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
         } else {                           Platform->gTextTexture->render(Platform->gRenderer, SCREEN_WIDTH - 200, 0);                    
         }                    

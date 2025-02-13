@@ -22,9 +22,9 @@ void displayMenu(Game* g){
             scale = 1.0f;
         }
 
-        if (!g->Platform.gMenuTexture->loadFromRenderedText(g->Menu[i], scale, scale, TextColor, gFont, g->Platform.gRenderer)) {
+        if (!g->Platform->gMenuTexture->loadFromRenderedText(Menu[i], scale, scale, TextColor, gFont, g->Platform->gRenderer)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );
-        } else {                           Platform.gMenuTexture->render(g->Platform.gRenderer, SCREEN_WIDTH - 200, 30 + i*30);
+        } else {                           g->Platform->gMenuTexture->render(g->Platform->gRenderer, SCREEN_WIDTH - 200, 30 + i*30);
         }                       
     }
     
@@ -32,11 +32,15 @@ void displayMenu(Game* g){
 
 void get_Menu_choice(Game* g, KeyState* currentKey){
 
-    if(g->state == MENU_INIT || g->state == PAUSE){        
+    uint8_t cursor = 0;
+    if(g->state == MENU_INIT || g->state == PAUSE){
+        cursor = 1;
         if(currentKey->key == SDL_SCANCODE_DOWN && currentKey->pressed){
-            g->pointed_option ++;
+            cursor ++;
+            g->pointed_option = (MENUCHOICE)cursor;
             if(g->pointed_option > MENUCHOICE(3)){
-                g->pointed_option = MENUCHOICE(0);
+                cursor = 0;
+                g->pointed_option = MENUCHOICE(cursor);
             };
         }
 
@@ -55,27 +59,27 @@ bool Start(Game* g){
         if(!init(g->Platform)){
             return false;
         }else{
-            if( ! LoadMedia(g->Platform->tileSet) )
+            if( ! LoadMedia(g->tileSet, g->Platform) )
             {
                 printf( "Failed to load media!\n" );
             }
             else
             {
-                TankPos = InitializeTankPos();
+                g->TankPos = InitializeTankPos();
             
                 for (int i = 0 ; i < TOTAL_ENEMY_TANK; i++){
-                    enemyTank[i] = InitializeTankInfo(TankPos[i].x, TankPos[i].y);
+                   g-> enemyTank[i] = InitializeTankInfo(g->TankPos[i].x, g->TankPos[i].y);
                 }
             
                 //Level camera
-                g->camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+                camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
                 Uframe = 0;
                 frame[4] = {} ;
                 StartTime =  SDL_GetTicks();
 
-                Startframe = 0;
-                Endframe = 0;
-                FrameElapse = 0;
+                StartTime = 0;
+                EndTime = 0;
+                TimeElapsed = 0;
 
                 Ecollided = false;
                 Ucollided = false;
@@ -85,7 +89,7 @@ bool Start(Game* g){
         }
 }
 
-void changeState(Game* g, KeyState* key, done){
+void changeState(Game* g, KeyState* key, bool done){
 
     switch(g->state){
         case MENU_INIT:
@@ -122,12 +126,13 @@ void changeState(Game* g, KeyState* key, done){
 }
 
 void ProcessInput(Game* g, bool done){
+    printf("Start process input \n");
     KeyState PreviousBut = {};
     KeyState CurrentBut = {};
-    while( SDL_PollEvent( g->platform->e ) != 0 )
+    while( SDL_PollEvent( &g->Platform->e ) != 0 )
     {
         //User requests quit
-        if( g->platform->e.type == SDL_QUIT || g->platform->e.key.keysym.scancode == 41 )
+        if( g->Platform->e.type == SDL_QUIT || g->Platform->e.key.keysym.scancode == 41 )
         {
             done = true;
         }
@@ -136,9 +141,9 @@ void ProcessInput(Game* g, bool done){
         //===================================================
 
         // NOTE: If I have time try to apply FSM to this input filter
-        if ((g->platform->e.key.state == SDL_PRESSED || g->platform->e.key.state == SDL_RELEASED) && g->platform->e.key.keysym.scancode != SDL_SCANCODE_UNKNOWN){                        
+        if ((g->Platform->e.key.state == SDL_PRESSED || g->Platform->e.key.state == SDL_RELEASED) && g->Platform->e.key.keysym.scancode != SDL_SCANCODE_UNKNOWN){                        
 
-            if((!CurrentBut.pressed && g->platform->e.key.state == SDL_PRESSED && CurrentBut.key != g->platform->e.key.keysym.scancode) || (g->platform->e.key.keysym.scancode == CurrentBut.key && CurrentBut.pressed != (g->platform->e.key.state == SDL_PRESSED))|| CurrentBut.init == 0 || g->platform->e.key.keysym.scancode == SDL_SCANCODE_SPACE)
+            if((!CurrentBut.pressed && g->Platform->e.key.state == SDL_PRESSED && CurrentBut.key != g->Platform->e.key.keysym.scancode) || (g->Platform->e.key.keysym.scancode == CurrentBut.key && CurrentBut.pressed != (g->Platform->e.key.state == SDL_PRESSED))|| CurrentBut.init == 0 || g->Platform->e.key.keysym.scancode == SDL_SCANCODE_SPACE)
 
                                 
                 if(CurrentBut.init == 0){
@@ -146,9 +151,9 @@ void ProcessInput(Game* g, bool done){
                 }
             
             PreviousBut = CurrentBut;
-            CurrentBut.pressed = (g->platform->e.key.state == SDL_PRESSED);
-            CurrentBut.key = g->platform->e.key.keysym.scancode;
-            CurrentBut.repeat = g->platform->e.key.repeat;
+            CurrentBut.pressed = (g->Platform->e.key.state == SDL_PRESSED);
+            CurrentBut.key = g->Platform->e.key.keysym.scancode;
+            CurrentBut.repeat = g->Platform->e.key.repeat;
 
             // NOTE: Consider removing this one
             // (This seemed kind of unproper)
@@ -165,7 +170,8 @@ void ProcessInput(Game* g, bool done){
                     break;
                 case EMPTY:
                     break;
-            };    
+            };
+            changeState(g, &CurrentBut, done);
         }
     }            
 }
@@ -201,14 +207,14 @@ void runMainScene(Game* g){
         // NOTE: The SDL_GetTicks() give the current time output
         // So how to calculate right spawn time every time user Tank
         // is hit
-        g->respawnTime = SDL_GetTicks();
-        while (g->respawnTime - StartTime < 1000.0f){
-            g->respawnTime = SDL_GetTicks();
+        respawnTime = SDL_GetTicks();
+        while (respawnTime - StartTime < 1000.0f){
+            respawnTime = SDL_GetTicks();
         }
         if(respawnEndTime - respawnStartTime > 1000.0f){
-            printf("Wait Time: %f\n", g->respawnTime - StartTime);
+            printf("Wait Time: %f\n", respawnTime - StartTime);
             respawn(g->userTank);
-            g->respawnTime = StartTime;
+            respawnTime = StartTime;
         }                
     };
 
@@ -221,7 +227,8 @@ void Update(Game* g){
     // Still haven't figure out how to change state right here
 
     // NOTE: Put the fsm here to loop through states change
-    // Do I need to jam all stuffs into game : update, render, input process    
+    // Do I need to jam all stuffs into game : update, render, input process
+    printf("Start update game based on state \n");
     switch (g->state){
         case MENU_INIT:
             displayMenu(g);
@@ -252,13 +259,13 @@ void Update(Game* g){
 void resetGame(Game*g){
     g->state = GAME_NEW;
     // Memory allocated using new must be freed by delete
-    delete TankPos;
-    delete userTank;
-    delete enemytank;
+    delete g->TankPos;
+    delete g->userTank;
+    delete g->enemyTank;
     
-    TankPos = new Position;
-    userTank = new TankInfo(true);
-    enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
+    g->TankPos = new Position;
+    g->userTank = new TankInfo(true);
+    g->enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
     g->chosen_option = NONE;
 }        
 
@@ -266,18 +273,18 @@ void RenderMainScene(Game* g){
 
     int k = 0;
  //Clear screen
- SDL_RenderClear( Platform.gRenderer);
+ SDL_RenderClear( g->Platform->gRenderer);
  SDL_SetRenderDrawColor( g->Platform->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
- if (g->state == IN_GAME){
+ if (g->state == GAME_NEW || g->state == GAME_RELOADED){
      // NOTE: Render main scene
  for( int i = 0; i < TOTAL_TILES; ++i )
  {
      //touchesWall(&userTank->mBox, tileSet)
-     tileSet[ i ]->render( camera, Platform->gRenderer,  Platform->gTileTexture,  Platform->gTileClips, false);
+     g->tileSet[ i ]->render( camera, g->Platform->gRenderer,  g->Platform->gTileTexture,  g->Platform->gTileClips, false);
      // tileSet[ i ]->render( camera, Platform->GetRenderer(),  Platform->GetgTileTexture(),  Platform->GetgTileClips(), checkCollision(&camera, tileSet[ i ]->getBox()));
  }
                
- render(userTank, Uframe, camera);
+ render(g->userTank, Uframe, camera, g->Platform);
  // NOTE: Bugs lied here
  while(k < TOTAL_ENEMY_TANK)
  {
@@ -297,33 +304,40 @@ void RenderMainScene(Game* g){
              }
              //Go to next frame
              if(frame[k]!=-1){
-                 g->Platform->gExplosionTexture->render( Platform->gRenderer ,(g->enemyTank[k].mBox.x - camera.x), (g->enemyTank[k].mBox.y - camera.y), &Platform->gExplosionClips[frame[k]]);
+                 g->Platform->gExplosionTexture->render( g->Platform->gRenderer ,(g->enemyTank[k].mBox.x - camera.x), (g->enemyTank[k].mBox.y - camera.y), &g->Platform->gExplosionClips[frame[k]]);
                  SDL_Delay(0.032);
                  frame[k]++;
              }
 
          }
      } else {
-         render(&g->enemyTank[k], g->frame[k], camera);                        
+         render(&g->enemyTank[k], frame[k], camera, g->Platform);                        
      }
      if (frame[k] == -1 || !g->enemyTank[k].isHit){
          k++;
      }
  };
                                    
- renderText(FPS, g->userTank);
+ renderText(FPS, g->userTank, g->Platform);
  SDL_RenderPresent( g->Platform->gRenderer);
  TimeElapsed = EndTime - StartTime;
  FPS = 1/(TimeElapsed/1000.0f);
  StartTime = EndTime;         
-    } else if (g->state == MENU_IDLE || g->state == PAUSE){
-     // NOTE: The render part is already in the menu fx. So what will I put in this one???
-     Menu(g);
-    }
- 
+    } 
 }
 
-void close (Game* g){
+void Render (Game* g){
+    printf("Render accordingly to stae\n");    
+    if (g->state == MENU_INIT || g->state == PAUSE){
+     // NOTE: The render part is already in the menu fx. So what will I put in this one???
+        displayMenu(g);
+    } else if (g->state == GAME_NEW || g->state == GAME_RELOADED){
+        RenderMainScene(g);
+    }
+    // NOTE: Else do nothing
+}
+
+void Close (Game* g){
     delete g->TankPos;    
     delete g->Platform;
     delete g->userTank;

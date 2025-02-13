@@ -15,35 +15,45 @@
 #include "xTank.h"
 #include "GamePhysics.h"
 #include "PlatformP.h"
-#include "KState.h"
 
-    global_variable real32 StartTime;
-    global_variable real32 EndTime;
-    global_variable real32 TimeElapsed = 0;
+global_variable real32 StartTime = 0;
+global_variable real32 EndTime = 0;
+global_variable real32 TimeElapsed = 0;
 
-    global_variable real32 respawnStartTime = 0;
-    global_variable real32 respawnEndTime = 0;
-    global_variable real32 respawnTime = 0.0f;
+global_variable real32 respawnStartTime = 0;
+global_variable real32 respawnEndTime = 0;
+global_variable real32 respawnTime = 0.0f;
 
-    global_variable uint8_t FPS = 0;
+global_variable uint8_t FPS = 0;
 
-    global_variable int frame[4] = {};
-    global_variable uint8_t Uframe = 0;
-    const global_variable real32 StandardFPS = 60.0f;
-    const global_variable uint32 FRAME_DELAY = 1000/60;
+global_variable int frame[4] = {};
+global_variable uint8_t Uframe = 0;
+global_variable SDL_Rect camera;
+const global_variable real32 StandardFPS = 60.0f;
+const global_variable uint32 FRAME_DELAY = 1000/60;
+char* Menu[] = {"NEW GAME", "RESUME", "OPTIONS", "EXIT"};
 
-    global_variable bool Ucollided = false;
-    global_variable bool Ecollided = false;
+global_variable bool Ucollided = false;
+global_variable bool Ecollided = false;
+
+
+enum STATE{
+    // NOTE: How to tell the new game state apart from the current one
+    EMPTY, MENU_INIT, GAME_NEW, GAME_RELOADED, PAUSE
+};
+
+enum MENUCHOICE{
+    NONE, NEW_GAME, RESUME, OPTIONS, EXIT
+};
+
 
 struct Game{    
-    const char* Menu[4] = {"NEW GAME", "RESUME", "OPTIONS", "EXIT"};
     STATE state;
     float startTime = 0.0f;
     int k = 0;    
     MENUCHOICE pointed_option;
     MENUCHOICE chosen_option;
     Tile* tileSet[ TOTAL_TILES ];
-    SDL_Rect camera;
     
     Position* TankPos = nullptr;    
     PlatformP* Platform = nullptr;

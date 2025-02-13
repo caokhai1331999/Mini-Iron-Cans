@@ -12,17 +12,17 @@ int main( int argc, char* args[] )
 {
     bool done = false;
     Game game = {};
-    if(!Start(&game)){
+    if(!Start(&game)) {
             printf("Fail to init game\n");
         } else {
-            while(!done){
+        printf("Init game successfully\n");
+            while(!done) {
                 ProcessInput(&game, done);
                 Update(&game);
                 Render(&game);
                 }
             // Clean up
-            close(&game);
+            Close(&game);
             };
-        }
 return 0;
 }
