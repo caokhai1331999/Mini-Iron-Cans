@@ -52,7 +52,7 @@ struct Game{
     STATE state;
     float startTime = 0.0f;
     int k = 0;    
-    MENUCHOICE pointed_option;
+    uint8_t pointed_option;
     MENUCHOICE chosen_option;
     Tile* tileSet[ TOTAL_TILES ];
     

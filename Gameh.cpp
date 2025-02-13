@@ -13,10 +13,10 @@ void displayMenu(Game* g){
     SDL_Color TextColor = {0 ,0 ,0};
     float scale = 0.0f;
 
-    for(uint8 i = 0; i < 3; ++i){
+    for(uint8_t i = 0; i < 4; ++i){
 
         // NOTE: Scale up the text whenever it is pointed to
-        if((uint8)g->pointed_option == i){            
+        if(g->pointed_option == i){            
             scale = 1.5f;   
         } else {
             scale = 1.0f;
@@ -24,7 +24,8 @@ void displayMenu(Game* g){
 
         if (!g->Platform->gMenuTexture->loadFromRenderedText(Menu[i], scale, scale, TextColor, gFont, g->Platform->gRenderer)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );
-        } else {                           g->Platform->gMenuTexture->render(g->Platform->gRenderer, SCREEN_WIDTH - 200, 30 + i*30);
+        } else {
+            g->Platform->gMenuTexture->render(g->Platform->gRenderer, 100, 30 + i*50);
         }                       
     }
     
@@ -32,28 +33,30 @@ void displayMenu(Game* g){
 
 void get_Menu_choice(Game* g, KeyState* currentKey){
 
-    uint8_t cursor = 0;
-    if(g->state == MENU_INIT || g->state == PAUSE){
-        cursor = 1;
-        if(currentKey->key == SDL_SCANCODE_DOWN && currentKey->pressed){
-            cursor ++;
-            g->pointed_option = (MENUCHOICE)cursor;
-            if(g->pointed_option > MENUCHOICE(3)){
-                cursor = 0;
-                g->pointed_option = MENUCHOICE(cursor);
-            };
-        }
-
-        if(currentKey->key == SDL_SCANCODE_KP_ENTER && currentKey->pressed)
-        {            
-            if(g->chosen_option != g->pointed_option)
-            {
-                g->chosen_option = g->pointed_option;
-            }
+    if (currentKey->pressed){
+        switch(currentKey->key){
+            case SDL_SCANCODE_DOWN:
+                g->pointed_option++;
+                if(g->pointed_option > 3){
+                    g->pointed_option = 0;
+                }
+                break;
+            case SDL_SCANCODE_UP :
+                if(g->pointed_option == 0){
+                    g->pointed_option = 3;
+                }
+                g->pointed_option--;
+                break;
+            case SDL_SCANCODE_RETURN:
+                if(g->chosen_option != g->pointed_option)
+                {
+                    g->chosen_option = (MENUCHOICE)g->pointed_option;
+                    g->chosen_option == NEW_GAME?printf("Start enter the game\n"):printf("not yet\n");
+                }
+                break;                                
         }
     }
-    
-};
+}
 
 bool Start(Game* g){
         if(!init(g->Platform)){
@@ -94,7 +97,8 @@ void changeState(Game* g, KeyState* key, bool done){
     switch(g->state){
         case MENU_INIT:
             if (g->chosen_option == NEW_GAME){
-                g->state = GAME_NEW; 
+                g->state = GAME_NEW;
+                g->chosen_option = NONE;
             } else if (g->chosen_option == EXIT){
                 g->state = EMPTY;
             }
@@ -102,8 +106,10 @@ void changeState(Game* g, KeyState* key, bool done){
         case PAUSE:
             if(g->chosen_option == NEW_GAME){
                 g->state = GAME_NEW;
+                g->chosen_option = NONE;
             }else if (g->chosen_option == RESUME){
                 g->state = GAME_RELOADED;
+                g->chosen_option = NONE;
             }else if (g->chosen_option == EXIT){
                 g->state = EMPTY;
             };
@@ -119,14 +125,18 @@ void changeState(Game* g, KeyState* key, bool done){
                 g->state = PAUSE;
             }
             break;
-        case EMPTY: done = (done!=true)?true:false;
+
+        case EMPTY:
+            if (done!=true){
+                done = true;
+            };
             break;
     }    
     
 }
 
 void ProcessInput(Game* g, bool done){
-    printf("Start process input \n");
+    // printf("Start process input \n");
     KeyState PreviousBut = {};
     KeyState CurrentBut = {};
     while( SDL_PollEvent( &g->Platform->e ) != 0 )
@@ -155,8 +165,6 @@ void ProcessInput(Game* g, bool done){
             CurrentBut.key = g->Platform->e.key.keysym.scancode;
             CurrentBut.repeat = g->Platform->e.key.repeat;
 
-            // NOTE: Consider removing this one
-            // (This seemed kind of unproper)
             switch(g->state){
                 case MENU_INIT: get_Menu_choice(g, &CurrentBut);
                     break;
@@ -228,7 +236,7 @@ void Update(Game* g){
 
     // NOTE: Put the fsm here to loop through states change
     // Do I need to jam all stuffs into game : update, render, input process
-    printf("Start update game based on state \n");
+    // printf("Start update game based on state \n");
     switch (g->state){
         case MENU_INIT:
             displayMenu(g);
@@ -257,7 +265,6 @@ void Update(Game* g){
 }
 
 void resetGame(Game*g){
-    g->state = GAME_NEW;
     // Memory allocated using new must be freed by delete
     delete g->TankPos;
     delete g->userTank;
@@ -266,6 +273,7 @@ void resetGame(Game*g){
     g->TankPos = new Position;
     g->userTank = new TankInfo(true);
     g->enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
+
     g->chosen_option = NONE;
 }        
 
@@ -273,8 +281,6 @@ void RenderMainScene(Game* g){
 
     int k = 0;
  //Clear screen
- SDL_RenderClear( g->Platform->gRenderer);
- SDL_SetRenderDrawColor( g->Platform->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
  if (g->state == GAME_NEW || g->state == GAME_RELOADED){
      // NOTE: Render main scene
  for( int i = 0; i < TOTAL_TILES; ++i )
@@ -319,7 +325,6 @@ void RenderMainScene(Game* g){
  };
                                    
  renderText(FPS, g->userTank, g->Platform);
- SDL_RenderPresent( g->Platform->gRenderer);
  TimeElapsed = EndTime - StartTime;
  FPS = 1/(TimeElapsed/1000.0f);
  StartTime = EndTime;         
@@ -327,7 +332,10 @@ void RenderMainScene(Game* g){
 }
 
 void Render (Game* g){
-    printf("Render accordingly to stae\n");    
+    SDL_RenderClear( g->Platform->gRenderer);
+    SDL_SetRenderDrawColor( g->Platform->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+    
+    // printf("Render accordingly to state\n");    
     if (g->state == MENU_INIT || g->state == PAUSE){
      // NOTE: The render part is already in the menu fx. So what will I put in this one???
         displayMenu(g);
@@ -335,6 +343,7 @@ void Render (Game* g){
         RenderMainScene(g);
     }
     // NOTE: Else do nothing
+    SDL_RenderPresent( g->Platform->gRenderer);
 }
 
 void Close (Game* g){
