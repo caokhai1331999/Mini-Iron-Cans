@@ -67,9 +67,49 @@ TODO:
                                       try to delay it (NEARLY DONE - let aside
                                       it to solve later)
 
-                                       + Begin to delve more to create my own map
+                                       + Begin to delve more to create my own
+                                       map and add wall to specific types (WORKING)
+                                           . Time to make the map bigger add
+                                       path and wall for it
 
-          3 Then devle more to understand how to scroll the background map
+                                       + How to figure out why the tile map make
+                                       the game's latency increase too much
+                                       (Temporary sovle by comment out the
+                                       collision loop check between wall and
+                                       object )
 
-- Finally: After majority of the game engine, time for shipping code, manage
-  gamestate and specific memory allocation
+                                       + Arised issues Spawn User tank after
+                                       being destroyed
+
+                                       + Add concrete Wall feature to the
+                                       background map maker
+
+                                       Then devle more to understand how to
+                                       scroll the background map
+
+                                       
+                                       ( Find some source to learn about this)
+
+                                       + Start to modulize the game to files
+                                       that is fixable.
+
+                                       - Finally: After majority of the game
+                                       engine, time for shipping code, manage
+                                       gamestate and specific memory allocation 
+
+                                       + Create Menu and round off the game
+
+                                       Debug the menu display and move on to
+                                       input process while in menu state
+
+                                       ?? How to get input and change state in
+                                       menu state
+
+                                       . I think I understand the game fsm and
+                                       nearly finish it. I temporarily rest at
+                                       the render part where I separately render
+                                       menu and main scene by meant ()
+
+                                       . I think I done the prototype code. Time
+                                       to start debugging!!!
+

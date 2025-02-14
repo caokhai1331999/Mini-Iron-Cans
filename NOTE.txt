@@ -1,3 +1,6 @@
 - By Simple SDL_GetTick() to caculate the Fps/MS per frame. It showed that
 The procedure style way leave the OOP one behind about performance (3000/4000 or
 more frames to compare to 1000/2000) 
+
+- NOTE that the getTick only work well in the game loop. So how can I ship the
+  code to modular parts

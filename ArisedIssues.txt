@@ -2,9 +2,9 @@
     // previous bullet DONE!
 
 + Bot Tank move one way and stuck in level width or height
-(Solved for userTank by set veclocity to 0 everytime new input is accept )
+(Solved for userTank by set veclocity to 0 everytime new input is accept ) DONE!
 
-+ Bot Tank stuck to the level height when spawn near them
++ Bot Tank stuck to the level height when spawn near them DONE!
 
 + UserTank can not fire when get near bot tank????? Don't know why It auto run
 fire() everytime userTank get near botTank (FIXED)
@@ -20,6 +20,18 @@ after was hit (!done)
 + An idea spark in my mind recently. Should I use the loop through the enemyTank
 to track and render the explosion every time it hit. Or I just need to send a
 signal every time a tank is hit to render an explosion to the pointed
-accordinates???? (On the way to check and fix)
+accordinates???? (On the way to check and fix) (Seem like the 2nd ideas doesn't
+work well)
 
-+ The Animation is too fast to track
++ After redrawing a new tile's background, Game's latency delay too much. There
+must be something happened to the memory (maybe related to how I set the tiles
+up, It's wrong somewhere)
+    . It's seem like when I don't use toucheswall function which loop check for
+    collision between tank and wall. The Game's latency seem decrease obviously
+ * Found out the issues, I passed unused Tile's pointer to move's loop
+ tank. which caused game lag
+
++ Where should I boil down the state revolving machine into?? In menu function
+or Update one
+
++ User tanks stuck with enemyTank. Time to find out
