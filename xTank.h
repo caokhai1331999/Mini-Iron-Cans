@@ -88,8 +88,8 @@ struct TankInfo
         Bullets = new Bullet[TOTAL_BULLET_PER_TANK];
         // TODO: figure out how to effectively flag these bullets as user's
         if(userBelong){
-            mBox.x = SCREEN_WIDTH/2;
-            mBox.y = SCREEN_HEIGHT/2;
+            mBox.x = rand()%SCREEN_WIDTH;
+            mBox.y = rand()%SCREEN_HEIGHT;
             for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
                 Bullets[i].type = userB;
             };
@@ -112,7 +112,7 @@ Position* InitializeTankPos();
 TankInfo InitializeTankInfo(int x, int y);
 
 //Takes key presses and adjusts the Tank's velocity
-void handleEvent(KeyState* CurrentBut, TankInfo* Tank );
+void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank );
 
 // Bot tanks auto find way using dijstra algorithm
 void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided);

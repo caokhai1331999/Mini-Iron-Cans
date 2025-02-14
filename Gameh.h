@@ -43,7 +43,7 @@ enum STATE{
 };
 
 enum MENUCHOICE{
-    NONE, NEW_GAME, RESUME, OPTIONS, EXIT
+    NONE = static_cast<uint8_t>(0), NEW_GAME, RESUME, OPTIONS, EXIT
 };
 
 
@@ -65,7 +65,7 @@ struct Game{
         userTank = new TankInfo(true);
         enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
         state = MENU_INIT;
-        pointed_option = NEW_GAME;
+        pointed_option = 0;
         chosen_option = NONE;
     };
 };

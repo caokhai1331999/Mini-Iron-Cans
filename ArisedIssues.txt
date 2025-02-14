@@ -35,3 +35,6 @@ up, It's wrong somewhere)
 or Update one
 
 + User tanks stuck with enemyTank. Time to find out
+
+** Done flag does't change
+   Game object position is changed unexpectedly

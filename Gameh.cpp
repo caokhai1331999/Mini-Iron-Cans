@@ -8,7 +8,7 @@
 #include "Gameh.h"
 
 void displayMenu(Game* g){
-    gFont = TTF_OpenFont( "Roboto-Variable.ttf", 28 );
+    gFont = TTF_OpenFont( "Roboto-thin.ttf", 28 );
     // SDL_Color TextColor = {249 ,166 ,2};
     SDL_Color TextColor = {0 ,0 ,0};
     float scale = 0.0f;
@@ -37,21 +37,22 @@ void get_Menu_choice(Game* g, KeyState* currentKey){
         switch(currentKey->key){
             case SDL_SCANCODE_DOWN:
                 g->pointed_option++;
-                if(g->pointed_option > 3){
+                if(g->pointed_option > 4){
                     g->pointed_option = 0;
                 }
                 break;
             case SDL_SCANCODE_UP :
                 if(g->pointed_option == 0){
-                    g->pointed_option = 3;
+                    g->pointed_option = 4;
                 }
                 g->pointed_option--;
                 break;
             case SDL_SCANCODE_RETURN:
                 if(g->chosen_option != g->pointed_option)
                 {
-                    g->chosen_option = (MENUCHOICE)g->pointed_option;
-                    g->chosen_option == NEW_GAME?printf("Start enter the game\n"):printf("not yet\n");
+                    g->chosen_option = static_cast<MENUCHOICE>(g->pointed_option);
+                    g->chosen_option == NEW_GAME||g->chosen_option == RESUME?printf("Start enter the game\n"):printf("not yet\n");
+                    g->chosen_option == EXIT?printf("Option is now exit\n"):printf("why option is not exit yet\n");
                 }
                 break;                                
         }
@@ -65,6 +66,7 @@ bool Start(Game* g){
             if( ! LoadMedia(g->tileSet, g->Platform) )
             {
                 printf( "Failed to load media!\n" );
+                return false;
             }
             else
             {
@@ -99,7 +101,8 @@ void changeState(Game* g, KeyState* key, bool done){
             if (g->chosen_option == NEW_GAME){
                 g->state = GAME_NEW;
                 g->chosen_option = NONE;
-            } else if (g->chosen_option == EXIT){
+            } else if (g->chosen_option == EXIT || key->type == SDL_QUIT){
+                key->type == SDL_QUIT?printf("quit event is triggered\n"):printf("exit option is chosen\n");
                 g->state = EMPTY;
             }
             break;
@@ -110,25 +113,30 @@ void changeState(Game* g, KeyState* key, bool done){
             }else if (g->chosen_option == RESUME){
                 g->state = GAME_RELOADED;
                 g->chosen_option = NONE;
-            }else if (g->chosen_option == EXIT){
+            }else if (g->chosen_option == EXIT || key->type == SDL_QUIT){
                 g->state = EMPTY;
             };
             break;
         case GAME_NEW:
             if (key->key == SDL_SCANCODE_ESCAPE && key->pressed){
                 g->state = PAUSE;
+            } else if (key->type == SDL_QUIT){
+                g->state = EMPTY;
             }
             break;
 
         case GAME_RELOADED:
             if (key->key == SDL_SCANCODE_ESCAPE && key->pressed){
                 g->state = PAUSE;
+            } else if (key->type == SDL_QUIT){
+                g->state = EMPTY;
             }
             break;
 
         case EMPTY:
             if (done!=true){
                 done = true;
+                done?printf("Done flag is true, Game should close now\n"):printf("why done is not true yet???\n");
             };
             break;
     }    
@@ -142,10 +150,6 @@ void ProcessInput(Game* g, bool done){
     while( SDL_PollEvent( &g->Platform->e ) != 0 )
     {
         //User requests quit
-        if( g->Platform->e.type == SDL_QUIT || g->Platform->e.key.keysym.scancode == 41 )
-        {
-            done = true;
-        }
 
         // Modulize this part to reuse it
         //===================================================
@@ -161,22 +165,40 @@ void ProcessInput(Game* g, bool done){
                 }
             
             PreviousBut = CurrentBut;
+            CurrentBut.type = g->Platform->e.type;
             CurrentBut.pressed = (g->Platform->e.key.state == SDL_PRESSED);
             CurrentBut.key = g->Platform->e.key.keysym.scancode;
             CurrentBut.repeat = g->Platform->e.key.repeat;
 
+            if (CurrentBut.type == SDL_QUIT){
+                if (!done){
+                    printf("Quit event is triggered, Game should start closing now!!\n");
+                    done = !done;
+                }
+            }
+            
             switch(g->state){
-                case MENU_INIT: get_Menu_choice(g, &CurrentBut);
+                case MENU_INIT:
+                    get_Menu_choice(g, &CurrentBut);
                     break;
-                case PAUSE: get_Menu_choice(g, &CurrentBut);
+                case PAUSE:
+                    get_Menu_choice(g, &CurrentBut);
                     break;
                 case GAME_NEW:
-                    handleEvent(&CurrentBut, g->userTank);
+                    if (CurrentBut.key != 41){
+                        handleEventForTank(&CurrentBut, g->userTank);
+                    }
                     break;
                 case GAME_RELOADED:
-                    handleEvent(&CurrentBut, g->userTank);
+                    if (CurrentBut.key != 41){
+                        handleEventForTank(&CurrentBut, g->userTank);
+                    }
                     break;
                 case EMPTY:
+                    if (!done){
+                        done = true;
+                        done?printf("Done flag is true, Game should close now\n"):printf("why done is not true yet???\n");
+                    }
                     break;
             };
             changeState(g, &CurrentBut, done);
@@ -185,7 +207,7 @@ void ProcessInput(Game* g, bool done){
 }
 
 void runMainScene(Game* g){
-    move( false, Ucollided, g->userTank);
+    move(false, Ucollided, g->userTank);
     for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
         BiTankCheck(&g->enemyTank[i], g->userTank);
 
@@ -239,6 +261,7 @@ void Update(Game* g){
     // printf("Start update game based on state \n");
     switch (g->state){
         case MENU_INIT:
+            // Duplicated code here??
             displayMenu(g);
             break;
 
@@ -260,12 +283,18 @@ void Update(Game* g){
             // STORE ALL the Game stats here(already in game var)
             runMainScene(g);
             break;
+
+        case EMPTY:
+            // DO nothing
+            break;
     }
     
 }
 
 void resetGame(Game*g){
     // Memory allocated using new must be freed by delete
+    g->chosen_option = NONE;
+
     delete g->TankPos;
     delete g->userTank;
     delete g->enemyTank;
@@ -274,14 +303,18 @@ void resetGame(Game*g){
     g->userTank = new TankInfo(true);
     g->enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
 
-    g->chosen_option = NONE;
+    g->TankPos = InitializeTankPos();
+            
+    for (int i = 0 ; i < TOTAL_ENEMY_TANK; i++){
+        g-> enemyTank[i] = InitializeTankInfo(g->TankPos[i].x, g->TankPos[i].y);
+    };
+
 }        
 
 void RenderMainScene(Game* g){
 
     int k = 0;
  //Clear screen
- if (g->state == GAME_NEW || g->state == GAME_RELOADED){
      // NOTE: Render main scene
  for( int i = 0; i < TOTAL_TILES; ++i )
  {
@@ -328,7 +361,6 @@ void RenderMainScene(Game* g){
  TimeElapsed = EndTime - StartTime;
  FPS = 1/(TimeElapsed/1000.0f);
  StartTime = EndTime;         
-    } 
 }
 
 void Render (Game* g){
@@ -351,4 +383,5 @@ void Close (Game* g){
     delete g->Platform;
     delete g->userTank;
     delete[] g->enemyTank;
+    close(g->tileSet, g->Platform);
 }

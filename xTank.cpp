@@ -60,7 +60,6 @@ TankInfo InitializeTankInfo(int x, int y){
 void fire(TankInfo* Tank){
     // TODO: Initialize bullet and send it fly, send signal when hit
     // && !Tank->isHit
-
     if(!Tank->destroyed) {
             // if(Tank->userBelong){
             //     printf("Looping through tank bullets\n");
@@ -138,7 +137,7 @@ void respawn(TankInfo* Tank){
     }
 }
 
-void handleEvent(KeyState* CurrentBut, TankInfo* Tank) {
+void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank) {
     //If a key was pressed
     if (Tank->userBelong) {
          if( CurrentBut->pressed && CurrentBut->repeat == 0)
