@@ -74,8 +74,8 @@ void displayMenu(Game* g);
 void get_Menu_choice(Game* g, KeyState* key);
 void changeState(Game* g);
 bool Start(Game* g);
-void ProcessInput(Game* g, bool done);
-void Update(Game* g);
+void ProcessInput(Game* g);
+void Update(Game* g, bool done);
 void resetGame(Game* g);
 
 // TODO: Complete this part

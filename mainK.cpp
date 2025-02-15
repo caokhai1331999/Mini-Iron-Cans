@@ -17,15 +17,12 @@ int main( int argc, char* args[] )
         } else {
         printf("Init game successfully\n");
         done = false;
+        // NOTE:
             while(!done) {
-                ProcessInput(&game, done);
-                Update(&game);
+                ProcessInput(&game);
+                Update(&game, done);
                 Render(&game);
-            };
-            done?printf("Out of Game Loop\n"):printf("Not out yet\n");
-            close(game.tileSet,game.Platform);
-            Close(&game);
-            // Clean up
-            };
+            }
+    }
 return 0;
 }

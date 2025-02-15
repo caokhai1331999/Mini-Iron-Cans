@@ -36,5 +36,22 @@ or Update one
 
 + User tanks stuck with enemyTank. Time to find out
 
-** Done flag does't change
-   Game object position is changed unexpectedly
+** Done flag is on but game refused to end(Solved)
+     *** By delegate task to each function : ProcessInput(Get Menu Choice And
+     Hint to change state and change state); Update (Run the Game accordingly or
+     Change done flag when it empty state) and Render (Render accordingly or
+     close if it's empty state) (**** Why the Loop won't end right after changing
+     flags) -- Because the loop check follow stack order which have to go
+     the end of the stack in current turn then go back to the condition check
+     for the next turn -- That also explain why bug arrived and app refused to stop
+     after turn the flag on because there was no closing task yet!!???
+     *** The main thing that solve bug is that I put close inside render fx to
+     clean up on time before getting out of loop
+** Beside that I deleted the Platform and tileSet before I close everything in
+it
+
+** Main Scene messed up. May be the SDL_getTick and the Position in everyFrame
+   seemed not calculated well (Big Problem)
+   ** latest Update: When choose new game. The Game run in a messed up way. But
+   after get to menu and choose resume. It then work like nearly normal but
+   still so fast. MAY BE THE RESET GAME MAKE 

@@ -16,25 +16,24 @@ void displayMenu(Game* g){
     for(uint8_t i = 0; i < 4; ++i){
 
         // NOTE: Scale up the text whenever it is pointed to
-        if(g->pointed_option  == i+1){            
+        if(g->pointed_option == i+1){            
             scale = 1.5f;   
         } else {
             scale = 1.0f;
         }
 
-        if (g->pointed_option > 0){            
-            if (!g->Platform->gMenuTexture->loadFromRenderedText(Menu[i], scale, scale, TextColor, gFont, g->Platform->gRenderer)) {
-                printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );
-            } else {
-                g->Platform->gMenuTexture->render(g->Platform->gRenderer, 100, 30 + i*50);
-            }                       
-        }
-    }
-    
+        if (!g->Platform->gMenuTexture->loadFromRenderedText(Menu[i], scale, scale, TextColor, gFont, g->Platform->gRenderer)) {
+            printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );
+        } else {
+            g->Platform->gMenuTexture->render(g->Platform->gRenderer, 100, 30 + i*50);
+        }                       
+
+    }    
 }
 
 void get_Menu_choice(Game* g, KeyState* currentKey){
-
+    
+    
     if (currentKey->pressed){
         switch(currentKey->key){
             case SDL_SCANCODE_DOWN:
@@ -44,10 +43,13 @@ void get_Menu_choice(Game* g, KeyState* currentKey){
                 }
                 break;
             case SDL_SCANCODE_UP :
-                g->pointed_option--;
-                if(g->pointed_option == 1){
+
+                if(g->pointed_option == 1 || g->pointed_option == 0){
                     g->pointed_option = 4;
+                }else {
+                    g->pointed_option--;
                 }
+                
                 break;
             case SDL_SCANCODE_RETURN:
                 if(g->pointed_option > 0 && g->pointed_option < 5){                    
@@ -59,7 +61,7 @@ void get_Menu_choice(Game* g, KeyState* currentKey){
                         g->chosen_option == EXIT?printf("Option is now exit\n"):printf("why option is not exit yet\n");
                     }
                 }
-                break;                                
+                break;                                 
         }
     }
 }
@@ -99,56 +101,49 @@ bool Start(Game* g){
         }
 }
 
-void changeState(Game* g, KeyState* key, bool done){
+void changeState(Game* g, KeyState* key){
+    if(g->state != EMPTY){
+        switch(g->state){
+            case MENU_INIT:
+                if (g->chosen_option == NEW_GAME){
+                    g->state = GAME_NEW;
+                    g->chosen_option = NONE;
+                } else if (g->chosen_option == EXIT || key->type == SDL_QUIT){
+                    key->type == SDL_QUIT?printf("quit event is triggered\n"):printf("exit option is chosen\n");
+                    g->state = EMPTY;
+                }
+                break;
+            case PAUSE:
+                if(g->chosen_option == NEW_GAME){
+                    g->state = GAME_NEW;
+                    g->chosen_option = NONE;
+                }else if (g->chosen_option == RESUME){
+                    g->state = GAME_RELOADED;
+                    g->chosen_option = NONE;
+                }else if (g->chosen_option == EXIT || key->type == SDL_QUIT){
+                    g->state = EMPTY;
+                };
+                break;
+            case GAME_NEW:
+                if (key->key == SDL_SCANCODE_ESCAPE && key->pressed){
+                    g->state = PAUSE;
+                } else if (key->type == SDL_QUIT){
+                    g->state = EMPTY;
+                }
+                break;
 
-    switch(g->state){
-        case MENU_INIT:
-            if (g->chosen_option == NEW_GAME){
-                g->state = GAME_NEW;
-                g->chosen_option = NONE;
-            } else if (g->chosen_option == EXIT || key->type == SDL_QUIT){
-                key->type == SDL_QUIT?printf("quit event is triggered\n"):printf("exit option is chosen\n");
-                g->state = EMPTY;
-            }
-            break;
-        case PAUSE:
-            if(g->chosen_option == NEW_GAME){
-                g->state = GAME_NEW;
-                g->chosen_option = NONE;
-            }else if (g->chosen_option == RESUME){
-                g->state = GAME_RELOADED;
-                g->chosen_option = NONE;
-            }else if (g->chosen_option == EXIT || key->type == SDL_QUIT){
-                g->state = EMPTY;
-            };
-            break;
-        case GAME_NEW:
-            if (key->key == SDL_SCANCODE_ESCAPE && key->pressed){
-                g->state = PAUSE;
-            } else if (key->type == SDL_QUIT){
-                g->state = EMPTY;
-            }
-            break;
-
-        case GAME_RELOADED:
-            if (key->key == SDL_SCANCODE_ESCAPE && key->pressed){
-                g->state = PAUSE;
-            } else if (key->type == SDL_QUIT){
-                g->state = EMPTY;
-            }
-            break;
-
-        case EMPTY:
-            if (done!=true){
-                done = true;
-                done?printf("Done flag is true, Game should close now\n"):printf("why done is not true yet???\n");
-            };
-            break;
+            case GAME_RELOADED:
+                if (key->key == SDL_SCANCODE_ESCAPE && key->pressed){
+                    g->state = PAUSE;
+                } else if (key->type == SDL_QUIT){
+                    g->state = EMPTY;
+                }
+                break;
+        }            
     }    
-    
 }
 
-void ProcessInput(Game* g, bool done){
+void ProcessInput(Game* g){
     // printf("Start process input \n");
     if (g->state != EMPTY){
     KeyState PreviousBut = {};
@@ -176,12 +171,6 @@ void ProcessInput(Game* g, bool done){
             CurrentBut.key = g->Platform->e.key.keysym.scancode;
             CurrentBut.repeat = g->Platform->e.key.repeat;
 
-            if (CurrentBut.type == SDL_QUIT){
-                if (!done){
-                    printf("Quit event is triggered, Game should start closing now!!\n");
-                    done = !done;
-                }
-            }
             
             switch(g->state){
                 case MENU_INIT:
@@ -200,10 +189,8 @@ void ProcessInput(Game* g, bool done){
                         handleEventForTank(&CurrentBut, g->userTank);
                     }
                     break;
-                case EMPTY:
-                    break;
             };
-            changeState(g, &CurrentBut, done);
+            changeState(g, &CurrentBut);
         }
     }                    
     };
@@ -254,7 +241,7 @@ void runMainScene(Game* g){
     setCamera(camera, g->userTank);        
 }
 
-void Update(Game* g){
+void Update(Game* g, bool done){
     // NOTE: STILL IN WORK HERE
     // The fms loop through state is right here
     // Still haven't figure out how to change state right here
@@ -278,7 +265,10 @@ void Update(Game* g){
             // the g is just the address of the game variable
             // how can I delete the whole struct and create new
             // or is there any way else???
+
+            // NOTE: resetGame() contain alot of bugs here!!!! 
             resetGame(g);
+            //================================================
             runMainScene(g);
             break;
 
@@ -288,10 +278,9 @@ void Update(Game* g){
             break;
 
         case EMPTY:
-            // DO nothing
+            !done?done=!done:printf("Closing Flag already turned on\n");
             break;
-    }
-    
+    }   
 }
 
 void resetGame(Game*g){
@@ -379,13 +368,18 @@ void Render (Game* g){
     }
     // NOTE: Else do nothing
     SDL_RenderPresent( g->Platform->gRenderer);        
+    } else {
+        Close(g);
     }
 }
 
 void Close (Game* g){
     delete g->TankPos;    
-    delete g->Platform;
-    delete g->userTank;
     delete[] g->enemyTank;
-    // close(g->tileSet, g->Platform);
+    delete g->userTank;
+    // NOTE: I think I see the problem now. I delete platform before I properly
+    // close everything in it
+    close(g->tileSet, g->Platform);
+    delete g->Platform;
+    delete [] g->tileSet;
 }

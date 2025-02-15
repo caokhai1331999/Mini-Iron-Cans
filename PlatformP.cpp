@@ -43,13 +43,16 @@ void close( Tile* tiles[], PlatformP* Platform){
 	SDL_DestroyRenderer( Platform->gRenderer );
 	SDL_DestroyWindow( Platform->gWindow );
 	Platform->gWindow = NULL;
-    Platform->gWindow == NULL?printf("Window is destroyed"):printf("Window is not destroyed yet. why??");
+    Platform->gWindow == NULL?printf("Window is destroyed\n"):printf("Window is not destroyed yet. why??");
 	Platform->gRenderer = NULL;
 
 	//Quit SDL subsystems
     TTF_Quit();
 	IMG_Quit();
-	SDL_Quit();    
+	SDL_Quit();
+    // NOTE: Still don't know why this function immediately close the app
+    // including terminal one
+    printf("End of Game, Thanks so much for playing my game\n");    
 }
 
 bool LoadMedia(Tile* tiles[],PlatformP* Platform){
@@ -490,7 +493,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
     // carefull to link, remember to put dll files in system32 folder
                 
     char OutPut[256];
-    gFont = TTF_OpenFont( "Roboto-Thin.ttf", 28 );
+    gFont = TTF_OpenFont( "Roboto.ttf", 28 );
     // SDL_Color TextColor = {249 ,166 ,2};
     SDL_Color TextColor = {0 ,0 ,0};                
     // NOTE: Somehow The exe file can't find out the TTF_OpenFont and TTF_Solid_Render which is in the ttf lib. Got to find out and fix
