@@ -43,6 +43,7 @@ void close( Tile* tiles[], PlatformP* Platform){
 	SDL_DestroyRenderer( Platform->gRenderer );
 	SDL_DestroyWindow( Platform->gWindow );
 	Platform->gWindow = NULL;
+    Platform->gWindow == NULL?printf("Window is destroyed"):printf("Window is not destroyed yet. why??");
 	Platform->gRenderer = NULL;
 
 	//Quit SDL subsystems

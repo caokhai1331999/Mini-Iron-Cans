@@ -16,13 +16,16 @@ int main( int argc, char* args[] )
             printf("Fail to init game\n");
         } else {
         printf("Init game successfully\n");
+        done = false;
             while(!done) {
                 ProcessInput(&game, done);
                 Update(&game);
                 Render(&game);
-                }
-            // Clean up
+            };
+            done?printf("Out of Game Loop\n"):printf("Not out yet\n");
+            close(game.tileSet,game.Platform);
             Close(&game);
+            // Clean up
             };
 return 0;
 }
