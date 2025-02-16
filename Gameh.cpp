@@ -85,14 +85,11 @@ bool Start(Game* g){
             
                 //Level camera
                 camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-                Uframe = 0;
-                frame[4] = {} ;
+                frame[4] = {};
+
                 StartTime =  SDL_GetTicks();
-
-                StartTime = 0;
-                EndTime = 0;
-                TimeElapsed = 0;
-
+                respawnStartTime = SDL_GetTicks();
+                
                 Ecollided = false;
                 Ucollided = false;
                 // uint32 LastFrameTime[TOTAL_ENEMY_TANK] ={};
@@ -107,6 +104,7 @@ void changeState(Game* g, KeyState* key){
             case MENU_INIT:
                 if (g->chosen_option == NEW_GAME){
                     g->state = GAME_NEW;
+                    // Game Constantly reset 
                     g->chosen_option = NONE;
                 } else if (g->chosen_option == EXIT || key->type == SDL_QUIT){
                     key->type == SDL_QUIT?printf("quit event is triggered\n"):printf("exit option is chosen\n");
@@ -115,6 +113,9 @@ void changeState(Game* g, KeyState* key){
                 break;
             case PAUSE:
                 if(g->chosen_option == NEW_GAME){
+                    // NOTE: Try to put Reset fx here to see anything different
+                    resetGame(g);
+                    // ====================
                     g->state = GAME_NEW;
                     g->chosen_option = NONE;
                 }else if (g->chosen_option == RESUME){
@@ -123,6 +124,7 @@ void changeState(Game* g, KeyState* key){
                 }else if (g->chosen_option == EXIT || key->type == SDL_QUIT){
                     g->state = EMPTY;
                 };
+                
                 break;
             case GAME_NEW:
                 if (key->key == SDL_SCANCODE_ESCAPE && key->pressed){
@@ -167,6 +169,15 @@ void ProcessInput(Game* g){
             
             PreviousBut = CurrentBut;
             CurrentBut.type = g->Platform->e.type;
+
+            if (CurrentBut.type == SDL_QUIT){
+                printf("Quit event triggered\n");
+            }
+
+            if (g->Platform->e.type == SDL_QUIT){
+                printf("Quit event triggered\n");
+            }
+
             CurrentBut.pressed = (g->Platform->e.key.state == SDL_PRESSED);
             CurrentBut.key = g->Platform->e.key.keysym.scancode;
             CurrentBut.repeat = g->Platform->e.key.repeat;
@@ -221,23 +232,32 @@ void runMainScene(Game* g){
         // printf(Ucollided?"EnemyTank collide each other out of minor loop\n":"No collision detected\n");
 
     }
-                
-    // NOTE: If user Tank is destroyed add spawnTank here                
+
+    // NOTE: If user Tank is destroyed add spawnTank here
+    //===========================================================
     if(g->userTank->isHit){
         // NOTE: The SDL_GetTicks() give the current time output
         // So how to calculate right spawn time every time user Tank
         // is hit
-        respawnTime = SDL_GetTicks();
-        while (respawnTime - StartTime < 1000.0f){
-            respawnTime = SDL_GetTicks();
-        }
-        if(respawnEndTime - respawnStartTime > 1000.0f){
-            printf("Wait Time: %f\n", respawnTime - StartTime);
+        respawnStartTime = SDL_GetTicks();
+        respawnEndTime = SDL_GetTicks();
+
+            while (respawnTime < 1000.0f){
+                // Why this make game so gotten bogged down
+                respawnEndTime = SDL_GetTicks();
+                respawnTime = respawnEndTime - respawnStartTime;
+                printf("Wait Time: %f\n", respawnTime);
+            }            
+        
+        if(respawnTime >= 1000.0f){
+            printf("Wait Time: %f\n", respawnTime);
             respawn(g->userTank);
-            respawnTime = StartTime;
+            respawnTime = 0.0f;
         }                
     };
-
+    // NOTE: Need to consider this fx it cause game lag because of while block
+    //=============================================================
+    
     setCamera(camera, g->userTank);        
 }
 
@@ -260,14 +280,10 @@ void Update(Game* g, bool done){
             break;
 
         case GAME_NEW:
-            // STORE ALL the Game stats here(already in game var)
-            // How to ensure the memory safety here. Note that
-            // the g is just the address of the game variable
-            // how can I delete the whole struct and create new
-            // or is there any way else???
-
-            // NOTE: resetGame() contain alot of bugs here!!!! 
-            resetGame(g);
+            // NOTE: resetGame() contain alot of bugs here!!!!
+            // because we constantly delete and create new game objects
+            // in game loop 
+            // How to tell apart which come from menu_init
             //================================================
             runMainScene(g);
             break;
@@ -287,14 +303,22 @@ void resetGame(Game*g){
     // Memory allocated using new must be freed by delete
     g->chosen_option = NONE;
 
-    delete g->TankPos;
-    delete g->userTank;
-    delete g->enemyTank;
+    StartTime = 0.0f;
+    EndTime = 0.0f;
+    TimeElapsed = 0.0f;
+
+    respawnStartTime = 0.0f;
+    respawnEndTime = 0.0f;
+
+    StartTime = SDL_GetTicks();
+    respawnStartTime = SDL_GetTicks();
     
-    g->TankPos = new Position;
+    delete []g->enemyTank;
+    delete g->userTank;
+    delete g->TankPos;
+    
     g->userTank = new TankInfo(true);
     g->enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
-
     g->TankPos = InitializeTankPos();
             
     for (int i = 0 ; i < TOTAL_ENEMY_TANK; i++){
@@ -304,7 +328,7 @@ void resetGame(Game*g){
 }        
 
 void RenderMainScene(Game* g){
-
+    EndTime = SDL_GetTicks();
     int k = 0;
  //Clear screen
      // NOTE: Render main scene
@@ -316,7 +340,7 @@ void RenderMainScene(Game* g){
  }
                
  render(g->userTank, Uframe, camera, g->Platform);
- // NOTE: Bugs lied here
+ 
  while(k < TOTAL_ENEMY_TANK)
  {
      if(g->enemyTank[k].isHit){
@@ -339,7 +363,6 @@ void RenderMainScene(Game* g){
                  SDL_Delay(0.032);
                  frame[k]++;
              }
-
          }
      } else {
          render(&g->enemyTank[k], frame[k], camera, g->Platform);                        
@@ -381,5 +404,5 @@ void Close (Game* g){
     // close everything in it
     close(g->tileSet, g->Platform);
     delete g->Platform;
-    delete [] g->tileSet;
+    delete[] &g->tileSet;
 }

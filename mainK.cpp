@@ -16,7 +16,6 @@ int main( int argc, char* args[] )
             printf("Fail to init game\n");
         } else {
         printf("Init game successfully\n");
-        done = false;
         // NOTE:
             while(!done) {
                 ProcessInput(&game);

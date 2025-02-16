@@ -16,13 +16,13 @@
 #include "GamePhysics.h"
 #include "PlatformP.h"
 
-global_variable real32 StartTime = 0;
-global_variable real32 EndTime = 0;
-global_variable real32 TimeElapsed = 0;
+global_variable real32 StartTime = 0.0f;
+global_variable real32 EndTime = 0.0f;
+global_variable real32 TimeElapsed = 0.0f;
 
-global_variable real32 respawnStartTime = 0;
-global_variable real32 respawnEndTime = 0;
-global_variable real32 respawnTime = 0.0f;
+global_variable real32 respawnStartTime = 0.0f;
+global_variable real32 respawnEndTime = 0.0f;
+global_variable real32 respawnTime = 0.0f;;
 
 global_variable uint8_t FPS = 0;
 
@@ -54,7 +54,7 @@ struct Game{
     int k = 0;    
     uint8_t pointed_option;
     MENUCHOICE chosen_option;
-    Tile* tileSet[ TOTAL_TILES ];
+    Tile* tileSet[TOTAL_TILES] = {};
     
     Position* TankPos = nullptr;    
     PlatformP* Platform = nullptr;

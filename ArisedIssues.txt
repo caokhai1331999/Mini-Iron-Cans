@@ -50,8 +50,20 @@ or Update one
 ** Beside that I deleted the Platform and tileSet before I close everything in
 it
 
-** Main Scene messed up. May be the SDL_getTick and the Position in everyFrame
+?? Main Scene messed up. May be the SDL_getTick and the Position in everyFrame
    seemed not calculated well (Big Problem)
-   ** latest Update: When choose new game. The Game run in a messed up way. But
+   ?? latest Update: When choose new game. The Game run in a messed up way. But
    after get to menu and choose resume. It then work like nearly normal but
    still so fast. MAY BE THE RESET GAME MAKE 
+     *** Issue fixed: I recklessly put the reset game properties in the
+   constantly running update fx
+
+?? The explosion texture span in an unexpected size
+
+?? The respawn part of code which include the while loop checking for respawn
+time drawing from SDL_GetTicks hold game down really much
+     ** Fixed:
+        // NOTE: As for the output debug infor. I Can see that the
+        // respawnTime check is flawed. It never meet the condition (>1s) to
+        respawn the tank. Cause the time is secured at 1s
+
