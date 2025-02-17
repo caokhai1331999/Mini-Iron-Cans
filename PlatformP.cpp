@@ -287,7 +287,8 @@ bool setTiles( Tile *tiles[],PlatformP* Platform){
 	else
 	{
         int i = 0, k = 0;
-        char* TileType = new char [0];
+        char* TileType = nullptr;
+        TileType = new char [2];
 		//Initialize the tiles
 		for (int i = 0; i < TOTAL_TILES; i ++ )
 		{
@@ -429,6 +430,7 @@ bool setTiles( Tile *tiles[],PlatformP* Platform){
 			Platform->gTileClips[ SMALL_WOOD_PATH_1 ].w = SMALL_TILE_WIDTH;
 			Platform->gTileClips[ SMALL_WOOD_PATH_1 ].h = SMALL_TILE_HEIGHT;
 		}
+    delete[] TileType;
 	}
 
     //Close the file
@@ -546,8 +548,10 @@ void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera 
             ExploFrameTime = ExploFrameEndTime - ExploFrameStartTime;
 
             if(ExploFrameTime = 0.032f){
+
                 printf("Frame Time: %f\n", ExploFrameTime);
                 Platform->gExplosionTexture->render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), &Platform->gExplosionClips[frame]);            
+
             }                
         }            
         

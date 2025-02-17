@@ -25,9 +25,10 @@ global_variable uint8_t FPS = 0;
 global_variable int frame[5] = {};
 global_variable uint8_t Uframe = 0;
 global_variable SDL_Rect camera;
+char* Menu[] = {"NEW GAME", "RESUME", "OPTIONS", "EXIT"};
+
 const global_variable real32 StandardFPS = 60.0f;
 const global_variable uint32 FRAME_DELAY = 1000/60;
-char* Menu[] = {"NEW GAME", "RESUME", "OPTIONS", "EXIT"};
 
 global_variable bool Ucollided = false;
 global_variable bool Ecollided = false;
@@ -59,6 +60,7 @@ struct Game{
     Game(){
         Platform = new PlatformP;
         userTank = new TankInfo(true);
+        TankPos = new Position[TOTAL_ENEMY_TANK];
         enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
         state = MENU_INIT;
         pointed_option = 0;
@@ -80,6 +82,5 @@ void RenderMainScene(Game* g);
 //===========================
 void Render(Game* g);
 void Close(Game* g);
-
 #define GAME_H
 #endif

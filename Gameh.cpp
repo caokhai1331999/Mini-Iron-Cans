@@ -77,7 +77,7 @@ bool Start(Game* g){
             }
             else
             {
-                g->TankPos = InitializeTankPos();
+                InitializeTankPos(g->TankPos);
             
                 for (int i = 0 ; i < TOTAL_ENEMY_TANK; i++){
                    g-> enemyTank[i] = InitializeTankInfo(g->TankPos[i].x, g->TankPos[i].y);
@@ -85,7 +85,6 @@ bool Start(Game* g){
             
                 //Level camera
                 camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-                frame[5] = {};
                 
                 Ecollided = false;
                 Ucollided = false;
@@ -305,7 +304,7 @@ void resetGame(Game*g){
     
     g->userTank = new TankInfo(true);
     g->enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
-    g->TankPos = InitializeTankPos();
+    InitializeTankPos(g->TankPos);
             
     for (int i = 0 ; i < TOTAL_ENEMY_TANK; i++){
         g-> enemyTank[i] = InitializeTankInfo(g->TankPos[i].x, g->TankPos[i].y);
@@ -379,31 +378,37 @@ void RenderMainScene(Game* g){
  StartTime = EndTime;         
 }
 
-void Render (Game* g){
-    if (g->state != EMPTY){
-    SDL_RenderClear( g->Platform->gRenderer);
-    SDL_SetRenderDrawColor( g->Platform->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-    // printf("Render accordingly to state\n");    
-    if (g->state == MENU_INIT || g->state == PAUSE){
-     // NOTE: The render part is already in the menu fx. So what will I put in this one???
-        displayMenu(g);
-    } else if (g->state == GAME_NEW || g->state == GAME_RELOADED){
-        RenderMainScene(g);
-    }
-    // NOTE: Else do nothing
-    SDL_RenderPresent( g->Platform->gRenderer);        
-    } else {
-        Close(g);
-    }
-}
 
-void Close (Game* g){
-    delete g->TankPos;    
+void Close(Game* g){    
+    delete g->TankPos;
+    g->TankPos = nullptr;
     delete[] g->enemyTank;
+    g->enemyTank = nullptr;
     delete g->userTank;
+    g->userTank = nullptr;
     // NOTE: I think I see the problem now. I delete platform before I properly
     // close everything in it
-    close(g->tileSet, g->Platform);
+    delete g->tileSet;
     delete g->Platform;
-    delete[] &g->tileSet;
+    g->Platform = nullptr;
+}
+
+
+void Render (Game* g){
+    if (g->state != EMPTY){
+        SDL_RenderClear( g->Platform->gRenderer);
+        SDL_SetRenderDrawColor( g->Platform->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+        // printf("Render accordingly to state\n");    
+        if (g->state == MENU_INIT || g->state == PAUSE){
+            // NOTE: The render part is already in the menu fx. So what will I put in this one???
+            displayMenu(g);
+        } else if (g->state == GAME_NEW || g->state == GAME_RELOADED){
+            RenderMainScene(g);
+        }
+        // NOTE: Else do nothing
+        SDL_RenderPresent( g->Platform->gRenderer);        
+    } else {
+        Close(g);
+        close(g->tileSet, g->Platform);        
+    }
 }

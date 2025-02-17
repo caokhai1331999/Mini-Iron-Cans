@@ -107,7 +107,7 @@ struct TankInfo
 // bool OtherReleased(SDL_KeyboardEvent key);
 
 // Randomize Tank Positions that far enough
-Position* InitializeTankPos();
+void InitializeTankPos(Position* RealTankPos);
 
 TankInfo InitializeTankInfo(int x, int y);
 

@@ -33,11 +33,10 @@ Position GeneratePosition(){
 }
 
 
-Position* InitializeTankPos(){
+void InitializeTankPos(Position* RealTankPos){
     bool valid = true;
     std::srand(std::time(nullptr));
-    Position* TankPos = new Position[TOTAL_ENEMY_TANK];
-    TankPos[0] = GeneratePosition();
+    RealTankPos[0] = GeneratePosition();
     Position* TempPos = new Position;
         // Loop comparing newly created pos to the previous valid one
     for (int i= 1; i < TOTAL_ENEMY_TANK; i++){
@@ -45,7 +44,7 @@ Position* InitializeTankPos(){
         while (!valid) {
             *TempPos = GeneratePosition();
             for (int p = 0; p < i; p++) {
-                if (((TempPos->x - TankPos[p].x) > ( 200)) || (abs(TempPos->y - TankPos[p].y) > (150))) {
+                if (((TempPos->x - RealTankPos[p].x) > ( 200)) || (abs(TempPos->y - RealTankPos[p].y) > (150))) {
                     if ( i - p > 1) {
                         continue;
                     } else {
@@ -57,11 +56,10 @@ Position* InitializeTankPos(){
             }
         }
         // printf("Position x: %d, y: %d", TempPos->x, TempPos->y);
-        TankPos[i] = *TempPos;
+        RealTankPos[i] = *TempPos;
     }
 
     delete TempPos;
-    return TankPos;
 }                                 
 
 TankInfo InitializeTankInfo(int x, int y){
