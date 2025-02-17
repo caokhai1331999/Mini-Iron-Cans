@@ -544,11 +544,13 @@ void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera 
             // Why this make game so gotten bogged down
             ExploFrameEndTime = SDL_GetTicks();
             ExploFrameTime = ExploFrameEndTime - ExploFrameStartTime;
+
+            if(ExploFrameTime = 0.032f){
+                printf("Frame Time: %f\n", ExploFrameTime);
+                Platform->gExplosionTexture->render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), &Platform->gExplosionClips[frame]);            
+            }                
         }            
         
-        if(ExploFrameTime >= 0.032f){
-            Platform->gExplosionTexture->render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), &Platform->gExplosionClips[frame]);            
-        }                
     }
     
 }

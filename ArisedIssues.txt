@@ -34,10 +34,9 @@ up, It's wrong somewhere)
 + Where should I boil down the state revolving machine into?? In menu function
 or Update one
 
-+ User tanks stuck with enemyTank. Time to find out
 
-** Done flag is on but game refused to end(Solved)
-     *** By delegate task to each function : ProcessInput(Get Menu Choice And
+** Done flag is on but game refused to end(SOLVED)
+     *** BY delegate task to each function : ProcessInput(Get Menu Choice And
      Hint to change state and change state); Update (Run the Game accordingly or
      Change done flag when it empty state) and Render (Render accordingly or
      close if it's empty state) (**** Why the Loop won't end right after changing
@@ -55,7 +54,7 @@ it
    ?? latest Update: When choose new game. The Game run in a messed up way. But
    after get to menu and choose resume. It then work like nearly normal but
    still so fast. MAY BE THE RESET GAME MAKE 
-     *** Issue fixed: I recklessly put the reset game properties in the
+     *** ISSUE FIXED: I recklessly put the reset game properties in the
    constantly running update fx
 
 ?? The explosion texture span in an unexpected size
@@ -67,3 +66,6 @@ time drawing from SDL_GetTicks hold game down really much
         // respawnTime check is flawed. It never meet the condition (>1s) to
         respawn the tank. Cause the time is secured at 1s
 
+??? POSITION COLLISION BUG:
+      ? User tanks stuck with enemyTank. Then can not move
+      ? bot tanks stuck at border. Then can not be hit

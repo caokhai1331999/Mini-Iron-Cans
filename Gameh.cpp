@@ -325,7 +325,7 @@ void RenderMainScene(Game* g){
      // tileSet[ i ]->render( camera, Platform->GetRenderer(),  Platform->GetgTileTexture(),  Platform->GetgTileClips(), checkCollision(&camera, tileSet[ i ]->getBox()));
  }
 
- if(!g->userTank->destroyed && !g->userTank->isHit){
+ if(!g->userTank->isHit){
      render(g->userTank, Uframe, camera, g->Platform);
  }else{
      if(g->userTank->isHit && !g->userTank->destroyed){

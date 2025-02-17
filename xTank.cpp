@@ -12,8 +12,23 @@
 
 Position GeneratePosition(){
     Position Tem;
-    Tem.x = std::rand()%(LEVEL_WIDTH - TANK_WIDTH - 50);
-    Tem.y = std::rand()%(LEVEL_HEIGHT - TANK_HEIGHT - 50);
+    
+    Tem.x = std::rand()%LEVEL_WIDTH;
+
+    if(Tem.x > LEVEL_WIDTH - TANK_WIDTH){
+        Tem.x = LEVEL_WIDTH - TANK_WIDTH;
+    } else if(Tem.x < TANK_WIDTH) {
+        Tem.x = TANK_WIDTH;
+    }
+
+    Tem.y = std::rand()%LEVEL_HEIGHT;
+
+    if(Tem.y > LEVEL_HEIGHT - TANK_HEIGHT){
+        Tem.x = LEVEL_HEIGHT - TANK_WIDTH;                        
+    } else if(Tem.y < TANK_HEIGHT) {
+        Tem.y = TANK_HEIGHT;
+    }
+
     return Tem ;
 }
 
@@ -138,21 +153,36 @@ void respawn(TankInfo* Tank){
         respawnStartTime = SDL_GetTicks();
         respawnEndTime = SDL_GetTicks();
         
-            while (respawnTime < 500.0f){
-                // Why this make game so gotten bogged down
-                respawnEndTime = SDL_GetTicks();
-                respawnTime = respawnEndTime - respawnStartTime;
-                // printf("Wait Time: %f\n", respawnTime);
-            }            
-        
-        if(respawnTime >= 500.0f){
+        while (respawnTime < 500.0f){
+            // Why this make game so gotten bogged down
+            respawnEndTime = SDL_GetTicks();
+            respawnTime = respawnEndTime - respawnStartTime;
+            // printf("Wait Time: %f\n", respawnTime);
+        }                    
+
+        // NOTE: Don't know why game stuck when put this inside while loop
+        if(respawnTime = 500.0f){
             // printf("Wait Time: %f\n", respawnTime);
             respawnTime = 0.0f;
-        }                        
             resetTank(Tank);
-            Tank->mBox.x = rand()%LEVEL_WIDTH - Tank->mBox.w - 50;
-            Tank->mBox.y = rand()%LEVEL_HEIGHT - Tank->mBox.h - 50;
-    }
+
+            Tank->mBox.x = rand()%LEVEL_WIDTH;
+
+            if(Tank->mBox.x > LEVEL_WIDTH - Tank->mBox.w){
+                Tank->mBox.x = LEVEL_WIDTH - Tank->mBox.w;
+            } else if(Tank->mBox.x < Tank->mBox.w) {
+                Tank->mBox.x = Tank->mBox.w;
+            }
+
+            Tank->mBox.y = rand()%LEVEL_HEIGHT;
+
+            if(Tank->mBox.y > LEVEL_HEIGHT - Tank->mBox.h){
+                Tank->mBox.y = LEVEL_HEIGHT - Tank->mBox.w;                        
+            } else if(Tank->mBox.y < Tank->mBox.h) {
+                Tank->mBox.y = Tank->mBox.h;
+            }
+        }
+    }                        
 }
 
 void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank) {
