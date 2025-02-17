@@ -111,5 +111,12 @@ TODO:
                                        menu and main scene by meant ()
 
                                        . I think I done the prototype code. Time
-                                       to start debugging!!!
+                                       to start debugging!!!(GAME RUN
+                                       RELUCTANTLY WITHOUT OBVIOUS ISSUES in
+                                       game play)
 
+                                       .Time to optimize game memory. It
+                                       persistently eat RAM until there are no
+                                       longer RAM to eat .
+                                       
+                                       . And remember to add sound

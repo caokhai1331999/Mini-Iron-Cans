@@ -130,7 +130,25 @@ void fire(TankInfo* Tank){
 }
 
 void respawn(TankInfo* Tank){
-    if(Tank->isHit){
+    if(Tank->destroyed){
+        real32 respawnStartTime = 0.0f;
+        real32 respawnEndTime = 0.0f;        
+        real32 respawnTime = 0.0f;
+        
+        respawnStartTime = SDL_GetTicks();
+        respawnEndTime = SDL_GetTicks();
+        
+            while (respawnTime < 500.0f){
+                // Why this make game so gotten bogged down
+                respawnEndTime = SDL_GetTicks();
+                respawnTime = respawnEndTime - respawnStartTime;
+                // printf("Wait Time: %f\n", respawnTime);
+            }            
+        
+        if(respawnTime >= 500.0f){
+            // printf("Wait Time: %f\n", respawnTime);
+            respawnTime = 0.0f;
+        }                        
             resetTank(Tank);
             Tank->mBox.x = rand()%LEVEL_WIDTH - Tank->mBox.w - 50;
             Tank->mBox.y = rand()%LEVEL_HEIGHT - Tank->mBox.h - 50;
@@ -214,7 +232,7 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
     // NOTE: Apply dijkstra's algo here to make bot tank'move more smart
 
     // checkCollision(Tank->mBox, all current active bullets boxes)
-    if(!Tank->destroyed && !Tank->isHit){
+    if(!Tank->destroyed){
         // if (Tank->userBelong){
             // And swivel the tank by the way
             //||touchesWall
@@ -245,9 +263,6 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
                     Tank->Bullets[i].blBox.y += Tank->Bullets[i].BlVelY;
                 }
         }    
-    }
-    if(collided){
-        
     }
 }
 

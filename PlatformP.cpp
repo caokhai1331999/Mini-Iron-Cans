@@ -525,3 +525,30 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
         // printf(OutPut);
     } 
 }
+
+void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera , int frame){
+
+    real32 ExploFrameStartTime = 0.0f;
+    real32 ExploFrameEndTime = 0.0f;
+    real32 ExploFrameTime = 0.0f; ;
+
+
+    if(Tank->isHit){
+        // NOTE: The SDL_GetTicks() give the current time output
+        // So how to calculate right spawn time every time user Tank
+        // is hit
+        ExploFrameStartTime = SDL_GetTicks();
+        ExploFrameEndTime = SDL_GetTicks();
+
+        while (ExploFrameTime < 0.032f){
+            // Why this make game so gotten bogged down
+            ExploFrameEndTime = SDL_GetTicks();
+            ExploFrameTime = ExploFrameEndTime - ExploFrameStartTime;
+        }            
+        
+        if(ExploFrameTime >= 0.032f){
+            Platform->gExplosionTexture->render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), &Platform->gExplosionClips[frame]);            
+        }                
+    }
+    
+}

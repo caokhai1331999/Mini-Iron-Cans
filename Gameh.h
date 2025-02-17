@@ -20,13 +20,9 @@ global_variable real32 StartTime = 0.0f;
 global_variable real32 EndTime = 0.0f;
 global_variable real32 TimeElapsed = 0.0f;
 
-global_variable real32 respawnStartTime = 0.0f;
-global_variable real32 respawnEndTime = 0.0f;
-global_variable real32 respawnTime = 0.0f;;
-
 global_variable uint8_t FPS = 0;
 
-global_variable int frame[4] = {};
+global_variable int frame[5] = {};
 global_variable uint8_t Uframe = 0;
 global_variable SDL_Rect camera;
 const global_variable real32 StandardFPS = 60.0f;

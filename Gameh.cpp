@@ -85,10 +85,7 @@ bool Start(Game* g){
             
                 //Level camera
                 camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-                frame[4] = {};
-
-                StartTime =  SDL_GetTicks();
-                respawnStartTime = SDL_GetTicks();
+                frame[5] = {};
                 
                 Ecollided = false;
                 Ucollided = false;
@@ -208,7 +205,19 @@ void ProcessInput(Game* g){
 }
 
 void runMainScene(Game* g){
-    move(false, Ucollided, g->userTank);
+
+    if(!g->userTank->destroyed && !g->userTank->isHit){
+        move(false, Ucollided, g->userTank);
+    }else{
+        // NOTE:
+        if(g->userTank->destroyed){
+            // NOTE: The SDL_GetTicks() give the current time output
+            // So how to calculate right spawn time every time user Tank
+            // is hit
+            respawn(g->userTank);
+        };
+    }
+    
     for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
         BiTankCheck(&g->enemyTank[i], g->userTank);
 
@@ -227,34 +236,15 @@ void runMainScene(Game* g){
         littleGuide(&g->enemyTank[i], g->userTank, Ecollided);
 
         // NOTE: Temporary not use touchwall here
-
-        move(false, Ecollided, &g->enemyTank[i]);
+        if(!g->enemyTank[i].destroyed){
+            move(false, Ecollided, &g->enemyTank[i]);
+        }
         // printf(Ucollided?"EnemyTank collide each other out of minor loop\n":"No collision detected\n");
 
     }
 
     // NOTE: If user Tank is destroyed add spawnTank here
     //===========================================================
-    if(g->userTank->isHit){
-        // NOTE: The SDL_GetTicks() give the current time output
-        // So how to calculate right spawn time every time user Tank
-        // is hit
-        respawnStartTime = SDL_GetTicks();
-        respawnEndTime = SDL_GetTicks();
-
-            while (respawnTime < 1000.0f){
-                // Why this make game so gotten bogged down
-                respawnEndTime = SDL_GetTicks();
-                respawnTime = respawnEndTime - respawnStartTime;
-                printf("Wait Time: %f\n", respawnTime);
-            }            
-        
-        if(respawnTime >= 1000.0f){
-            printf("Wait Time: %f\n", respawnTime);
-            respawn(g->userTank);
-            respawnTime = 0.0f;
-        }                
-    };
     // NOTE: Need to consider this fx it cause game lag because of while block
     //=============================================================
     
@@ -307,11 +297,7 @@ void resetGame(Game*g){
     EndTime = 0.0f;
     TimeElapsed = 0.0f;
 
-    respawnStartTime = 0.0f;
-    respawnEndTime = 0.0f;
-
     StartTime = SDL_GetTicks();
-    respawnStartTime = SDL_GetTicks();
     
     delete []g->enemyTank;
     delete g->userTank;
@@ -338,8 +324,23 @@ void RenderMainScene(Game* g){
      g->tileSet[ i ]->render( camera, g->Platform->gRenderer,  g->Platform->gTileTexture,  g->Platform->gTileClips, false);
      // tileSet[ i ]->render( camera, Platform->GetRenderer(),  Platform->GetgTileTexture(),  Platform->GetgTileClips(), checkCollision(&camera, tileSet[ i ]->getBox()));
  }
-               
- render(g->userTank, Uframe, camera, g->Platform);
+
+ if(!g->userTank->destroyed && !g->userTank->isHit){
+     render(g->userTank, Uframe, camera, g->Platform);
+ }else{
+     if(g->userTank->isHit && !g->userTank->destroyed){
+         // NOTE: This secure the game check isHit flag first then
+         // destroyed one
+         frame[4] = 0;
+
+         while(frame[4]/12 < ANIMATING_FRAMES+1){
+             renderExplosionFrame(g->userTank, g->Platform, &camera, frame[4]/12);
+             frame[4]++;
+         }
+         
+         g->userTank->destroyed = true;
+     }
+ }
  
  while(k < TOTAL_ENEMY_TANK)
  {
@@ -359,10 +360,10 @@ void RenderMainScene(Game* g){
              }
              //Go to next frame
              if(frame[k]!=-1){
-                 g->Platform->gExplosionTexture->render( g->Platform->gRenderer ,(g->enemyTank[k].mBox.x - camera.x), (g->enemyTank[k].mBox.y - camera.y), &g->Platform->gExplosionClips[frame[k]]);
-                 SDL_Delay(0.032);
+                 renderExplosionFrame(&g->enemyTank[k], g->Platform, &camera ,frame[k]/12);
                  frame[k]++;
              }
+             
          }
      } else {
          render(&g->enemyTank[k], frame[k], camera, g->Platform);                        
