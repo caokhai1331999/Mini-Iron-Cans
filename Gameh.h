@@ -62,6 +62,9 @@ struct Game{
         userTank = new TankInfo(true);
         TankPos = new Position[TOTAL_ENEMY_TANK];
         enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
+        if(tileSet == NULL){
+            *tileSet = new Tile[TOTAL_TILES];
+        }
         state = MENU_INIT;
         pointed_option = 0;
         chosen_option = NONE;

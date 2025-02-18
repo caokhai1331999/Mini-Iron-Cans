@@ -40,19 +40,8 @@ void close( Tile* tiles[], PlatformP* Platform){
     Platform->gExplosionTexture->free();
     
 	//Destroy window	
-	SDL_DestroyRenderer( Platform->gRenderer );
-	SDL_DestroyWindow( Platform->gWindow );
-	Platform->gWindow = NULL;
-    Platform->gWindow == NULL?printf("Window is destroyed\n"):printf("Window is not destroyed yet. why??");
-	Platform->gRenderer = NULL;
-
-	//Quit SDL subsystems
-    TTF_Quit();
-	IMG_Quit();
-	SDL_Quit();
     // NOTE: Still don't know why this function immediately close the app
     // including terminal one
-    printf("End of Game, Thanks so much for playing my game\n");    
 }
 
 bool LoadMedia(Tile* tiles[],PlatformP* Platform){
@@ -111,7 +100,7 @@ bool LoadMedia(Tile* tiles[],PlatformP* Platform){
 
 
 	//Load tile texture
-        if( !Platform->gTileTexture->loadFromFile( "media/32x32_map_tile v3.1 [MARGINLESS].png", Platform->gRenderer, (int)30, (int)30) )
+        if( !Platform->gTileTexture->loadFromFile( "media/32x32_map_tile v3.1 [MARGINLESS].bmp", Platform->gRenderer, (int)30, (int)30) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;

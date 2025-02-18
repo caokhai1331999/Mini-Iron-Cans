@@ -67,5 +67,8 @@ time drawing from SDL_GetTicks hold game down really much
         respawn the tank. Cause the time is secured at 1s
 
 ??? POSITION COLLISION BUG:
-      ? User tanks stuck with enemyTank. Then can not move
-      ? bot tanks stuck at border. Then can not be hit
+
+    ? User tanks stuck with enemyTank. Then can not move (WORKING)
+        Collision checking (Between Tanks and bullets) fx is buggy
+
+    ? bot tanks stuck at border. Then can not be hit (WORKING)

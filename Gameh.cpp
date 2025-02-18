@@ -218,35 +218,46 @@ void runMainScene(Game* g){
     }
     
     for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
-        BiTankCheck(&g->enemyTank[i], g->userTank);
+        // NOTE: a Sole Ecollided is not enough
+        // Rewrite the collision check and moving system
+        
+        Ucollided = BiTankCheck(&g->enemyTank[i], g->userTank);
 
-        for (int p = 0; p < i; p++){
-            if (i > 1 && p < i){
+        // ===============================================================
+        // for (int p = 0; p < i; p++){
+        //     if (i > 1 && p < i){
 
-                Ecollided = checkCollision(&g->enemyTank[i].mBox, &g->enemyTank[p].mBox) | checkCollision(&g->userTank->mBox, &g->enemyTank[i].mBox);
-                            
+        //         Ecollided = checkCollision(&g->enemyTank[i].mBox, &g->enemyTank[p].mBox) | checkCollision(&g->userTank->mBox, &g->enemyTank[i].mBox);
+                
+        //         // printf(Ecollided?"EnemyTank collide each other in minor loop\n":"No collision detected\n");                            
+        //     }
+        //     // littleGuide(&g->enemyTank[i], g->userTank, collided);
+        //     // move(false, collided, &g->enemyTank[p]);
+        // }
+        //========================================================================
+
+        // NOTE: AI ways
+        for (int j = i+1; j < TOTAL_ENEMY_TANK; j++){
+
+            Ecollided = checkCollision(&g->enemyTank[i].mBox, &g->enemyTank[j].mBox) | checkCollision(&g->userTank->mBox, &g->enemyTank[i].mBox);
+                
                 // printf(Ecollided?"EnemyTank collide each other in minor loop\n":"No collision detected\n");                            
             }
             // littleGuide(&g->enemyTank[i], g->userTank, collided);
-            // move(false, collided, &g->enemyTank[p]);
-        }
-
-        Ucollided = checkCollision(&g->userTank->mBox, &g->enemyTank[i].mBox);
+            // NOTE: BUG lies inside this fx
+            // add the solution to the specific colliding case 
         littleGuide(&g->enemyTank[i], g->userTank, Ecollided);
 
         // NOTE: Temporary not use touchwall here
         if(!g->enemyTank[i].destroyed){
             move(false, Ecollided, &g->enemyTank[i]);
         }
+    // ===============================================
+    
+
         // printf(Ucollided?"EnemyTank collide each other out of minor loop\n":"No collision detected\n");
 
-    }
-
-    // NOTE: If user Tank is destroyed add spawnTank here
-    //===========================================================
-    // NOTE: Need to consider this fx it cause game lag because of while block
-    //=============================================================
-    
+    }    
     setCamera(camera, g->userTank);        
 }
 
@@ -380,17 +391,30 @@ void RenderMainScene(Game* g){
 
 
 void Close(Game* g){    
-    delete g->TankPos;
+    delete[] g->TankPos;
     g->TankPos = nullptr;
     delete[] g->enemyTank;
     g->enemyTank = nullptr;
     delete g->userTank;
     g->userTank = nullptr;
+    close(g->tileSet, g->Platform);        
     // NOTE: I think I see the problem now. I delete platform before I properly
     // close everything in it
-    delete g->tileSet;
+    // delete g->tileSet;
+    SDL_DestroyRenderer( g->Platform->gRenderer );
+	SDL_DestroyWindow( g->Platform->gWindow );
+	g->Platform->gRenderer = NULL;
+	g->Platform->gWindow = NULL;
+    g->Platform->gWindow == NULL?printf("Window is destroyed\n"):printf("Window is not destroyed yet. why??");
+
     delete g->Platform;
     g->Platform = nullptr;
+	//Quit SDL subsystems
+    TTF_Quit();
+	IMG_Quit();
+	SDL_Quit();
+    
+    printf("End of Game, Thanks so much for playing my game\n");    
 }
 
 
@@ -409,6 +433,5 @@ void Render (Game* g){
         SDL_RenderPresent( g->Platform->gRenderer);        
     } else {
         Close(g);
-        close(g->tileSet, g->Platform);        
     }
 }

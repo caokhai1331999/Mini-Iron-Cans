@@ -9,6 +9,8 @@ class Tile
 {
     public:
 		//Initializes position and type
+    Tile(){};
+        ~Tile(){};
 		Tile( int x, int y, int tileType );
 
 		//Shows the tile
