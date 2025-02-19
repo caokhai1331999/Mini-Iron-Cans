@@ -18,7 +18,6 @@
 
 #define real32 float
 #define uint32 uint32_t
-const char menuChoices [][10] = {"NEW GAME","RESUME","OPTIONS","EXIT"}; 
 
 struct PlatformP {
     

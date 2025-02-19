@@ -17,18 +17,12 @@ Position GeneratePosition(){
 
     if(Tem.x > LEVEL_WIDTH - TANK_WIDTH){
         Tem.x = LEVEL_WIDTH - TANK_WIDTH;
-    } else if(Tem.x < TANK_WIDTH) {
-        Tem.x = TANK_WIDTH;
     }
-
     Tem.y = std::rand()%LEVEL_HEIGHT;
 
     if(Tem.y > LEVEL_HEIGHT - TANK_HEIGHT){
         Tem.y = LEVEL_HEIGHT - TANK_HEIGHT;                        
-    } else if(Tem.y < TANK_HEIGHT) {
-        Tem.y = TANK_HEIGHT;
     }
-
     return Tem ;
 }
 
@@ -268,14 +262,14 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
         //TODO: Add collision code here
             Tank->mBox.x += Tank->mVelX;
             // (Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH - 50)||
-           if ((Tank->mBox.x < TANK_WIDTH)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH - TANK_WIDTH) || collided){
+           if ((Tank->mBox.x < 0)||(Tank->mBox.x  > LEVEL_WIDTH - TANK_WIDTH) || collided){
                     Tank->mBox.x -= Tank->mVelX;
                }
                     // printf("Tank Pos X is: %d /n", Tank->mBox.x);                    
             
             Tank->mBox.y += Tank->mVelY;
             // (Tank->mBox.y < 10)||(Tank->mBox.y + Tank->mBox.h > LEVEL_HEIGHT  - 50) ||
-            if ((Tank->mBox.y < TANK_HEIGHT)||(Tank->mBox.y + Tank->mBox.h > LEVEL_HEIGHT  - TANK_HEIGHT) || collided)
+            if ((Tank->mBox.y < 0)||(Tank->mBox.y > LEVEL_HEIGHT  - TANK_HEIGHT) || collided)
             {
                     Tank->mBox.y -= Tank->mVelY;
                     // printf("Tank Pos Y is: %d /n", Tank->mBox.y);

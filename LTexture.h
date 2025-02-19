@@ -115,7 +115,7 @@ class LTexture
 		
 		#if defined(SDL_TTF_MAJOR_VERSION)
 		//Creates image from font string
-    bool loadFromRenderedText(char* textureText, float ScaleW, float ScaleH, SDL_Color textColor, TTF_Font* gFont , SDL_Renderer* gRenderer);
+    bool loadFromRenderedText(char* textureText, int Scale, SDL_Color textColor, TTF_Font* gFont , SDL_Renderer* gRenderer);
 		#endif
 
 		//Deallocates texture

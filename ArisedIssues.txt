@@ -72,3 +72,6 @@ time drawing from SDL_GetTicks hold game down really much
         Collision checking (Between Tanks and bullets) fx is buggy
 
     ? bot tanks stuck at border. Then can not be hit (WORKING)
+
+?? Memory Issue:
+   ? Platform pointer is freed before closing Tile

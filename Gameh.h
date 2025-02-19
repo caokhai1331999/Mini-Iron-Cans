@@ -22,7 +22,7 @@ global_variable real32 TimeElapsed = 0.0f;
 
 global_variable uint8_t FPS = 0;
 
-global_variable int frame[5] = {};
+global_variable int* frame[5];
 global_variable uint8_t Uframe = 0;
 global_variable SDL_Rect camera;
 char* Menu[] = {"NEW GAME", "RESUME", "OPTIONS", "EXIT"};
@@ -51,20 +51,25 @@ struct Game{
     int k = 0;    
     uint8_t pointed_option;
     MENUCHOICE chosen_option;
-    Tile* tileSet[TOTAL_TILES] = {};
+    Tile* tileSet[TOTAL_TILES];
     
-    Position* TankPos = nullptr;    
-    PlatformP* Platform = nullptr;
-    TankInfo* userTank = nullptr;
-    TankInfo* enemyTank = nullptr;
+    Position* TankPos;    
+    PlatformP* Platform;
+    TankInfo* userTank;
+    TankInfo* enemyTank;
     Game(){
+        Platform = nullptr;        
         Platform = new PlatformP;
+
+        userTank = nullptr;
         userTank = new TankInfo(true);
+
+        TankPos = nullptr;
         TankPos = new Position[TOTAL_ENEMY_TANK];
+
+        enemyTank = nullptr;
         enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
-        if(tileSet == NULL){
-            *tileSet = new Tile[TOTAL_TILES];
-        }
+        
         state = MENU_INIT;
         pointed_option = 0;
         chosen_option = NONE;
