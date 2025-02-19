@@ -79,7 +79,7 @@ bool LTexture::loadFromRenderedText(char* textureText, float Scale, SDL_Color te
 		}
 		else
 		{
-                if(Scale != 0){
+                if(Scale != 0.0f){
                     mWidth = (int)(textSurface->w)* Scale;
                     mHeight = (int)(textSurface->h)* Scale;                
                 }

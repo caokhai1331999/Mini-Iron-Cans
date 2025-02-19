@@ -120,3 +120,6 @@ TODO:
                                        longer RAM to eat .
                                        
                                        . And remember to add sound
+
+* I coincidentally fix the slow closing issue by adding delete menu and frame
+  array of integer in closing fx
