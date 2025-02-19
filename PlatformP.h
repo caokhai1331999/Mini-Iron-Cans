@@ -30,8 +30,8 @@ struct PlatformP {
     LTexture* BlueTexture;
     LTexture* ShimmerTexture;
     
-    LTexture* gMenuTexture;
     LTexture* gTileTexture;
+    LTexture* gMenuTexture;
     LTexture* gTextTexture;
     LTexture* gUserTankTexture;
     LTexture* gUserBulletTexture;
@@ -46,7 +46,6 @@ struct PlatformP {
     
 //The window renderer
     PlatformP(){
-
         gTileTexture = nullptr;
         gTileTexture = new LTexture;
 

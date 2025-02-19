@@ -310,11 +310,15 @@ void resetGame(Game*g){
     StartTime = SDL_GetTicks();
     
     delete []g->enemyTank;
+    g->enemyTank = nullptr;
     delete g->userTank;
-    delete g->TankPos;
+    g->userTank = nullptr;
+    delete []g->TankPos;
+    g->TankPos = nullptr;
     
     g->userTank = new TankInfo(true);
     g->enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
+    g->TankPos = new Position[TOTAL_ENEMY_TANK];
     InitializeTankPos(g->TankPos);
             
     for (int i = 0 ; i < TOTAL_ENEMY_TANK; i++){
@@ -397,8 +401,11 @@ void Close(Game* g){
     g->enemyTank = nullptr;
     delete g->userTank;
     g->userTank = nullptr;
+
+    // NOTE: Still leak memmory????
     close(g->tileSet, g->Platform);        
-    // NOTE: I think I see the problem now. I delete platform before I properly
+
+// NOTE: I think I see the problem now. I delete platform before I properly
     // close everything in it
     // delete g->tileSet;
     SDL_DestroyRenderer( g->Platform->gRenderer );

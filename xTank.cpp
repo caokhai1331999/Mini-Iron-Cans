@@ -24,7 +24,7 @@ Position GeneratePosition(){
     Tem.y = std::rand()%LEVEL_HEIGHT;
 
     if(Tem.y > LEVEL_HEIGHT - TANK_HEIGHT){
-        Tem.x = LEVEL_HEIGHT - TANK_WIDTH;                        
+        Tem.y = LEVEL_HEIGHT - TANK_HEIGHT;                        
     } else if(Tem.y < TANK_HEIGHT) {
         Tem.y = TANK_HEIGHT;
     }

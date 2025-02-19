@@ -19,6 +19,10 @@ bool IsArrow(SDL_Scancode KeyCode){
 //Frees media and shuts down SDL
 void close( Tile* tiles[], PlatformP* Platform){
 	//Deallocate tiles
+    if(Platform->gTileTexture!=NULL){
+        Platform->gTileTexture->free();
+    }
+    
 	for( int i = 0; i < TOTAL_TILES; ++i )
 	{
 		 if( tiles[ i ] != NULL )
@@ -30,7 +34,8 @@ void close( Tile* tiles[], PlatformP* Platform){
 
 	//Free loaded images
 	// Platform->gDotTexture->free();
-	Platform->gTileTexture->free();
+    // Don't know why this TileTexture free fx is
+    
 	Platform->gMenuTexture->free();
     Platform->gTextTexture->free();
     Platform->gUserTankTexture->free();
