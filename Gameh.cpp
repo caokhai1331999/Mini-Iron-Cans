@@ -11,15 +11,15 @@ void displayMenu(Game* g){
     gFont = TTF_OpenFont( "Roboto.ttf", 28 );
     // SDL_Color TextColor = {249 ,166 ,2};
     SDL_Color TextColor = {0 ,0 ,0};
-    int scale = 0.0;
+    float scale = 0.0f;
 
     for(uint8_t i = 0; i < 4; ++i){
 
         // NOTE: Scale up the text whenever it is pointed to
         if(g->pointed_option == i+1){            
-            scale = 2;   
+            scale = 1.5f;   
         } else {
-            scale = 1;
+            scale = 1.0f;
         }
 
         if (!g->Platform->gMenuTexture->loadFromRenderedText(Menu[i], scale, TextColor, gFont, g->Platform->gRenderer)) {
