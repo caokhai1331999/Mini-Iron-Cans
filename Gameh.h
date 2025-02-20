@@ -25,8 +25,8 @@ global_variable uint8_t FPS = 0;
 global_variable int* frame[5];
 global_variable uint8_t Uframe = 0;
 global_variable SDL_Rect camera;
-char* Menu[] = {"NEW GAME", "RESUME", "OPTIONS", "EXIT"};
 
+global_variable char* Menu[4] = {"NEW GAME", "RESUME", "OPTIONS", "EXIT"};
 const global_variable real32 StandardFPS = 60.0f;
 const global_variable uint32 FRAME_DELAY = 1000/60;
 

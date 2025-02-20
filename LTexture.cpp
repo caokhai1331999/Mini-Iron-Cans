@@ -68,7 +68,8 @@ bool LTexture::loadFromRenderedText(char* textureText, float Scale, SDL_Color te
 	free();
 
 	//Render text surface
-	SDL_Surface* textSurface = TTF_RenderText_Solid( gFont, textureText, textColor );
+	SDL_Surface* textSurface = nullptr;
+    textSurface = TTF_RenderText_Solid( gFont, textureText, textColor);
 	if( textSurface != NULL )
 	{
 		//Create texture from surface pixels
@@ -82,6 +83,9 @@ bool LTexture::loadFromRenderedText(char* textureText, float Scale, SDL_Color te
                 if(Scale != 0.0f){
                     mWidth = (int)(textSurface->w)* Scale;
                     mHeight = (int)(textSurface->h)* Scale;                
+                } else {
+                    mWidth = (int)(textSurface->w);
+                    mHeight = (int)(textSurface->h);                
                 }
 		}
 

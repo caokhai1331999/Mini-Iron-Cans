@@ -415,12 +415,7 @@ void Close(Game* g){
     g->userTank = nullptr;
 
     // NOTE: Still leak memmory????
-
-    for (int i = 0; i < 4; i++){
-        delete Menu[i];
-        Menu[i] = nullptr;
-    }
-
+    // =====================
     for (int i = 0; i < 5; i++){
         delete frame[i];
         frame[i] = nullptr;
@@ -443,8 +438,7 @@ void Close(Game* g){
     TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
-    
-    printf("End of Game, Thanks so much for playing my game\n");    
+    printf("End of Game, Thanks so much for playing my game\n");        
 }
 
 

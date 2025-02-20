@@ -19,14 +19,6 @@ bool IsArrow(SDL_Scancode KeyCode){
 //Frees media and shuts down SDL
 void close( Tile* tiles[], PlatformP* Platform){
 	//Deallocate tiles
-    if(Platform != NULL && Platform->gTileTexture!=NULL){
-        Platform->gTileTexture->free();
-    } else {
-        Platform == NULL?printf("Platform pointer was already freed somewhere\n"):
-            printf("Platform was not freed but ");
-        Platform->gTileTexture == NULL?printf("Tile texture pointer was already freed"):printf("Tile texture was not freed\n");
-    }
-    
 	for( int i = 0; i < TOTAL_TILES; ++i )
 	{
 		 if( tiles[ i ] != NULL )
@@ -35,6 +27,16 @@ void close( Tile* tiles[], PlatformP* Platform){
 			tiles[ i ] = NULL;
 		 }
 	}
+
+    if(Platform != NULL && Platform->gTileTexture!=NULL){
+        Platform->gTileTexture->free();
+    } else {
+        Platform == NULL?printf("Platform pointer was already freed somewhere\n"):
+            printf("Platform was not freed but ");
+
+        Platform->gTileTexture == NULL?printf("Tile texture pointer was already freed"):printf("Tile texture was not freed\n");
+        
+    }    
 
 	//Free loaded images
 	// Platform->gDotTexture->free();
@@ -499,7 +501,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
     // carefull to link, remember to put dll files in system32 folder
                 
     char OutPut[256];
-    gFont = TTF_OpenFont( "Roboto.ttf", 28 );
+    gFont = TTF_OpenFont( "Roboto.ttf", 26);
     // SDL_Color TextColor = {249 ,166 ,2};
     SDL_Color TextColor = {0 ,0 ,0};                
     // NOTE: Somehow The exe file can't find out the TTF_OpenFont and TTF_Solid_Render which is in the ttf lib. Got to find out and fix
@@ -508,7 +510,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
 
     // printf(OutPut);
                 
-    if (!Platform->gTextTexture->loadFromRenderedText(OutPut, 0, TextColor, gFont, Platform->gRenderer)) {
+    if (!Platform->gTextTexture->loadFromRenderedText(OutPut, 0.0f, TextColor, gFont, Platform->gRenderer)) {
         printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
     } else {                           Platform->gTextTexture->render(Platform->gRenderer, 0, 0);                    
     }
@@ -516,7 +518,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
     if(userTank->BulletsNumber == 0){
         sprintf(OutPut, "Tank Bullets: Loading\n");
         //Update screen
-        if (!Platform->gTextTexture->loadFromRenderedText(OutPut, 0, TextColor, gFont, Platform->gRenderer)) {
+        if (!Platform->gTextTexture->loadFromRenderedText(OutPut, 0.0f, TextColor, gFont, Platform->gRenderer)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
         } else {                           Platform->gTextTexture->render(Platform->gRenderer, SCREEN_WIDTH - 300, 0);                    
         }                    
@@ -524,7 +526,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
     } else {                    
         sprintf(OutPut, "Tank Bullets :%d \n", int(userTank->BulletsNumber));
         //Update screen
-        if (!Platform->gTextTexture->loadFromRenderedText(OutPut, 0, TextColor, gFont, Platform->gRenderer)) {
+        if (!Platform->gTextTexture->loadFromRenderedText(OutPut, 0.0f, TextColor, gFont, Platform->gRenderer)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
         } else {                           Platform->gTextTexture->render(Platform->gRenderer, SCREEN_WIDTH - 200, 0);                    
         }                    
