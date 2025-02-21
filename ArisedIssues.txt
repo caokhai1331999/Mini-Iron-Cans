@@ -74,4 +74,8 @@ time drawing from SDL_GetTicks hold game down really much
     ? bot tanks stuck at border. Then can not be hit (WORKING)
 
 ?? Memory Issue:
-   ? Platform pointer is freed before closing Tile
+   ** Fixed: By Rewriting the Tile file and change its structure from class
+   to struct. I Fixed the serious memory leaking problem. The eaten memory
+   stop at 600 mb and no more. May be the problem related to the array of
+   pointer and the way class work
+
