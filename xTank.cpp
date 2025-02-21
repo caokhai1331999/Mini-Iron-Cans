@@ -57,11 +57,13 @@ void InitializeTankPos(Position* RealTankPos){
 }                                 
 
 TankInfo InitializeTankInfo(int x, int y){
-    TankInfo Tank;
+    TankInfo* Tank = nullptr;
+    Tank = new TankInfo;
     // TODO: Mark the Tank bullet
-    Tank.mBox.x = x;
-    Tank.mBox.y = y;
-    return Tank;
+    Tank->mBox.x = x;
+    Tank->mBox.y = y;
+    return *Tank;
+    delete Tank;
 }
 
 void fire(TankInfo* Tank){

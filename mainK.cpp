@@ -14,18 +14,22 @@ int main( int argc, char* args[] )
 {
     bool done = false;
     _CrtDumpMemoryLeaks();
-    Game game = {};
-    if(!Start(&game)) {
+    Game* game = nullptr;
+    game = new Game;
+    if(!Start(game)) {
             printf("Fail to init game\n");
         } else {
         printf("Init game successfully\n");
         // NOTE:
             while(!done) {
-                ProcessInput(&game);
-                Update(&game, done);
-                Render(&game);
+                ProcessInput(game);
+                Update(game, done);
+                Render(game);
+                if (done){
+                    delete game;
+                    game = nullptr;
+                }
             }
-            Close(&game); 
     }
 return 0;
 }

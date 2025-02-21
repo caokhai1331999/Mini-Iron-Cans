@@ -45,6 +45,8 @@ struct PlatformP {
     
 //The window renderer
     PlatformP(){
+        e = {};
+
         gTileTexture = nullptr;
         gTileTexture = new LTexture;
 
@@ -52,8 +54,6 @@ struct PlatformP {
         gMenuTexture = nullptr;
         gMenuTexture = new LTexture;
         
-        // gDotTexture = nullptr;
-        // gDotTexture = new LTexture;
         gTextTexture = nullptr;
         gTextTexture = new LTexture;
 

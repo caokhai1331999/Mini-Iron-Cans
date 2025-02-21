@@ -32,24 +32,42 @@ void close( Tile* tiles[], PlatformP* Platform){
         Platform->gTileTexture->free();
     } else {
         Platform == NULL?printf("Platform pointer was already freed somewhere\n"):
-            printf("Platform was not freed but ");
-
-        Platform->gTileTexture == NULL?printf("Tile texture pointer was already freed"):printf("Tile texture was not freed\n");
-        
+            printf("Platform was not freed but ");        
     }    
 
 	//Free loaded images
 	// Platform->gDotTexture->free();
     // Don't know why this TileTexture free fx is
-    
-	Platform->gMenuTexture->free();
+    if(Platform->gMenuTexture!=NULL){
+        Platform->gMenuTexture->free();
+    }
+    // ================================================
+    delete Platform->gMenuTexture;
+    Platform->gMenuTexture = nullptr;
+
     Platform->gTextTexture->free();
+    delete Platform->gTextTexture;
+    Platform->gTextTexture = NULL;
+;
     Platform->gUserTankTexture->free();
+    delete Platform->gUserTankTexture;
+    Platform->gUserTankTexture = NULL;
+
     Platform->gEnemyTankTexture->free();
-    Platform->gUserBulletTexture->free();
-    Platform->gEnemyBulletTexture->free();
-    Platform->gExplosionTexture->free();
+    delete Platform->gEnemyTankTexture;
+    Platform->gEnemyTankTexture = NULL;
     
+    Platform->gUserBulletTexture->free();
+    delete Platform->gUserBulletTexture;
+    Platform->gUserBulletTexture = NULL;
+
+    Platform->gEnemyBulletTexture->free();
+    delete Platform->gEnemyBulletTexture;
+    Platform->gEnemyBulletTexture = NULL;
+    
+    Platform->gExplosionTexture->free();
+    delete Platform->gExplosionTexture;
+    Platform->gExplosionTexture = NULL;
 	//Destroy window	
     // NOTE: Still don't know why this function immediately close the app
     // including terminal one

@@ -48,6 +48,7 @@ struct Bullet{
     int BlVelX, BlVelY;
     bool Launched;
     SDL_Rect blBox;
+
     Bullet(int TankX = 0, int TankY = 0, bool launched = false, bool userBelong = false)
     {
         blBox.x = TankX;
@@ -57,6 +58,7 @@ struct Bullet{
         blBox.w = BULLET_WIDTH;
         blBox.h = BULLET_HEIGHT;
     }
+    
 };
 
 struct TankInfo
@@ -85,7 +87,10 @@ struct TankInfo
         mBox.h = TANK_HEIGHT;
         mVelX = 0;
         mVelY = 0;
+
+        Bullets = nullptr ;
         Bullets = new Bullet[TOTAL_BULLET_PER_TANK];
+        
         // TODO: figure out how to effectively flag these bullets as user's
         if(userBelong){
             mBox.x = rand()%SCREEN_WIDTH;

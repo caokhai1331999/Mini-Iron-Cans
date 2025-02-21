@@ -57,6 +57,7 @@ struct Game{
     PlatformP* Platform;
     TankInfo* userTank;
     TankInfo* enemyTank;
+
     Game(){
         Platform = nullptr;        
         Platform = new PlatformP;
@@ -74,6 +75,20 @@ struct Game{
         pointed_option = 0;
         chosen_option = NONE;
     };
+        
+    ~Game(){
+        delete Platform;
+        Platform = nullptr;        
+
+        delete userTank;
+        userTank = nullptr;
+
+        delete TankPos;
+        TankPos = nullptr;
+
+        delete enemyTank;
+        enemyTank = nullptr;        
+    }
 };
 
 void displayMenu(Game* g);

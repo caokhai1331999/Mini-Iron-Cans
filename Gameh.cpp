@@ -153,6 +153,7 @@ void ProcessInput(Game* g){
     if (g->state != EMPTY){
     KeyState PreviousBut = {};
     KeyState CurrentBut = {};
+    
     while( SDL_PollEvent( &g->Platform->e ) != 0 )
     {
         //User requests quit
@@ -332,7 +333,7 @@ void resetGame(Game*g){
     InitializeTankPos(g->TankPos);
             
     for (int i = 0 ; i < TOTAL_ENEMY_TANK; i++){
-        g-> enemyTank[i] = InitializeTankInfo(g->TankPos[i].x, g->TankPos[i].y);
+        g->enemyTank[i] = InitializeTankInfo(g->TankPos[i].x, g->TankPos[i].y);
     };
 
 }        
@@ -407,12 +408,12 @@ void RenderMainScene(Game* g){
 void Close(Game* g){    
     close(g->tileSet, g->Platform);        
 
-    delete[] g->TankPos;
-    g->TankPos = nullptr;
-    delete[] g->enemyTank;
-    g->enemyTank = nullptr;
-    delete g->userTank;
-    g->userTank = nullptr;
+    // delete[] g->TankPos;
+    // g->TankPos = nullptr;
+    // delete[] g->enemyTank;
+    // g->enemyTank = nullptr;
+    // delete g->userTank;
+    // g->userTank = nullptr;
 
     // NOTE: Still leak memmory????
     // =====================
@@ -428,17 +429,12 @@ void Close(Game* g){
 	g->Platform->gRenderer = NULL;
 	SDL_DestroyWindow( g->Platform->gWindow );
 	g->Platform->gWindow = NULL;
-
     g->Platform->gWindow == NULL?printf("Window is destroyed\n"):printf("Window is not destroyed yet. why??");
-
-    delete g->Platform;
-    g->Platform = nullptr;
 
 	//Quit SDL subsystems
     TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
-    printf("End of Game, Thanks so much for playing my game\n");        
 }
 
 
@@ -453,9 +449,10 @@ void Render (Game* g){
         } else if (g->state == GAME_NEW || g->state == GAME_RELOADED){
             RenderMainScene(g);
         }
-        // NOTE: Else do nothing
         SDL_RenderPresent( g->Platform->gRenderer);        
+        // NOTE: Else do nothing
     } else {
         Close(g);
+        printf("End of Game, Thanks so much for playing my game\n");
     }
 }
