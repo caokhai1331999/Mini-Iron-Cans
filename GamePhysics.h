@@ -9,7 +9,7 @@
 #include <fstream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "Tile.h"
+#include "TileX.h"
 // #include "xTank.h"
 // #include "Dot.h"
 
@@ -20,7 +20,7 @@ bool checkCollision( SDL_Rect* a, SDL_Rect* b );
 // bool MassCheckCollision( TankInfo* UserTank, TankInfo* EnemyTanks);
 
 //checks collision box against set of tiles
-bool touchesWall( SDL_Rect* box, Tile* tiles[] );
+bool touchesWall( SDL_Rect* box, Tile* tiles );
 
 #define GAMEPHYSICS_H
 #endif

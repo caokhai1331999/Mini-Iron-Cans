@@ -346,7 +346,7 @@ void RenderMainScene(Game* g){
  for( int i = 0; i < TOTAL_TILES; ++i )
  {
      //touchesWall(&userTank->mBox, tileSet)
-     g->tileSet[ i ]->render( camera, g->Platform->gRenderer,  g->Platform->gTileTexture,  g->Platform->gTileClips, false);
+     renderTile( camera, g->Platform->gRenderer, g->tileSet[ i ], g->Platform->gTileTexture,  g->Platform->gTileClips, false);
      // tileSet[ i ]->render( camera, Platform->GetRenderer(),  Platform->GetgTileTexture(),  Platform->GetgTileClips(), checkCollision(&camera, tileSet[ i ]->getBox()));
  }
 
@@ -387,8 +387,7 @@ void RenderMainScene(Game* g){
              if(*frame[k]!=-1){
                  renderExplosionFrame(&g->enemyTank[k], g->Platform, &camera ,(*frame[k])/12);
                  (*frame[k])++;
-             }
-             
+             }             
          }
      } else {
          render(&g->enemyTank[k], *frame[k], camera, g->Platform);                        
@@ -406,15 +405,20 @@ void RenderMainScene(Game* g){
 
 
 void Close(Game* g){    
-    close(g->tileSet, g->Platform);        
 
-    // delete[] g->TankPos;
-    // g->TankPos = nullptr;
-    // delete[] g->enemyTank;
-    // g->enemyTank = nullptr;
-    // delete g->userTank;
-    // g->userTank = nullptr;
+    delete[] g->TankPos;
+    g->TankPos = nullptr;
+    delete[] g->enemyTank;
+    g->enemyTank = nullptr;
+    delete g->userTank;
+    g->userTank = nullptr;
+    delete[] g->tileSet;
+    g->tileSet = NULL;
 
+    close(g->Platform);        
+    delete g->Platform;
+    g->Platform = NULL;
+    
     // NOTE: Still leak memmory????
     // =====================
     for (int i = 0; i < 5; i++){
@@ -425,7 +429,7 @@ void Close(Game* g){
 // NOTE: I think I see the problem now. I delete platform before I properly
     // close everything in it
     // delete g->tileSet;
-    SDL_DestroyRenderer( g->Platform->gRenderer );
+    SDL_DestroyRenderer(g->Platform->gRenderer );
 	g->Platform->gRenderer = NULL;
 	SDL_DestroyWindow( g->Platform->gWindow );
 	g->Platform->gWindow = NULL;

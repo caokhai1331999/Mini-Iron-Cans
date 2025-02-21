@@ -17,17 +17,8 @@ bool IsArrow(SDL_Scancode KeyCode){
 };
 
 //Frees media and shuts down SDL
-void close( Tile* tiles[], PlatformP* Platform){
-	//Deallocate tiles
-	for( int i = 0; i < TOTAL_TILES; ++i )
-	{
-		 if( tiles[ i ] != NULL )
-		 {
-			delete tiles[ i ];
-			tiles[ i ] = NULL;
-		 }
-	}
-
+void close( PlatformP* Platform){
+	//Deallocate tiles    
     if(Platform != NULL && Platform->gTileTexture!=NULL){
         Platform->gTileTexture->free();
     } else {
@@ -73,7 +64,7 @@ void close( Tile* tiles[], PlatformP* Platform){
     // including terminal one
 }
 
-bool LoadMedia(Tile* tiles[],PlatformP* Platform){
+bool LoadMedia(Tile* tiles,PlatformP* Platform){
 	//Loading success flag
 	bool success = true;
 
@@ -246,6 +237,12 @@ bool init(PlatformP* Platform)
 			printf( "Warning: Linear texture filtering not enabled!" );
 		}
 
+		//Set turn off VSYNC
+		// if( !SDL_SetHint( SDL_HINT_RENDER_VSYNC, "0" ) )
+		// {
+		// 	printf( "Warning: Can not turn VSYNC off!" );
+		// }
+
 		//Create window
 		Platform->gWindow = SDL_CreateWindow( "SDL Tank Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE );
 		if( Platform->gWindow == NULL )
@@ -291,7 +288,7 @@ bool init(PlatformP* Platform)
 
 
 //Sets tiles from tile map
-bool setTiles( Tile *tiles[],PlatformP* Platform){
+bool setTiles( Tile *tiles,PlatformP* Platform){
     
 	//Success flag
 	bool tilesLoaded = true;
@@ -352,7 +349,9 @@ bool setTiles( Tile *tiles[],PlatformP* Platform){
                 // }else{
                 // tiles[ i ] = new Tile( x , y, tileType);                    
                 // }
-                tiles[ i ] = new Tile( x , y, tileType);                    
+                Tile* tempTile = new Tile( x , y, tileType);
+                tiles[i] = *tempTile;
+                delete tempTile;
 			}
 			//If we don't recognize the tile type
 			else
@@ -579,6 +578,5 @@ void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera 
             }                
         }            
         
-    }
-    
+    }    
 }

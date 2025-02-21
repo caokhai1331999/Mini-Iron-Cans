@@ -121,5 +121,12 @@ TODO:
                                        
                                        . And remember to add sound
 
+                                       . Time to draw my own tank bmp image file
+                                       for faster sprite loading add animation
+                                       for sprite too But FIRST, change all the
+                                       png files to bmp( cut background if needed
+                                       ).  And check the change in memory
+
 * I coincidentally fix the slow closing issue by adding delete menu and frame
   array of integer in closing fx
+

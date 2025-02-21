@@ -11,7 +11,7 @@
 #include <string>
 #include <cstring>
 #include "SDL2/SDL_timer.h"
-#include "Tile.h"
+#include "TileX.h"
 #include "xTank.h"
 #include "GamePhysics.h"
 #include "PlatformP.h"
@@ -51,7 +51,7 @@ struct Game{
     int k = 0;    
     uint8_t pointed_option;
     MENUCHOICE chosen_option;
-    Tile* tileSet[TOTAL_TILES];
+    Tile* tileSet;
     
     Position* TankPos;    
     PlatformP* Platform;
@@ -62,6 +62,9 @@ struct Game{
         Platform = nullptr;        
         Platform = new PlatformP;
 
+        tileSet = nullptr;
+        tileSet = new Tile[TOTAL_TILES];
+        
         userTank = nullptr;
         userTank = new TankInfo(true);
 
@@ -75,20 +78,6 @@ struct Game{
         pointed_option = 0;
         chosen_option = NONE;
     };
-        
-    ~Game(){
-        delete Platform;
-        Platform = nullptr;        
-
-        delete userTank;
-        userTank = nullptr;
-
-        delete TankPos;
-        TankPos = nullptr;
-
-        delete enemyTank;
-        enemyTank = nullptr;        
-    }
 };
 
 void displayMenu(Game* g);

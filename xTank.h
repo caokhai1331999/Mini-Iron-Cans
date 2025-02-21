@@ -14,7 +14,7 @@
 #include <ctime>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "Tile.h"
+#include "TileX.h"
 #include "GamePhysics.h"
 
 using namespace std;

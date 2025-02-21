@@ -11,7 +11,7 @@
 #include <SDL2/SDL.h>
 #include "LTexture.h"
 #include "xTank.h"
-#include "Tile.h"
+#include "TileX.h"
 
 // TODO: Why the PlatformP won't recognize the Platform variable
 // TODO: Try to figure out how the gDotTexture and gTileTexture is nullptr
@@ -87,11 +87,11 @@ struct PlatformP {
 
 //Frees media and shuts down SDL
 bool init(PlatformP* Platform);    
-bool LoadMedia(Tile* tiles[], PlatformP* Platform);
-void close( Tile* tiles[], PlatformP* Platform);
+bool LoadMedia(Tile* tiles, PlatformP* Platform);
+void close(PlatformP* Platform);
 bool IsArrow(SDL_Scancode KeyCode);
 //Sets tiles from tile map
-bool setTiles( Tile *tiles[], PlatformP* Platform);
+bool setTiles( Tile *tiles, PlatformP* Platform);
 bool valid(SDL_Event e, KeyState* previousKey, KeyState* currentKey);
 //Shows the Tank on the screen
 void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform);

@@ -59,16 +59,16 @@ bool checkCollision( SDL_Rect* a, SDL_Rect* b )
 //     return collided;
 // }
 
-bool touchesWall( SDL_Rect* box, Tile* tiles[] )
+bool touchesWall( SDL_Rect* box, Tile* tiles)
 {
     //Go through the tiles
     for( int i = 0; i < TOTAL_TILES; ++i )
     {
         //If the tile is a wall type tile
-        if( ( tiles[ i ]->getType() >= SMALL_STUMP_TILE_1 ) && ( tiles[ i ]->getType() <= SMALL_STUMP_TILE_4 ) )
+        if( ( tiles[ i ].mType >= SMALL_STUMP_TILE_1 ) && ( tiles[ i ].mType <= SMALL_STUMP_TILE_4 ) )
         {
             //If the collision box touches the wall tile
-            if( checkCollision( box, tiles[ i ]->getBox() ) )
+            if( checkCollision( box, &tiles[ i ].mBox) )
             {
                 return true;
             }

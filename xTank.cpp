@@ -69,7 +69,7 @@ TankInfo InitializeTankInfo(int x, int y){
 void fire(TankInfo* Tank){
     // TODO: Initialize bullet and send it fly, send signal when hit
     // && !Tank->isHit
-    if(!Tank->destroyed) {
+    if(!Tank->destroyed && !Tank->isHit) {
             // if(Tank->userBelong){
             //     printf("Looping through tank bullets\n");
             // }
@@ -130,12 +130,12 @@ void fire(TankInfo* Tank){
                 //     printf("Out of loop\n");                
                 // }
                 Tank->Bullets[i].Launched = true;
-                // Tank->Bullets[i].Launched?printf("Bullet Launched\n"):printf("Bullet wasn't launched\n");                
                 break;
+                // Tank->Bullets[i].Launched?printf("Bullet Launched\n"):printf("Bullet wasn't launched\n");                
             }
         }
     }
-            // printf("End function\n");    
+    // printf("End function\n");    
 }
 
 void respawn(TankInfo* Tank){
@@ -339,7 +339,7 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided){
         }
     }
     
-    if (targetTank->mBox.x < TANK_WIDTH || targetTank->mBox.x + TANK_WIDTH + 50 > LEVEL_WIDTH|| targetTank->mBox.y < TANK_HEIGHT + 50 || targetTank->mBox.y + TANK_HEIGHT + 50 > LEVEL_HEIGHT || collided){
+    if (targetTank->mBox.x < 0 || targetTank->mBox.x  > LEVEL_WIDTH - TANK_WIDTH|| targetTank->mBox.y < 0 || targetTank->mBox.y > LEVEL_HEIGHT - TANK_HEIGHT || collided){
         if(targetTank->face < 180){
             targetTank->face += 180.0f;
         } else {
@@ -369,7 +369,7 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided){
             if(targetTank->face != RIGHT){
                 targetTank->face = RIGHT;
             }
-            if (targetTank->mBox.x + TANK_WIDTH < LEVEL_WIDTH){                
+            if (targetTank->mBox.x  < LEVEL_WIDTH - TANK_WIDTH){                
                 targetTank->mVelX = TANK_VEL;
                 targetTank->mVelY = 0;
             }
@@ -394,7 +394,7 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided){
             if(targetTank->face != DOWN){
             targetTank->face = DOWN;                
             }
-            if (targetTank->mVelY + TANK_HEIGHT < LEVEL_HEIGHT ){                
+            if (targetTank->mVelY < LEVEL_HEIGHT - TANK_HEIGHT ){                
                 targetTank->mVelX = 0;                
                 targetTank->mVelY = TANK_VEL;
             }
@@ -427,7 +427,10 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided){
                             }
                         }
                     }
+
             if(!targetTank->userBelong){
+                // NOTE: How to make bot tank look less stupid when they firing
+                // and how to make fire less frequent
                 fire(targetTank);
             }
 } 
@@ -452,6 +455,7 @@ bool BiTankCheck(TankInfo* ATank, TankInfo* BTank){
     bool TwoTankcollided = checkCollision(&ATank->mBox, &BTank->mBox);
     // printf("Start checking the whether tank or bullet is collided\n");
     for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
+
         if (ATank->Bullets[i].Launched && !BTank->destroyed){
             if ((ATank->Bullets[i].blBox.x < 0)||(ATank->Bullets[i].blBox.x + ATank->Bullets[i].blBox.w > LEVEL_WIDTH||ATank->Bullets[i].blBox.y < 0)||(ATank->Bullets[i].blBox.y + ATank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
                 resetBullet(&ATank->Bullets[i]);
