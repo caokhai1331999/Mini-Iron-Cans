@@ -9,9 +9,9 @@
 
 #include <fstream>
 #include <SDL2/SDL.h>
-#include "LTexture.h"
-#include "xTank.h"
+#include "XTexture.h"
 #include "TileX.h"
+#include "xTank.h"
 
 // TODO: Why the PlatformP won't recognize the Platform variable
 // TODO: Try to figure out how the gDotTexture and gTileTexture is nullptr
@@ -24,19 +24,19 @@ struct PlatformP {
    SDL_Rect gExplosionClips [ANIMATING_FRAMES];
    SDL_Rect gTileClips [TOTAL_TILE_SPRITES];
 
-    LTexture* RedTexture;
-    LTexture* GreenTexture;
-    LTexture* BlueTexture;
-    LTexture* ShimmerTexture;
+    XTexture* RedTexture;
+    XTexture* GreenTexture;
+    XTexture* BlueTexture;
+    XTexture* ShimmerTexture;
     
-    LTexture* gTileTexture;
-    LTexture* gMenuTexture;
-    LTexture* gTextTexture;
-    LTexture* gUserTankTexture;
-    LTexture* gUserBulletTexture;
-    LTexture* gEnemyTankTexture;
-    LTexture* gEnemyBulletTexture;
-    LTexture* gExplosionTexture;
+    XTexture* gTileTexture;
+    XTexture* gMenuTexture;
+    XTexture* gTextTexture;
+    XTexture* gUserTankTexture;
+    XTexture* gUserBulletTexture;
+    XTexture* gEnemyTankTexture;
+    XTexture* gEnemyBulletTexture;
+    XTexture* gExplosionTexture;
 
 //The window we'll be rendering to
     SDL_Window* gWindow;
@@ -48,32 +48,32 @@ struct PlatformP {
         e = {};
 
         gTileTexture = nullptr;
-        gTileTexture = new LTexture;
+        gTileTexture = new XTexture;
 
         // NOTE: Menu texture using the image or text string as the main display
         gMenuTexture = nullptr;
-        gMenuTexture = new LTexture;
+        gMenuTexture = new XTexture;
         
         gTextTexture = nullptr;
-        gTextTexture = new LTexture;
+        gTextTexture = new XTexture;
 
         gUserTankTexture = nullptr;
-        gUserTankTexture = new LTexture;
+        gUserTankTexture = new XTexture;
 
         gEnemyTankTexture = nullptr;
-        gEnemyTankTexture = new LTexture;
+        gEnemyTankTexture = new XTexture;
 
         gEnemyBulletTexture = nullptr;
-        gEnemyBulletTexture = new LTexture;
+        gEnemyBulletTexture = new XTexture;
 
         gUserBulletTexture = nullptr;
-        gUserBulletTexture = new LTexture;
+        gUserBulletTexture = new XTexture;
 
         gTextTexture = nullptr;
-        gTextTexture = new LTexture;
+        gTextTexture = new XTexture;
 
         gExplosionTexture = nullptr;
-        gExplosionTexture = new LTexture;
+        gExplosionTexture = new XTexture;
 
         gWindow = NULL;
         gRenderer = NULL;};
@@ -96,7 +96,7 @@ bool valid(SDL_Event e, KeyState* previousKey, KeyState* currentKey);
 //Shows the Tank on the screen
 void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform);
 void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera, int frame);
-void render(TankInfo* Tank, int frame, SDL_Rect& camera, PlatformP* Platform );
+void renderTank(TankInfo* Tank, int frame, SDL_Rect& camera, PlatformP* Platform);
 
 #define PLATFORMP_H
 #endif

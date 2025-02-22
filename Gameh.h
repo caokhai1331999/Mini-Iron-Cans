@@ -11,10 +11,9 @@
 #include <string>
 #include <cstring>
 #include "SDL2/SDL_timer.h"
-#include "TileX.h"
-#include "xTank.h"
 #include "GamePhysics.h"
 #include "PlatformP.h"
+#include "xTank.h"
 
 global_variable real32 StartTime = 0.0f;
 global_variable real32 EndTime = 0.0f;

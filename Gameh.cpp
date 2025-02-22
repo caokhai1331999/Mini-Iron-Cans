@@ -22,10 +22,10 @@ void displayMenu(Game* g){
             scale = 1.0f;
         }
 
-        if (!g->Platform->gMenuTexture->loadFromRenderedText(Menu[i], scale, TextColor, gFont, g->Platform->gRenderer)) {
+        if (!loadFromRenderedText(Menu[i], scale, TextColor, gFont, g->Platform->gRenderer, g->Platform->gMenuTexture)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );
         } else {
-            g->Platform->gMenuTexture->render(g->Platform->gRenderer, 100, 30 + i*50);
+            render(g->Platform->gRenderer, 100, 30 + i*50, g->Platform->gMenuTexture);
         }                       
 
     }    
@@ -70,7 +70,7 @@ bool Start(Game* g){
         if(!init(g->Platform)){
             return false;
         }else{
-            if( ! LoadMedia(g->tileSet, g->Platform) )
+            if( !LoadMedia(g->tileSet, g->Platform) )
             {
                 printf( "Failed to load media!\n" );
                 return false;
@@ -351,7 +351,7 @@ void RenderMainScene(Game* g){
  }
 
  if(!g->userTank->isHit){
-     render(g->userTank, Uframe, camera, g->Platform);
+     renderTank(g->userTank, Uframe, camera, g->Platform);
  }else{
      if(g->userTank->isHit && !g->userTank->destroyed){
          // NOTE: This secure the game check isHit flag first then
@@ -390,7 +390,7 @@ void RenderMainScene(Game* g){
              }             
          }
      } else {
-         render(&g->enemyTank[k], *frame[k], camera, g->Platform);                        
+         renderTank(&g->enemyTank[k], *frame[k], camera, g->Platform);                        
      }
      if ((*frame[k]) == -1 || !g->enemyTank[k].isHit){
          k++;
@@ -429,11 +429,16 @@ void Close(Game* g){
 // NOTE: I think I see the problem now. I delete platform before I properly
     // close everything in it
     // delete g->tileSet;
-    SDL_DestroyRenderer(g->Platform->gRenderer );
-	g->Platform->gRenderer = NULL;
-	SDL_DestroyWindow( g->Platform->gWindow );
-	g->Platform->gWindow = NULL;
-    g->Platform->gWindow == NULL?printf("Window is destroyed\n"):printf("Window is not destroyed yet. why??");
+        SDL_DestroyWindow(g->Platform->gWindow);
+    if(	g->Platform->gWindow != NULL){        
+        g->Platform->gWindow = NULL;
+        g->Platform->gWindow == NULL?printf("Window is destroyed\n"):printf("Window is not destroyed yet. why??");
+    }
+
+    SDL_DestroyRenderer(g->Platform->gRenderer);
+    if(g->Platform->gRenderer != NULL){
+        g->Platform->gRenderer = NULL;
+    }
 
 	//Quit SDL subsystems
     TTF_Quit();

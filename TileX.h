@@ -8,7 +8,7 @@
    ======================================================================== */
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "LTexture.h"
+#include "XTexture.h"
 
 struct Tile{
     //The attributes of the tile
@@ -30,7 +30,7 @@ struct Tile{
     };
 };
 
-void renderTile( SDL_Rect& camera, SDL_Renderer* gRenderer, Tile tile, LTexture* gTileTexture, SDL_Rect* gTileClips = NULL, bool checkCollision = false);
+void renderTile( SDL_Rect& camera, SDL_Renderer* gRenderer, Tile tile, XTexture* gTileTexture, SDL_Rect* gTileClips = NULL, bool checkCollision = false);
 
 #define TILEX_H
 #endif

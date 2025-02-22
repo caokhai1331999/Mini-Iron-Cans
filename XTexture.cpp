@@ -54,7 +54,7 @@ bool loadFromFile( std::string path, SDL_Renderer* gRenderer, int Width, int Hei
 }
 
 #if defined(SDL_TTF_MAJOR_VERSION)
-bool LTexture::loadFromRenderedText(char* textureText, float Scale, SDL_Color textColor, TTF_Font* gFont , SDL_Renderer* gRenderer, XTexture* texture)
+bool loadFromRenderedText(char* textureText, float Scale, SDL_Color textColor, TTF_Font* gFont , SDL_Renderer* gRenderer, XTexture* texture)
 {
 	//Get rid of preexisting texture
 	free(texture);
@@ -65,8 +65,8 @@ bool LTexture::loadFromRenderedText(char* textureText, float Scale, SDL_Color te
 	if( textSurface != NULL )
 	{
 		//Create texture from surface pixels
-        mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
-		if( mTexture == NULL )
+        texture->mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
+		if( texture->mTexture == NULL )
 		{
 			printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
 		}
@@ -91,7 +91,7 @@ bool LTexture::loadFromRenderedText(char* textureText, float Scale, SDL_Color te
 
 	
 	//Return success
-	return mTexture != NULL;
+	return texture->mTexture != NULL;
 }
 #endif
 
@@ -100,17 +100,17 @@ void free(XTexture* texture)
 	//Free texture if it exists
 	if( texture->mTexture != NULL )
 	{
-		SDL_DestroyTexture( texture->mTexture );
+		SDL_DestroyTexture(texture->mTexture);
 		texture->mTexture = NULL;
-		mtexture->Width = 0;
+		texture->mWidth = 0;
 		texture->mHeight = 0;
 	}
 }
 
-void setColor( Uint8 red, Uint8 green, Uint8 blue )
+void setColor( Uint8 red, Uint8 green, Uint8 blue, XTexture* texture )
 {
 	//Modulate texture rgb
-	SDL_SetTextureColorMod( mTexture, red, green, blue );
+	SDL_SetTextureColorMod( texture->mTexture, red, green, blue );
 }
 
 void setBlendMode( SDL_BlendMode blending, XTexture* texture)
@@ -125,7 +125,7 @@ void setAlpha( Uint8 alpha, XTexture* texture )
 	SDL_SetTextureAlphaMod( texture->mTexture, alpha );
 }
 
-void render( SDL_Renderer* gRenderer, int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip, XTexture* texture)
+void render( SDL_Renderer* gRenderer, int x, int y, XTexture* texture, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
 	//Set rendering space and render to screen
 
@@ -140,3 +140,4 @@ void render( SDL_Renderer* gRenderer, int x, int y, SDL_Rect* clip, double angle
 
 	//Render to screen
 	SDL_RenderCopyEx( gRenderer, texture->mTexture, clip, &renderQuad, angle, center, flip );
+}
