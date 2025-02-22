@@ -5,7 +5,7 @@
    $Creator: Cao Khai(Casey Muratori's disciple) $
    $Notice: (C) Copyright 2024 by Cao Khai, Inc. All Rights Reserved. $
    ======================================================================== */
-
+#define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
 #include "Gameh.h"
 
@@ -14,6 +14,7 @@ int main( int argc, char* args[] )
 {
     bool done = false;
     _CrtDumpMemoryLeaks();
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);;
     Game* game = nullptr;
     game = new Game;
     if(!Start(game)) {
