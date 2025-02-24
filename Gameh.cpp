@@ -32,9 +32,7 @@ void displayMenu(Game* g){
 }
 
 void get_Menu_choice(Game* g, KeyState* currentKey){
-    
-    
-    if (currentKey->pressed){
+        if (currentKey->pressed){
         switch(currentKey->key){
             case SDL_SCANCODE_DOWN:
                 g->pointed_option++;
@@ -148,9 +146,9 @@ void changeState(Game* g, KeyState* key){
     }    
 }
 
-void ProcessInput(Game* g){
+void ProcessInput(Game* g, bool* done){
     // printf("Start process input \n");
-    if (g->state != EMPTY){
+    if (!*done){
     KeyState PreviousBut = {};
     KeyState CurrentBut = {};
     
@@ -162,8 +160,8 @@ void ProcessInput(Game* g){
         //===================================================
 
         // NOTE: If I have time try to apply FSM to this input filter
-        if ((g->Platform->e.key.state == SDL_PRESSED || g->Platform->e.key.state == SDL_RELEASED) && g->Platform->e.key.keysym.scancode != SDL_SCANCODE_UNKNOWN){                        
-
+        if ((g->Platform->e.key.state == SDL_PRESSED || g->Platform->e.key.state == SDL_RELEASED) && g->Platform->e.key.keysym.scancode != SDL_SCANCODE_UNKNOWN || g->Platform->e.type == SDL_QUIT){                        
+            // NOTE: Forgot to add SDL_QUIT to filter conditions
             if((!CurrentBut.pressed && g->Platform->e.key.state == SDL_PRESSED && CurrentBut.key != g->Platform->e.key.keysym.scancode) || (g->Platform->e.key.keysym.scancode == CurrentBut.key && CurrentBut.pressed != (g->Platform->e.key.state == SDL_PRESSED))|| CurrentBut.init == 0 || g->Platform->e.key.keysym.scancode == SDL_SCANCODE_SPACE)
 
                                 
@@ -174,41 +172,36 @@ void ProcessInput(Game* g){
             PreviousBut = CurrentBut;
             CurrentBut.type = g->Platform->e.type;
 
-            if (CurrentBut.type == SDL_QUIT){
-                printf("Quit event triggered\n");
-            }
-
-            if (g->Platform->e.type == SDL_QUIT){
-                printf("Quit event triggered\n");
-            }
-
             CurrentBut.pressed = (g->Platform->e.key.state == SDL_PRESSED);
             CurrentBut.key = g->Platform->e.key.keysym.scancode;
             CurrentBut.repeat = g->Platform->e.key.repeat;
 
+            if(CurrentBut.type == SDL_QUIT){
+                *done = true;
+            }
             
-            switch(g->state){
-                case MENU_INIT:
-                    get_Menu_choice(g, &CurrentBut);
-                    break;
-                case PAUSE:
-                    get_Menu_choice(g, &CurrentBut);
-                    break;
-                case GAME_NEW:
-                    if (CurrentBut.key != 41){
-                        handleEventForTank(&CurrentBut, g->userTank);
-                    }
-                    break;
-                case GAME_RELOADED:
-                    if (CurrentBut.key != 41){
-                        handleEventForTank(&CurrentBut, g->userTank);
-                    }
-                    break;
-            };
-            changeState(g, &CurrentBut);
+                switch(g->state){
+                    case MENU_INIT:
+                        get_Menu_choice(g, &CurrentBut);
+                        break;
+                    case PAUSE:
+                        get_Menu_choice(g, &CurrentBut);
+                        break;
+                    case GAME_NEW:
+                        if (CurrentBut.key != 41){
+                            handleEventForTank(&CurrentBut, g->userTank);
+                        }
+                        break;
+                    case GAME_RELOADED:
+                        if (CurrentBut.key != 41){
+                            handleEventForTank(&CurrentBut, g->userTank);
+                        }
+                        break;
+                };
+                changeState(g, &CurrentBut);
         }
     }                    
-    };
+    } 
 }
 
 void runMainScene(Game* g){
@@ -269,7 +262,7 @@ void runMainScene(Game* g){
     setCamera(camera, g->userTank);        
 }
 
-void Update(Game* g, bool done){
+void Update(Game* g){
     // NOTE: STILL IN WORK HERE
     // The fms loop through state is right here
     // Still haven't figure out how to change state right here
@@ -277,34 +270,32 @@ void Update(Game* g, bool done){
     // NOTE: Put the fsm here to loop through states change
     // Do I need to jam all stuffs into game : update, render, input process
     // printf("Start update game based on state \n");
-    switch (g->state){
-        case MENU_INIT:
-            // Duplicated code here??
-            displayMenu(g);
-            break;
+    if (g->state != EMPTY){        
+        switch (g->state){
+            case MENU_INIT:
+                // Duplicated code here??
+                displayMenu(g);
+                break;
 
-        case PAUSE:
-            displayMenu(g);
-            break;
+            case PAUSE:
+                displayMenu(g);
+                break;
 
-        case GAME_NEW:
-            // NOTE: resetGame() contain alot of bugs here!!!!
-            // because we constantly delete and create new game objects
-            // in game loop 
-            // How to tell apart which come from menu_init
-            //================================================
-            runMainScene(g);
-            break;
+            case GAME_NEW:
+                // NOTE: resetGame() contain alot of bugs here!!!!
+                // because we constantly delete and create new game objects
+                // in game loop 
+                // How to tell apart which come from menu_init
+                //================================================
+                runMainScene(g);
+                break;
 
-        case GAME_RELOADED:
-            // STORE ALL the Game stats here(already in game var)
-            runMainScene(g);
-            break;
-
-        case EMPTY:
-            !done?done=!done:printf("Closing Flag already turned on\n");
-            break;
-    }   
+            case GAME_RELOADED:
+                // STORE ALL the Game stats here(already in game var)
+                runMainScene(g);
+                break;
+        }   
+    }
 }
 
 void resetGame(Game*g){
@@ -405,6 +396,10 @@ void RenderMainScene(Game* g){
 
 
 void Close(Game* g){    
+    for (int i = 0; i < 5; i++){
+        delete frame[i];
+        frame[i] = nullptr;
+    }
 
     delete[] g->TankPos;
     g->TankPos = nullptr;
@@ -415,39 +410,39 @@ void Close(Game* g){
     delete[] g->tileSet;
     g->tileSet = NULL;
 
+    
+    // NOTE: Still leak memmory????
+    // =====================
     close(g->Platform);        
     delete g->Platform;
     g->Platform = NULL;
     
-    // NOTE: Still leak memmory????
-    // =====================
-    for (int i = 0; i < 5; i++){
-        delete frame[i];
-        frame[i] = nullptr;
-    }
-    
 // NOTE: I think I see the problem now. I delete platform before I properly
     // close everything in it
     // delete g->tileSet;
-        SDL_DestroyWindow(g->Platform->gWindow);
-    if(	g->Platform->gWindow != NULL){        
-        g->Platform->gWindow = NULL;
-        g->Platform->gWindow == NULL?printf("Window is destroyed\n"):printf("Window is not destroyed yet. why??");
-    }
-
     SDL_DestroyRenderer(g->Platform->gRenderer);
     if(g->Platform->gRenderer != NULL){
         g->Platform->gRenderer = NULL;
     }
 
+    SDL_DestroyWindow(g->Platform->gWindow);
+    if(	g->Platform->gWindow != NULL){        
+        g->Platform->gWindow = NULL;
+
+        g->Platform->gWindow == NULL?printf("Window is destroyed\n"):printf("Window is not destroyed yet. why??");
+    }
+
+
 	//Quit SDL subsystems
     TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
+
 }
 
 
 void Render (Game* g){
+
     if (g->state != EMPTY){
         SDL_RenderClear( g->Platform->gRenderer);
         SDL_SetRenderDrawColor( g->Platform->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
@@ -456,12 +451,16 @@ void Render (Game* g){
             // NOTE: The render part is already in the menu fx. So what will I put in this one???
             displayMenu(g);
         } else if (g->state == GAME_NEW || g->state == GAME_RELOADED){
+
             RenderMainScene(g);
+            
         }
         SDL_RenderPresent( g->Platform->gRenderer);        
         // NOTE: Else do nothing
     } else {
-        Close(g);
+        //??? WHY LOOP ONLY END AFTER I CALL SDL_QUIT IT IN GAME LOOP
+        // Close(g);
         printf("End of Game, Thanks so much for playing my game\n");
     }
+    
 }

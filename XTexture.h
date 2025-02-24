@@ -97,7 +97,7 @@ struct KeyState{
     SDL_Scancode key;
     bool repeat;
     int init;
-    uint8_t type;
+    uint32_t type;
     KeyState(){
         pressed = false;
         key = (SDL_Scancode)0;  // NOTE: This is unknown button

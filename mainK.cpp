@@ -12,25 +12,25 @@
 
 int main( int argc, char* args[] )
 {
-    bool done = false;
     _CrtDumpMemoryLeaks();
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);;
     Game* game = nullptr;
+    bool done = false;
     game = new Game;
     if(!Start(game)) {
             printf("Fail to init game\n");
         } else {
         printf("Init game successfully\n");
         // NOTE:
-            while(!done) {
-                ProcessInput(game);
-                Update(game, done);
+            while(game->state != EMPTY) {
+                
+                ProcessInput(game, &done);
+                Update(game);
                 Render(game);
-                if (done){
-                    delete game;
-                    game = nullptr;
-                }
             }
+    Close(game);
+    delete game;
+    game = nullptr;
     }
 return 0;
 }

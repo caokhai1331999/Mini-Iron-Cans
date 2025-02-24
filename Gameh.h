@@ -50,27 +50,22 @@ struct Game{
     int k = 0;    
     uint8_t pointed_option;
     MENUCHOICE chosen_option;
-    Tile* tileSet;
+    Tile* tileSet = NULL;
     
-    Position* TankPos;    
-    PlatformP* Platform;
-    TankInfo* userTank;
-    TankInfo* enemyTank;
+    Position* TankPos = NULL;    
+    PlatformP* Platform = NULL;
+    TankInfo* userTank = NULL;
+    TankInfo* enemyTank = NULL;
 
     Game(){
-        Platform = nullptr;        
         Platform = new PlatformP;
 
-        tileSet = nullptr;
         tileSet = new Tile[TOTAL_TILES];
         
-        userTank = nullptr;
         userTank = new TankInfo(true);
 
-        TankPos = nullptr;
         TankPos = new Position[TOTAL_ENEMY_TANK];
 
-        enemyTank = nullptr;
         enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
         
         state = MENU_INIT;
@@ -83,8 +78,8 @@ void displayMenu(Game* g);
 void get_Menu_choice(Game* g, KeyState* key);
 void changeState(Game* g);
 bool Start(Game* g);
-void ProcessInput(Game* g);
-void Update(Game* g, bool done);
+void ProcessInput(Game* g, bool* done);
+void Update(Game* g);
 void resetGame(Game* g);
 
 // TODO: Complete this part

@@ -100,10 +100,10 @@ void free(XTexture* texture)
 	//Free texture if it exists
 	if( texture->mTexture != NULL )
 	{
-		SDL_DestroyTexture(texture->mTexture);
-		texture->mTexture = NULL;
 		texture->mWidth = 0;
 		texture->mHeight = 0;
+		SDL_DestroyTexture(texture->mTexture);
+		texture->mTexture = NULL;
 	}
 }
 

@@ -73,6 +73,11 @@ time drawing from SDL_GetTicks hold game down really much
 
     ? bot tanks stuck at border. Then can not be hit (WORKING)
 
+? Side issue:
+  Turn out Done flag can not be changed by passing its mere value to the
+  function
+  * Fixed by passing the its address to fx
+
 ?? Memory Issue:
    ** Fixed: By Rewriting the Tile file and change its structure from class
    to struct. I Fixed the serious memory leaking problem. The eaten memory
