@@ -80,17 +80,19 @@ bool Start(Game* g){
                 for (int i = 0 ; i < TOTAL_ENEMY_TANK; i++){
                    g-> enemyTank[i] = InitializeTankInfo(g->TankPos[i].x, g->TankPos[i].y);
                 }
-            
+                
                 //Level camera
                 camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
-                for (int i = 0; i < 5; i++){
-                    if(frame[i] != nullptr){
-                        delete frame[i];
-                    }
-                    frame[i] = new int;
-                    *frame[i] = 0;
+                if(frame != nullptr){
+                    delete []frame;
+                    frame = nullptr;
                 }
+                frame = new int[5];
+                for(int i = 0; i < 5; i++){
+                    frame[i] = 0;
+                };
+
                 Ecollided = false;
                 Ucollided = false;
                 // uint32 LastFrameTime[TOTAL_ENEMY_TANK] ={};
@@ -291,7 +293,7 @@ void Update(Game* g){
                 break;
 
             case GAME_RELOADED:
-                // STORE ALL the Game stats here(already in game var)
+               // STORE ALL the Game stats here(already in game var)
                 runMainScene(g);
                 break;
         }   
@@ -307,6 +309,16 @@ void resetGame(Game*g){
     TimeElapsed = 0.0f;
 
     StartTime = SDL_GetTicks();
+    if(frame != nullptr){
+        delete []frame;
+        frame = nullptr;
+    }
+
+    frame = new int[5];
+
+    for(int i = 0; i < 5; i++){
+        frame[i] = 0;
+    };
     
     delete []g->enemyTank;
     g->enemyTank = nullptr;
@@ -347,11 +359,11 @@ void RenderMainScene(Game* g){
      if(g->userTank->isHit && !g->userTank->destroyed){
          // NOTE: This secure the game check isHit flag first then
          // destroyed one
-         *frame[4] = 0;
+         frame[4] = 0;
 
-         while(*frame[4]/12 < ANIMATING_FRAMES+1){
-             renderExplosionFrame(g->userTank, g->Platform, &camera, (*frame[4])/12);
-             (*frame[4])++;
+         while(frame[4]/12 < ANIMATING_FRAMES+1){
+             renderExplosionFrame(g->userTank, g->Platform, &camera, (frame[4])/12);
+             (frame[4])++;
          }
          
          g->userTank->destroyed = true;
@@ -370,20 +382,20 @@ void RenderMainScene(Game* g){
              //the animation
                             
              //Cycle animation
-             if ((*frame[k])/12 == ANIMATING_FRAMES+1){
+             if (frame[k]/12 == ANIMATING_FRAMES+1){
                  resetTank(&g->enemyTank[k]);
-                 *frame[k] = -1;
+                 frame[k] = -1;
              }
              //Go to next frame
-             if(*frame[k]!=-1){
-                 renderExplosionFrame(&g->enemyTank[k], g->Platform, &camera ,(*frame[k])/12);
-                 (*frame[k])++;
+             if(frame[k]!=-1){
+                 renderExplosionFrame(&g->enemyTank[k], g->Platform, &camera ,(frame[k])/12);
+                 (frame[k])++;
              }             
          }
      } else {
-         renderTank(&g->enemyTank[k], *frame[k], camera, g->Platform);                        
+         renderTank(&g->enemyTank[k], frame[k], camera, g->Platform);                        
      }
-     if ((*frame[k]) == -1 || !g->enemyTank[k].isHit){
+     if (frame[k] == -1 || !g->enemyTank[k].isHit){
          k++;
      }
  };
@@ -395,42 +407,51 @@ void RenderMainScene(Game* g){
 }
 
 
-void Close(Game* g){    
-    for (int i = 0; i < 5; i++){
-        delete frame[i];
-        frame[i] = nullptr;
-    }
+void Close(Game* g){
+    if(frame != nullptr){
+        delete []frame;
+        frame = nullptr;
+    }    
+    
+    delete[] frame;
+    frame = nullptr;
 
     delete[] g->TankPos;
     g->TankPos = nullptr;
+    
     delete[] g->enemyTank;
     g->enemyTank = nullptr;
+    
     delete g->userTank;
     g->userTank = nullptr;
+    
     delete[] g->tileSet;
-    g->tileSet = NULL;
+    g->tileSet = nullptr;
 
     
     // NOTE: Still leak memmory????
     // =====================
-    close(g->Platform);        
-    delete g->Platform;
-    g->Platform = NULL;
     
 // NOTE: I think I see the problem now. I delete platform before I properly
     // close everything in it
     // delete g->tileSet;
+
     SDL_DestroyRenderer(g->Platform->gRenderer);
-    if(g->Platform->gRenderer != NULL){
-        g->Platform->gRenderer = NULL;
+    
+    if(g->Platform->gRenderer != nullptr){
+        g->Platform->gRenderer = nullptr;
     }
 
     SDL_DestroyWindow(g->Platform->gWindow);
-    if(	g->Platform->gWindow != NULL){        
-        g->Platform->gWindow = NULL;
+    if(	g->Platform->gWindow != nullptr){        
+        g->Platform->gWindow = nullptr;
 
-        g->Platform->gWindow == NULL?printf("Window is destroyed\n"):printf("Window is not destroyed yet. why??");
+        // g->Platform->gWindow == nullptr?printf("Window is destroyed\n"):printf("Window is not destroyed yet. why??");
     }
+
+    close(g->Platform);        
+    delete g->Platform;
+    g->Platform = nullptr;
 
 
 	//Quit SDL subsystems

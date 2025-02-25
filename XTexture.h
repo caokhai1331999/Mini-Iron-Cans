@@ -24,7 +24,7 @@
 //Screen dimension constants
 global_variable int SCREEN_WIDTH = 450;
 global_variable int SCREEN_HEIGHT = 300;
-global_variable TTF_Font* gFont = NULL;
+global_variable TTF_Font* gFont = nullptr;
 
 //The dimensions of the level
 const global_variable int LEVEL_WIDTH = 1800;
@@ -113,18 +113,18 @@ struct XTexture{
     int mWidth;
     int mHeight;
     XTexture(){
-        mTexture = NULL;
+        mTexture = nullptr;
         mWidth = 0;
         mHeight = 0;
     };
 };
 
 //Loads image at specified path
-bool loadFromFile( std::string path, SDL_Renderer* gRenderer, int Width = 0, int Height = 0, XTexture* texture = NULL);
+bool loadFromFile( std::string path, SDL_Renderer* gRenderer, int Width = 0, int Height = 0, XTexture* texture = nullptr);
 		
 #if defined(SDL_TTF_MAJOR_VERSION)
 //Creates image from font string
-bool loadFromRenderedText(char* textureText, float Scale, SDL_Color textColor , TTF_Font* gFont , SDL_Renderer* gRenderer, XTexture* texture = NULL);
+bool loadFromRenderedText(char* textureText, float Scale, SDL_Color textColor , TTF_Font* gFont , SDL_Renderer* gRenderer, XTexture* texture = nullptr);
 #endif
 
 //Set color modulation
@@ -137,10 +137,10 @@ void setBlendMode( SDL_BlendMode blending );
 void setAlpha( Uint8 alpha );
 		
 //Renders texture at given point
-void render( SDL_Renderer* gRenderer = NULL, int x = 0, int y = 0, XTexture* texture = NULL, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+void render( SDL_Renderer* gRenderer = nullptr, int x = 0, int y = 0, XTexture* texture = nullptr, SDL_Rect* clip = nullptr, double angle = 0.0, SDL_Point* center = nullptr, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 //Deallocates texture
-void free(XTexture* texture = NULL);
+void free(XTexture* texture = nullptr);
 
 #define XTEXTURE_H
 #endif

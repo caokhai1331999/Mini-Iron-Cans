@@ -19,17 +19,17 @@ bool IsArrow(SDL_Scancode KeyCode){
 //Frees media and shuts down SDL
 void close( PlatformP* Platform){
 	//Deallocate tiles    
-    if(Platform != NULL && Platform->gTileTexture!=NULL){
+    if(Platform != nullptr && Platform->gTileTexture != nullptr){
         free(Platform->gTileTexture);
     } else {
-        Platform == NULL?printf("Platform pointer was already freed somewhere\n"):
+        Platform == nullptr?printf("Platform pointer was already freed somewhere\n"):
             printf("Platform was not freed but ");        
     }    
 
 	//Free loaded images
 	// Platform->gDotTexture->free();
     // Don't know why this TileTexture free fx is
-    if(Platform->gMenuTexture!=NULL){
+    if(Platform->gMenuTexture!=nullptr){
         free(Platform->gMenuTexture);
     }
     // ================================================
@@ -38,27 +38,27 @@ void close( PlatformP* Platform){
 
     free(Platform->gTextTexture);
     delete Platform->gTextTexture;
-    Platform->gTextTexture = NULL;
+    Platform->gTextTexture = nullptr;
 
     free(Platform->gUserTankTexture);
     delete Platform->gUserTankTexture;
-    Platform->gUserTankTexture = NULL;
+    Platform->gUserTankTexture = nullptr;
 
     free(Platform->gEnemyTankTexture);
     delete Platform->gEnemyTankTexture;
-    Platform->gEnemyTankTexture = NULL;
+    Platform->gEnemyTankTexture = nullptr;
     
     free(Platform->gUserBulletTexture);
     delete Platform->gUserBulletTexture;
-    Platform->gUserBulletTexture = NULL;
+    Platform->gUserBulletTexture = nullptr;
 
     free(Platform->gEnemyBulletTexture);
     delete Platform->gEnemyBulletTexture;
-    Platform->gEnemyBulletTexture = NULL;
+    Platform->gEnemyBulletTexture = nullptr;
     
     free(Platform->gExplosionTexture);
     delete Platform->gExplosionTexture;
-    Platform->gExplosionTexture = NULL;
+    Platform->gExplosionTexture = nullptr;
 	//Destroy window	
     // NOTE: Still don't know why this function immediately close the app
     // including terminal one
@@ -214,13 +214,13 @@ bool init(PlatformP* Platform)
 	//Initialization flag
 	bool success = true;
 
-    if(Platform->gWindow != NULL){
-        Platform->gWindow = NULL;
+    if(Platform->gWindow != nullptr){
+        Platform->gWindow = nullptr;
     }
 
-    if (Platform->gRenderer != NULL)
+    if (Platform->gRenderer != nullptr)
     {
-        Platform->gRenderer = NULL;
+        Platform->gRenderer = nullptr;
     }
     srand(time(nullptr));    
 	//Initialize SDL
@@ -245,7 +245,7 @@ bool init(PlatformP* Platform)
 
 		//Create window
 		Platform->gWindow = SDL_CreateWindow( "SDL Tank Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE );
-		if( Platform->gWindow == NULL )
+		if( Platform->gWindow == nullptr )
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
 			success = false;
@@ -254,7 +254,7 @@ bool init(PlatformP* Platform)
 		{
 			//Create renderer for window
 			Platform->gRenderer = SDL_CreateRenderer( Platform->gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-			if( Platform->gRenderer == NULL )
+			if( Platform->gRenderer == nullptr )
 			{
 				printf( "Renderer could not be created! SDL Error: %s\n", SDL_GetError() );
 				success = false;
@@ -468,32 +468,32 @@ void renderTank(TankInfo* Tank, int frame, SDL_Rect& camera, PlatformP* Platform
 
     if(!Tank->destroyed) {
     //NOTE: Show the tank and bullet here
-    if (Tank->userBelong && Platform->gUserTankTexture!=NULL) {
+    if (Tank->userBelong && Platform->gUserTankTexture!=nullptr) {
         // printf("User Tank image is being rendered\n");
-        render( Platform->gRenderer ,(Tank->mBox.x - camera.x), (Tank->mBox.y - camera.y), Platform->gUserTankTexture, NULL,Tank->face);
+        render( Platform->gRenderer ,(Tank->mBox.x - camera.x), (Tank->mBox.y - camera.y), Platform->gUserTankTexture, nullptr,Tank->face);
 
         // NOTE: Now the bullets
         // TODO: The bullet not show, Time to check this one
         // The bullet stuck with number 0 while get near bot Tank
-        if(Platform->gUserBulletTexture!=NULL) {             
+        if(Platform->gUserBulletTexture!=nullptr) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){                
                 // printf("Bullets %d image is being rendered\n", i);
-                render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), Platform->gUserBulletTexture, NULL, Tank->face);
+                render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), Platform->gUserBulletTexture, nullptr, Tank->face);
             }
         }
     }
 
   }
-else if (!Tank->userBelong && Platform->gEnemyTankTexture != NULL) {
+else if (!Tank->userBelong && Platform->gEnemyTankTexture != nullptr) {
         // SOMEHOW the enemy tank positions changed to keep in bound while the text one is not
         // if (((Tank->mBox.x >= camera.x) && (Tank->mBox.x <= camera.x + camera.w)) &&((Tank->mBox.y >= camera.y) && (Tank->mBox.y <= camera.y + camera.w)) ){
     // printf("Tank is being rendered\n");
-    render( Platform->gRenderer ,Tank->mBox.x - camera.x,Tank->mBox.y - camera.y, Platform->gEnemyTankTexture, NULL, Tank->face);
-        if(Platform->gEnemyBulletTexture!=NULL) {             
+    render( Platform->gRenderer ,Tank->mBox.x - camera.x,Tank->mBox.y - camera.y, Platform->gEnemyTankTexture, nullptr, Tank->face);
+        if(Platform->gEnemyBulletTexture!=nullptr) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){                
-                render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), Platform->gEnemyBulletTexture, NULL, Tank->face);
+                render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), Platform->gEnemyBulletTexture, nullptr, Tank->face);
                 // printf("Enemy tanks and Bullets %d image is being rendered\n", i);
             }
         }

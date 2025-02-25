@@ -24,59 +24,55 @@ struct PlatformP {
    SDL_Rect gExplosionClips [ANIMATING_FRAMES];
    SDL_Rect gTileClips [TOTAL_TILE_SPRITES];
 
-    XTexture* RedTexture;
-    XTexture* GreenTexture;
-    XTexture* BlueTexture;
-    XTexture* ShimmerTexture;
+    XTexture* RedTexture = nullptr;
+    XTexture* GreenTexture = nullptr;
+    XTexture* BlueTexture = nullptr;
+    XTexture* ShimmerTexture = nullptr;
     
-    XTexture* gTileTexture;
-    XTexture* gMenuTexture;
-    XTexture* gTextTexture;
-    XTexture* gUserTankTexture;
-    XTexture* gUserBulletTexture;
-    XTexture* gEnemyTankTexture;
-    XTexture* gEnemyBulletTexture;
-    XTexture* gExplosionTexture;
+    XTexture* gTileTexture = nullptr;
+    XTexture* gMenuTexture = nullptr;
+    XTexture* gTextTexture = nullptr;
+    XTexture* gUserTankTexture = nullptr;
+    XTexture* gUserBulletTexture = nullptr;
+    XTexture* gEnemyTankTexture = nullptr;
+    XTexture* gEnemyBulletTexture = nullptr;
+    XTexture* gExplosionTexture = nullptr;
 
 //The window we'll be rendering to
-    SDL_Window* gWindow;
-    SDL_Renderer* gRenderer;
+    SDL_Window* gWindow = nullptr;
+    SDL_Renderer* gRenderer = nullptr;
     SDL_Event e;
     
 //The window renderer
     PlatformP(){
         e = {};
 
-        gTileTexture = nullptr;
         gTileTexture = new XTexture;
 
         // NOTE: Menu texture using the image or text string as the main display
-        gMenuTexture = nullptr;
         gMenuTexture = new XTexture;
         
-        gTextTexture = nullptr;
         gTextTexture = new XTexture;
 
-        gUserTankTexture = nullptr;
         gUserTankTexture = new XTexture;
 
-        gEnemyTankTexture = nullptr;
         gEnemyTankTexture = new XTexture;
 
-        gEnemyBulletTexture = nullptr;
         gEnemyBulletTexture = new XTexture;
 
-        gUserBulletTexture = nullptr;
         gUserBulletTexture = new XTexture;
 
-        gTextTexture = nullptr;
         gTextTexture = new XTexture;
 
-        gExplosionTexture = nullptr;
         gExplosionTexture = new XTexture;
 
-        gWindow = NULL;
-        gRenderer = NULL;};
+        if(gWindow!=nullptr){
+            gWindow = nullptr;
+        }
+        if(gRenderer = nullptr){
+            gRenderer = nullptr;
+        }
+        };
 };
 
 // NOTE: BE CAREFUL this part (This can mess the whole thing up)

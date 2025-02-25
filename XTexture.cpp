@@ -13,14 +13,14 @@ bool loadFromFile( std::string path, SDL_Renderer* gRenderer, int Width, int Hei
 	free(texture);
 
 	//The final texture
-	SDL_Texture* newTexture = NULL;
+	SDL_Texture* newTexture = nullptr;
 
 	//Load image at specified path
 	SDL_Surface* loadedSurface = IMG_Load( path.c_str() );
-    if (gRenderer == NULL){
-		printf( "gRenderer is NULL %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );        
+    if (gRenderer == nullptr){
+		printf( "gRenderer is nullptr %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );        
     } else {
-	if( loadedSurface == NULL )
+	if( loadedSurface == nullptr )
 	{
 		printf( "Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError() );
 	}
@@ -31,7 +31,7 @@ bool loadFromFile( std::string path, SDL_Renderer* gRenderer, int Width, int Hei
 
 		//Create texture from surface pixels
         newTexture = SDL_CreateTextureFromSurface( gRenderer, loadedSurface );
-		if( newTexture == NULL )
+		if( newTexture == nullptr )
 		{
 			printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
 		}
@@ -50,7 +50,7 @@ bool loadFromFile( std::string path, SDL_Renderer* gRenderer, int Width, int Hei
 
 	//Return success
 	texture->mTexture = newTexture;
-	return texture->mTexture != NULL;
+	return texture->mTexture != nullptr;
 }
 
 #if defined(SDL_TTF_MAJOR_VERSION)
@@ -62,11 +62,11 @@ bool loadFromRenderedText(char* textureText, float Scale, SDL_Color textColor, T
 	//Render text surface
 	SDL_Surface* textSurface = nullptr;
     textSurface = TTF_RenderText_Solid( gFont, textureText, textColor);
-	if( textSurface != NULL )
+	if( textSurface != nullptr )
 	{
 		//Create texture from surface pixels
         texture->mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
-		if( texture->mTexture == NULL )
+		if( texture->mTexture == nullptr )
 		{
 			printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
 		}
@@ -91,19 +91,21 @@ bool loadFromRenderedText(char* textureText, float Scale, SDL_Color textColor, T
 
 	
 	//Return success
-	return texture->mTexture != NULL;
+	return texture->mTexture != nullptr;
 }
 #endif
 
 void free(XTexture* texture)
 {
 	//Free texture if it exists
-	if( texture->mTexture != NULL )
+	if( texture->mTexture != nullptr )
 	{
 		texture->mWidth = 0;
 		texture->mHeight = 0;
+
 		SDL_DestroyTexture(texture->mTexture);
-		texture->mTexture = NULL;
+        // delete texture->mTexture;
+		// texture->mTexture = nullptr;
 	}
 }
 
@@ -132,7 +134,7 @@ void render( SDL_Renderer* gRenderer, int x, int y, XTexture* texture, SDL_Rect*
 	SDL_Rect renderQuad = { x, y, texture->mWidth, texture->mHeight };
 
 	//Set clip rendering dimensions
-	if( clip != NULL )
+	if( clip != nullptr )
 	{
 		renderQuad.w = clip->w;
 		renderQuad.h = clip->h;
