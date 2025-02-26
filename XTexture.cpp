@@ -104,8 +104,6 @@ void free(XTexture* texture)
 		texture->mHeight = 0;
 
 		SDL_DestroyTexture(texture->mTexture);
-        // delete texture->mTexture;
-		// texture->mTexture = nullptr;
 	}
 }
 

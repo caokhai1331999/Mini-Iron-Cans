@@ -554,31 +554,26 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
     } 
 }
 
-void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera , int frame){
+void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera , uint8_t* frame, int frameIndex){
 
-    real32 ExploFrameStartTime = 0.0f;
-    real32 ExploFrameEndTime = 0.0f;
-    real32 ExploFrameTime = 0.0f; ;
+    // real32 ExploFrameStartTime = 0.0f;
+    // real32 ExploFrameEndTime = 0.0f;
+    // real32 ExploFrameTime = 0.0f; ;
 
+         // NOTE: This secure the game check isHit flag first then
+         // destroyed one
+         if(frame[frameIndex] == -1){
+             frame[frameIndex] = 0;
+         }
 
-    if(Tank->isHit){
-        // NOTE: The SDL_GetTicks() give the current time output
-        // So how to calculate right spawn time every time user Tank
-        // is hit
-        ExploFrameStartTime = SDL_GetTicks();
-        ExploFrameEndTime = SDL_GetTicks();
+         if(frame[frameIndex]/12 < ANIMATING_FRAMES+1 && frame[frameIndex]/12 != -1){
+             render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), Platform->gExplosionTexture, &Platform->gExplosionClips[frame[frameIndex]]);            
 
-        while (ExploFrameTime < 0.032f){
-            // Why this make game so gotten bogged down
-            ExploFrameEndTime = SDL_GetTicks();
-            ExploFrameTime = ExploFrameEndTime - ExploFrameStartTime;
+             (frame[frameIndex])++;
+         }
 
-            if(ExploFrameTime = 0.032f){
-
-                printf("Frame Time: %f\n", ExploFrameTime);
-                render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), Platform->gExplosionTexture, &Platform->gExplosionClips[frame]);            
-            }                
-        }            
-        
-    }    
-}
+         if(frame[frameIndex]/12 == ANIMATING_FRAMES+1){
+             frame[frameIndex] = -1;
+             Tank->destroyed = true;
+         };
+}    

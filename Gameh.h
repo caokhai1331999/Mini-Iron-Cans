@@ -21,7 +21,7 @@ global_variable real32 TimeElapsed = 0.0f;
 
 global_variable uint8_t FPS = 0;
 
-global_variable int* frame;
+global_variable uint8_t* frame;
 global_variable uint8_t Uframe = 0;
 global_variable SDL_Rect camera;
 

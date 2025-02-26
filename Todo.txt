@@ -130,3 +130,6 @@ TODO:
 * I coincidentally fix the slow closing issue by adding delete menu and frame
   array of integer in closing fx
 
+* Finally understand the game loop and remove the wrong loop for explosion
+  effect. The game loop is already made it run. All I just need to do to set
+  conidtion to make it revolving
