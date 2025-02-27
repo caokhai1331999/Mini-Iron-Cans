@@ -6,7 +6,7 @@
    $Notice: (C) Copyright 2024 by Cao Khai, Inc. All Rights Reserved. $
    ======================================================================== */
 
-#include "GamePhysics.h"
+#include <GamePhysics.h>
 
 bool checkCollision( SDL_Rect* a, SDL_Rect* b )
 {

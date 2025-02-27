@@ -5,7 +5,7 @@
    $Creator: Cao Khai(Casey Muratori's disciple) $
    $Notice: (C) Copyright 2024 by Cao Khai, Inc. All Rights Reserved. $
    ======================================================================== */
-#include "xTank.h"
+#include <xTank.h>
 
 //Takes key presses and adjusts the Tank's velocity
 // Move this function to PlatForm one
@@ -53,7 +53,7 @@ void InitializeTankPos(Position* RealTankPos){
         RealTankPos[i] = *TempPos;
     }
 
-    delete TempPos;
+   delete TempPos;
 }                                 
 
 TankInfo InitializeTankInfo(int x, int y){
@@ -264,14 +264,14 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
         //TODO: Add collision code here
             Tank->mBox.x += Tank->mVelX;
             // (Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH - 50)||
-           if ((Tank->mBox.x < 0)||(Tank->mBox.x  > LEVEL_WIDTH - TANK_WIDTH) || collided){
+            if ((Tank->mBox.x < 0)||(Tank->mBox.x  > LEVEL_WIDTH - (TANK_WIDTH + 30)) || collided){
                     Tank->mBox.x -= Tank->mVelX;
                }
                     // printf("Tank Pos X is: %d /n", Tank->mBox.x);                    
             
             Tank->mBox.y += Tank->mVelY;
             // (Tank->mBox.y < 10)||(Tank->mBox.y + Tank->mBox.h > LEVEL_HEIGHT  - 50) ||
-            if ((Tank->mBox.y < 0)||(Tank->mBox.y > LEVEL_HEIGHT  - TANK_HEIGHT) || collided)
+            if ((Tank->mBox.y < 0)||(Tank->mBox.y > LEVEL_HEIGHT - (TANK_HEIGHT + 30)) || collided)
             {
                     Tank->mBox.y -= Tank->mVelY;
                     // printf("Tank Pos Y is: %d /n", Tank->mBox.y);
@@ -339,7 +339,7 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided){
         }
     }
     
-    if (targetTank->mBox.x < 0 || targetTank->mBox.x  > LEVEL_WIDTH - TANK_WIDTH|| targetTank->mBox.y < 0 || targetTank->mBox.y > LEVEL_HEIGHT - TANK_HEIGHT || collided){
+    if (targetTank->mBox.x < 0 || targetTank->mBox.x  > LEVEL_WIDTH - TANK_WIDTH -30 || targetTank->mBox.y < 0 || targetTank->mBox.y > LEVEL_HEIGHT - TANK_HEIGHT - 30 || collided){
         if(targetTank->face < 180){
             targetTank->face += 180.0f;
         } else {
@@ -439,8 +439,8 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided){
 void resetTank(TankInfo* Tank){
     Tank->mBox.x = -1;
     Tank->mBox.y = -1;
-    Tank->isHit = false;
-    Tank->destroyed = false;
+    Tank->isHit = true;
+    Tank->destroyed = true;
 }
 
 void resetBullet(Bullet* bullet){
@@ -452,7 +452,9 @@ void resetBullet(Bullet* bullet){
 bool BiTankCheck(TankInfo* ATank, TankInfo* BTank){
     // NOTE: Put this function in the Moving function
     // ON WORK and Experiment
-    bool TwoTankcollided = checkCollision(&ATank->mBox, &BTank->mBox);
+    bool TwoTankcollided = false;
+    if(!ATank->destroyed && !BTank->destroyed){
+        TwoTankcollided = checkCollision(&ATank->mBox, &BTank->mBox);
     // printf("Start checking the whether tank or bullet is collided\n");
     for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
 
@@ -490,6 +492,7 @@ bool BiTankCheck(TankInfo* ATank, TankInfo* BTank){
                 resetBullet(&BTank->Bullets[i]);
             }
         }        
+    }
     }
     return TwoTankcollided;
 }

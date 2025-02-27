@@ -5,7 +5,7 @@
    $Creator: Cao Khai(Casey Muratori's disciple) $
    $Notice: (C) Copyright 2024 by Cao Khai, Inc. All Rights Reserved. $
    ======================================================================== */
-#include "Gameh.h"
+#include <Gameh.h>
 
 void displayMenu(Game* g){
     gFont = TTF_OpenFont( "Roboto.ttf", 28 );

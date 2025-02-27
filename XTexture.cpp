@@ -6,7 +6,7 @@
    $Notice: (C) Copyright 2024 by Cao Khai, Inc. All Rights Reserved. $
    ======================================================================== */
 
-#include "XTexture.h"
+#include <XTexture.h>
 bool loadFromFile( std::string path, SDL_Renderer* gRenderer, int Width, int Height, XTexture* texture)
 {
 	//Get rid of preexisting texture

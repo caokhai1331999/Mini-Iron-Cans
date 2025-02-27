@@ -5,7 +5,7 @@
    $Creator: Cao Khai(Casey Muratori's disciple) $
    $Notice: (C) Copyright 2024 by Cao Khai, Inc. All Rights Reserved. $
    ======================================================================== */
-#include "PlatformP.h"
+#include <PlatformP.h>
 // NOTE: One the way to make Platform in SIMD and Procedure styles.
 
 
