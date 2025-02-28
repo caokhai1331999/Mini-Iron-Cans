@@ -53,13 +53,11 @@ struct Game{
     Tile* tileSet = NULL;
     
     Position* TankPos = NULL;    
-    PlatformP* Platform = NULL;
     TankInfo* userTank = NULL;
     TankInfo* enemyTank = NULL;
 
+    SDL_Event e;
     Game(){
-        Platform = new PlatformP;
-
         tileSet = new Tile[TOTAL_TILES];
         
         userTank = new TankInfo(true);
@@ -74,19 +72,19 @@ struct Game{
     };
 };
 
-void displayMenu(Game* g);
+void displayMenu(PlatformP* p, Game* g);
 void get_Menu_choice(Game* g, KeyState* key);
 void changeState(Game* g);
-bool Start(Game* g);
+bool Start(PlatformP* p, Game* g);
 void ProcessInput(Game* g, bool* done);
 void Update(Game* g);
 void resetGame(Game* g);
 
 // TODO: Complete this part
 void runMainScene(Game* g);
-void RenderMainScene(Game* g);
+void RenderMainScene(PlatformP* p, Game* g);
 //===========================
-void Render(Game* g);
-void Close(Game* g);
+void Render(PlatformP* p, Game* g);
+void Close(PlatformP* p, Game* g);
 #define GAME_H
 #endif

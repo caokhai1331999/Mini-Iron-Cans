@@ -13,11 +13,11 @@
 int main( int argc, char* args[] )
 {
     _CrtDumpMemoryLeaks();
-    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);;
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     Game* game = nullptr;
     bool done = false;
     game = new Game;
-    if(!Start(game)) {
+    if(!Start(&Platform, game)) {
             printf("Fail to init game\n");
         } else {
         printf("Init game successfully\n");
@@ -26,9 +26,9 @@ int main( int argc, char* args[] )
                 
                 ProcessInput(game, &done);
                 Update(game);
-                Render(game);
+                Render(&Platform, game);
             }
-    Close(game);
+            Close(&Platform, game);
     delete game;
     game = nullptr;
     }

@@ -49,11 +49,8 @@ struct Bullet{
     bool Launched;
     SDL_Rect blBox;
 
-    Bullet(int TankX = 0, int TankY = 0, bool launched = false, bool userBelong = false)
+    Bullet(int TankX = 0, int TankY = 0, bool launched = false, bool userBelong = false): blBox({TankX, TankY, BULLET_WIDTH, BULLET_HEIGHT}), Launched(launched)
     {
-        blBox.x = TankX;
-        blBox.y = TankY;
-        Launched = launched;
         type = userBelong?userB:enemyB;
         blBox.w = BULLET_WIDTH;
         blBox.h = BULLET_HEIGHT;

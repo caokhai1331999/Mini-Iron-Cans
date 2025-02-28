@@ -7,7 +7,7 @@
    ======================================================================== */
 #include <Gameh.h>
 
-void displayMenu(Game* g){
+void displayMenu(PlatformP* p, Game* g){
     gFont = TTF_OpenFont( "Roboto.ttf", 28 );
     // SDL_Color TextColor = {249 ,166 ,2};
     SDL_Color TextColor = {0 ,0 ,0};
@@ -22,10 +22,10 @@ void displayMenu(Game* g){
             scale = 1.0f;
         }
 
-        if (!loadFromRenderedText(Menu[i], scale, TextColor, gFont, g->Platform->gRenderer, g->Platform->gMenuTexture)) {
+        if (!loadFromRenderedText(Menu[i], scale, TextColor, gFont, p->gRenderer, p->gMenuTexture)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );
         } else {
-            render(g->Platform->gRenderer, 100, 30 + i*50, g->Platform->gMenuTexture);
+            render(p->gRenderer, 100, 30 + i*50, p->gMenuTexture);
         }                       
 
     }    
@@ -64,11 +64,11 @@ void get_Menu_choice(Game* g, KeyState* currentKey){
     }
 }
 
-bool Start(Game* g){
-        if(!init(g->Platform)){
+bool Start(PlatformP* p, Game* g){
+        if(!init(p)){
             return false;
         }else{
-            if( !LoadMedia(g->tileSet, g->Platform) )
+            if( !LoadMedia(g->tileSet, p) )
             {
                 printf( "Failed to load media!\n" );
                 return false;
@@ -156,7 +156,7 @@ void ProcessInput(Game* g, bool* done){
     KeyState PreviousBut = {};
     KeyState CurrentBut = {};
     
-    while( SDL_PollEvent( &g->Platform->e ) != 0 )
+    while( SDL_PollEvent( &g->e ) != 0 )
     {
         //User requests quit
 
@@ -164,9 +164,9 @@ void ProcessInput(Game* g, bool* done){
         //===================================================
 
         // NOTE: If I have time try to apply FSM to this input filter
-        if ((g->Platform->e.key.state == SDL_PRESSED || g->Platform->e.key.state == SDL_RELEASED) && g->Platform->e.key.keysym.scancode != SDL_SCANCODE_UNKNOWN || g->Platform->e.type == SDL_QUIT){                        
+        if ((g->e.key.state == SDL_PRESSED || g->e.key.state == SDL_RELEASED) && g->e.key.keysym.scancode != SDL_SCANCODE_UNKNOWN || g->e.type == SDL_QUIT){                        
             // NOTE: Forgot to add SDL_QUIT to filter conditions
-            if((!CurrentBut.pressed && g->Platform->e.key.state == SDL_PRESSED && CurrentBut.key != g->Platform->e.key.keysym.scancode) || (g->Platform->e.key.keysym.scancode == CurrentBut.key && CurrentBut.pressed != (g->Platform->e.key.state == SDL_PRESSED))|| CurrentBut.init == 0 || g->Platform->e.key.keysym.scancode == SDL_SCANCODE_SPACE)
+            if((!CurrentBut.pressed && g->e.key.state == SDL_PRESSED && CurrentBut.key != g->e.key.keysym.scancode) || (g->e.key.keysym.scancode == CurrentBut.key && CurrentBut.pressed != (g->e.key.state == SDL_PRESSED))|| CurrentBut.init == 0 || g->e.key.keysym.scancode == SDL_SCANCODE_SPACE)
 
                                 
                 if(CurrentBut.init == 0){
@@ -174,11 +174,11 @@ void ProcessInput(Game* g, bool* done){
                 }
             
             PreviousBut = CurrentBut;
-            CurrentBut.type = g->Platform->e.type;
+            CurrentBut.type = g->e.type;
 
-            CurrentBut.pressed = (g->Platform->e.key.state == SDL_PRESSED);
-            CurrentBut.key = g->Platform->e.key.keysym.scancode;
-            CurrentBut.repeat = g->Platform->e.key.repeat;
+            CurrentBut.pressed = (g->e.key.state == SDL_PRESSED);
+            CurrentBut.key = g->e.key.keysym.scancode;
+            CurrentBut.repeat = g->e.key.repeat;
 
             if(CurrentBut.type == SDL_QUIT){
                 *done = true;
@@ -278,11 +278,11 @@ void Update(Game* g){
         switch (g->state){
             case MENU_INIT:
                 // Duplicated code here??
-                displayMenu(g);
+                // displayMenu(p, g);
                 break;
 
             case PAUSE:
-                displayMenu(g);
+                // displayMenu(p, g);
                 break;
 
             case GAME_NEW:
@@ -337,7 +337,7 @@ void resetGame(Game*g){
 
 }        
 
-void RenderMainScene(Game* g){
+void RenderMainScene(PlatformP* p, Game* g){
     EndTime = SDL_GetTicks();
     int k = 0;
  //Clear screen
@@ -345,19 +345,19 @@ void RenderMainScene(Game* g){
  for( int i = 0; i < TOTAL_TILES; ++i )
  {
      //touchesWall(&userTank->mBox, tileSet)
-     renderTile( camera, g->Platform->gRenderer, g->tileSet[ i ], g->Platform->gTileTexture,  g->Platform->gTileClips, false);
+     renderTile( camera, p->gRenderer, g->tileSet[ i ], p->gTileTexture,  p->gTileClips, false);
      // tileSet[ i ]->render( camera, Platform->GetRenderer(),  Platform->GetgTileTexture(),  Platform->GetgTileClips(), checkCollision(&camera, tileSet[ i ]->getBox()));
  }
 
  if(!g->userTank->isHit){
-     renderTank(g->userTank, Uframe, camera, g->Platform);
+     renderTank(g->userTank, Uframe, camera, p);
  }else{
      // The additional loop just make the explostion clip run incredibly faster
      // I didn't understand the game loop up until now
      // Just need the checking cycle for that explosion effect
      if(g->userTank->isHit && !g->userTank->destroyed){
          if(frame!=nullptr){
-             renderExplosionFrame(g->userTank, g->Platform, &camera, frame, 4);
+             renderExplosionFrame(g->userTank, p, &camera, frame, 4);
          }
      }     
  }
@@ -365,25 +365,25 @@ void RenderMainScene(Game* g){
  while(k < TOTAL_ENEMY_TANK)
  {
      if(!g->enemyTank[k].isHit){
-         renderTank(&g->enemyTank[k], frame[k], camera, g-> Platform);                        
+         renderTank(&g->enemyTank[k], frame[k], camera, p);                        
      } else {
      if(g->enemyTank[k].isHit && !g->enemyTank[k].destroyed){
          if(frame!=nullptr){
-             renderExplosionFrame(&g->enemyTank[k], g->Platform, &camera, frame, k);              
+             renderExplosionFrame(&g->enemyTank[k], p, &camera, frame, k);              
          }
      }
      }
      k++;
  };
                                    
- renderText(FPS, g->userTank, g->Platform);
+ renderText(FPS, g->userTank, p);
  TimeElapsed = EndTime - StartTime;
  FPS = 1/(TimeElapsed/1000.0f);
  StartTime = EndTime;         
 }
 
 
-void Close(Game* g){
+void Close(PlatformP* p, Game* g){
     delete []frame;
     frame = nullptr;
     
@@ -407,23 +407,19 @@ void Close(Game* g){
     // close everything in it
     // delete g->tileSet;
 
-    SDL_DestroyRenderer(g->Platform->gRenderer);
+    close(p);        
+    SDL_DestroyRenderer(p->gRenderer);
     
-    if(g->Platform->gRenderer != nullptr){
-        g->Platform->gRenderer = nullptr;
+    if(p->gRenderer != nullptr){
+        p->gRenderer = nullptr;
     }
 
-    SDL_DestroyWindow(g->Platform->gWindow);
-    if(	g->Platform->gWindow != nullptr){        
-        g->Platform->gWindow = nullptr;
+    SDL_DestroyWindow(p->gWindow);
+    if(	p->gWindow != nullptr){        
+        p->gWindow = nullptr;
 
-        // g->Platform->gWindow == nullptr?printf("Window is destroyed\n"):printf("Window is not destroyed yet. why??");
+        // p->gWindow == nullptr?printf("Window is destroyed\n"):printf("Window is not destroyed yet. why??");
     }
-
-    close(g->Platform);        
-    delete g->Platform;
-    g->Platform = nullptr;
-
 
 	//Quit SDL subsystems
     TTF_Quit();
@@ -433,26 +429,25 @@ void Close(Game* g){
 }
 
 
-void Render (Game* g){
+void Render (PlatformP* p, Game* g){
 
     if (g->state != EMPTY){
-        SDL_RenderClear( g->Platform->gRenderer);
-        SDL_SetRenderDrawColor( g->Platform->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+        SDL_RenderClear( p->gRenderer);
+        SDL_SetRenderDrawColor( p->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
         // printf("Render accordingly to state\n");    
         if (g->state == MENU_INIT || g->state == PAUSE){
             // NOTE: The render part is already in the menu fx. So what will I put in this one???
-            displayMenu(g);
+            displayMenu(p, g);
         } else if (g->state == GAME_NEW || g->state == GAME_RELOADED){
 
-            RenderMainScene(g);
+            RenderMainScene(p, g);
             
         }
-        SDL_RenderPresent( g->Platform->gRenderer);        
+        SDL_RenderPresent( p->gRenderer);        
         // NOTE: Else do nothing
     } else {
         //??? WHY LOOP ONLY END AFTER I CALL SDL_QUIT IT IN GAME LOOP
         // Close(g);
         printf("End of Game, Thanks so much for playing my game\n");
-    }
-    
+    }    
 }
