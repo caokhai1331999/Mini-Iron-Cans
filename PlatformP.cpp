@@ -31,45 +31,50 @@ void close( PlatformP* Platform){
     // Don't know why this TileTexture free fx is
     if(Platform->gMenuTexture!=nullptr){
         free(Platform->gMenuTexture);
+        delete Platform->gMenuTexture;
+        Platform->gMenuTexture = nullptr;
     }
     // ================================================
-    delete Platform->gMenuTexture;
-    Platform->gMenuTexture = nullptr;
 
-    free(Platform->gTextTexture);
-    delete Platform->gTextTexture;
-    Platform->gTextTexture = nullptr;
-
-    free(Platform->gUserTankTexture);
-    delete Platform->gUserTankTexture;
-    Platform->gUserTankTexture = nullptr;
-
-    free(Platform->gEnemyTankTexture);
-    delete Platform->gEnemyTankTexture;
-    Platform->gEnemyTankTexture = nullptr;
-    
-    free(Platform->gUserBulletTexture);
-    delete Platform->gUserBulletTexture;
-    Platform->gUserBulletTexture = nullptr;
-
-    free(Platform->gEnemyBulletTexture);
-    delete Platform->gEnemyBulletTexture;
-    Platform->gEnemyBulletTexture = nullptr;
-    
-    free(Platform->gExplosionTexture);
-    delete Platform->gExplosionTexture;
-    Platform->gExplosionTexture = nullptr;
-
-    SDL_DestroyRenderer(Platform->gRenderer);
-    if(Platform->gRenderer != nullptr){
-        Platform->gRenderer = nullptr;
+    if (Platform->gTextTexture!=nullptr){
+        free(Platform->gTextTexture);
+        delete Platform->gTextTexture;
+        Platform->gTextTexture = nullptr;        
     }
+    
+    if (Platform->gUserTankTexture!=nullptr){
+        free(Platform->gUserTankTexture);
+        delete Platform->gUserTankTexture;
+        Platform->gUserTankTexture = nullptr;        
+    }
+
+    if (Platform->gEnemyTankTexture!=nullptr){
+        free(Platform->gEnemyTankTexture);
+        delete Platform->gEnemyTankTexture;
+        Platform->gEnemyTankTexture = nullptr;        
+    }
+
+    if (Platform->gUserBulletTexture!=nullptr){
+        free(Platform->gUserBulletTexture);
+        delete Platform->gUserBulletTexture;
+        Platform->gUserBulletTexture = nullptr;        
+    }    
+
+    if (Platform->gEnemyBulletTexture!=nullptr){
+        free(Platform->gEnemyBulletTexture);
+        delete Platform->gEnemyBulletTexture;
+        Platform->gEnemyBulletTexture = nullptr;        
+    }    
+
+    if (Platform->gExplosionTexture!=nullptr){
+        free(Platform->gExplosionTexture);
+        delete Platform->gExplosionTexture;
+        Platform->gExplosionTexture = nullptr;        
+    }    
 
 	//Destroy window	
+    SDL_DestroyRenderer(Platform->gRenderer);
     SDL_DestroyWindow(Platform->gWindow);
-    if(	Platform->gWindow != nullptr){        
-        Platform->gWindow = nullptr;
-    }
     // NOTE: Still don't know why this function immediately close the app
     // including terminal one
  	//Quit SDL subsystems

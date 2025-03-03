@@ -90,6 +90,5 @@ bool valid(SDL_Event e, KeyState* previousKey, KeyState* currentKey);
 void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform);
 void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera,  uint8_t* frame, int frameIndex);
 void renderTank(TankInfo* Tank, int frame, SDL_Rect& camera, PlatformP* Platform);
-
 #define PLATFORMP_H
 #endif
