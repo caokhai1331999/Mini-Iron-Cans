@@ -23,11 +23,6 @@ struct PlatformP {
     
    SDL_Rect gExplosionClips [ANIMATING_FRAMES];
    SDL_Rect gTileClips [TOTAL_TILE_SPRITES];
-
-    XTexture* RedTexture = nullptr;
-    XTexture* GreenTexture = nullptr;
-    XTexture* BlueTexture = nullptr;
-    XTexture* ShimmerTexture = nullptr;
     
     XTexture* gTileTexture = nullptr;
     XTexture* gMenuTexture = nullptr;
@@ -44,8 +39,8 @@ struct PlatformP {
     
 //The window renderer
     PlatformP(){
-
         gTileTexture = new XTexture;
+
         // NOTE: Menu texture using the image or text string as the main display
         gMenuTexture = new XTexture;
         
@@ -73,10 +68,10 @@ struct PlatformP {
 };
 
 // NOTE: BE CAREFUL this part (This can mess the whole thing up)
-#if !defined
-extern PlatformP Platform = {};
-#define PLATFORM
-#endif
+// #if !defined
+// extern PlatformP Platform = {};
+// #define PLATFORM
+// #endif
 
 //Frees media and shuts down SDL
 bool init(PlatformP* Platform);    
@@ -90,5 +85,6 @@ bool valid(SDL_Event e, KeyState* previousKey, KeyState* currentKey);
 void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform);
 void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera,  uint8_t* frame, int frameIndex);
 void renderTank(TankInfo* Tank, int frame, SDL_Rect& camera, PlatformP* Platform);
+
 #define PLATFORMP_H
 #endif

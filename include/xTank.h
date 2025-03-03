@@ -52,24 +52,20 @@ struct Bullet{
     Bullet(int TankX = 0, int TankY = 0, bool launched = false, bool userBelong = false): blBox({TankX, TankY, BULLET_WIDTH, BULLET_HEIGHT}), Launched(launched)
     {
         type = userBelong?userB:enemyB;
-        blBox.w = BULLET_WIDTH;
-        blBox.h = BULLET_HEIGHT;
-    }
-    
+    }    
 };
 
 struct TankInfo
 {
     bool userBelong;
-
-    int BulletsNumber;
     int name;
     bool destroyed;
     bool isHit;
     SDL_Rect mBox;
     int mVelX, mVelY;
     TANKFACE face;
-    Bullet* Bullets;
+    int BulletsNumber = TOTAL_BULLET_PER_TANK;
+    Bullet* Bullets = nullptr;
     // NOTE: Bullet created when Tank is created, follow them until being fired
     // after fire, create the second bullet to follow it when the previous is sent
     //flied
@@ -79,28 +75,27 @@ struct TankInfo
         // Initialize the collision box
         destroyed = false;
         isHit = false;
-        BulletsNumber = TOTAL_BULLET_PER_TANK;
         mBox.w = TANK_WIDTH;
         mBox.h = TANK_HEIGHT;
         mVelX = 0;
         mVelY = 0;
-
-        Bullets = nullptr ;
         Bullets = new Bullet[TOTAL_BULLET_PER_TANK];
         
         // TODO: figure out how to effectively flag these bullets as user's
         if(userBelong){
             mBox.x = rand()%SCREEN_WIDTH;
             mBox.y = rand()%SCREEN_HEIGHT;
-            for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
-                Bullets[i].type = userB;
-            };
         }
+
         switch(rand()%3){
             case 0: face = UP;break;
             case 1: face = RIGHT;break;
             case 2: face = DOWN;break;
             case 3: face = LEFT;break;
+        };
+
+        for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
+            userBelong?Bullets[i].type = userB:Bullets[i].type = enemyB;
         };
         // NOTE: Turn out I can not delete any single element on array without changing the others. Got to rewrite it
     };

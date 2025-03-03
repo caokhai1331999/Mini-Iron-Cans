@@ -22,52 +22,53 @@ void close( PlatformP* Platform){
 	// Platform->gDotTexture->free();
     // Don't know why this TileTexture free fx is
 
-	//Deallocate tiles    
+	//Deallocate tiles
+    //NOTE: Something off about gTileTexture
     if(Platform->gTileTexture != nullptr){
-        free(Platform->gTileTexture);
+        xfree(Platform->gTileTexture);
         delete Platform->gTileTexture;
         Platform->gTileTexture = nullptr;
     }
     
     if(Platform->gMenuTexture!=nullptr){
-        free(Platform->gMenuTexture);
+        xfree(Platform->gMenuTexture);
         delete Platform->gMenuTexture;
         Platform->gMenuTexture = nullptr;
     }
     // ================================================
 
     if (Platform->gTextTexture!=nullptr){
-        free(Platform->gTextTexture);
+        xfree(Platform->gTextTexture);
         delete Platform->gTextTexture;
         Platform->gTextTexture = nullptr;        
     }
     
     if (Platform->gUserTankTexture!=nullptr){
-        free(Platform->gUserTankTexture);
+        xfree(Platform->gUserTankTexture);
         delete Platform->gUserTankTexture;
         Platform->gUserTankTexture = nullptr;        
     }
 
     if (Platform->gEnemyTankTexture!=nullptr){
-        free(Platform->gEnemyTankTexture);
+        xfree(Platform->gEnemyTankTexture);
         delete Platform->gEnemyTankTexture;
         Platform->gEnemyTankTexture = nullptr;        
     }
 
     if (Platform->gUserBulletTexture!=nullptr){
-        free(Platform->gUserBulletTexture);
+        xfree(Platform->gUserBulletTexture);
         delete Platform->gUserBulletTexture;
         Platform->gUserBulletTexture = nullptr;        
     }    
 
     if (Platform->gEnemyBulletTexture!=nullptr){
-        free(Platform->gEnemyBulletTexture);
+        xfree(Platform->gEnemyBulletTexture);
         delete Platform->gEnemyBulletTexture;
         Platform->gEnemyBulletTexture = nullptr;        
     }    
 
     if (Platform->gExplosionTexture!=nullptr){
-        free(Platform->gExplosionTexture);
+        xfree(Platform->gExplosionTexture);
         delete Platform->gExplosionTexture;
         Platform->gExplosionTexture = nullptr;        
     }    
@@ -586,7 +587,7 @@ void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera 
          }
 
          if(frame[frameIndex]/12 < ANIMATING_FRAMES+1 && frame[frameIndex]/12 != -1){
-             render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), Platform->gExplosionTexture, &Platform->gExplosionClips[frame[frameIndex]]);            
+             render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), Platform->gExplosionTexture, &Platform->gExplosionClips[frame[frameIndex]/12]);            
 
              (frame[frameIndex])++;
          }

@@ -107,13 +107,16 @@ struct KeyState{
 
 struct XTexture{
     //The actual hardware texture
-    SDL_Texture* mTexture;
+    SDL_Texture* mTexture = nullptr;
 
     //Image dimensions
     int mWidth;
     int mHeight;
+
     XTexture(){
-        mTexture = nullptr;
+        if(mTexture != nullptr){
+            mTexture = nullptr;
+        }
         mWidth = 0;
         mHeight = 0;
     };
@@ -140,7 +143,7 @@ void setAlpha( Uint8 alpha );
 void render( SDL_Renderer* gRenderer = nullptr, int x = 0, int y = 0, XTexture* texture = nullptr, SDL_Rect* clip = nullptr, double angle = 0.0, SDL_Point* center = nullptr, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 //Deallocates texture
-void free(XTexture* texture = nullptr);
+void xfree(XTexture* texture = nullptr);
 
 #define XTEXTURE_H
 #endif

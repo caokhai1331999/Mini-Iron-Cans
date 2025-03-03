@@ -10,7 +10,7 @@
 bool loadFromFile( std::string path, SDL_Renderer* gRenderer, int Width, int Height, XTexture* texture)
 {
 	//Get rid of preexisting texture
-	free(texture);
+	xfree(texture);
 
 	//The final texture
 	SDL_Texture* newTexture = nullptr;
@@ -31,6 +31,7 @@ bool loadFromFile( std::string path, SDL_Renderer* gRenderer, int Width, int Hei
 
 		//Create texture from surface pixels
         newTexture = SDL_CreateTextureFromSurface( gRenderer, loadedSurface );
+
 		if( newTexture == nullptr )
 		{
 			printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
@@ -49,7 +50,7 @@ bool loadFromFile( std::string path, SDL_Renderer* gRenderer, int Width, int Hei
     }
 
 	//Return success
-	texture->mTexture = newTexture;
+	texture->mTexture = newTexture;    
 	return texture->mTexture != nullptr;
 }
 
@@ -57,7 +58,7 @@ bool loadFromFile( std::string path, SDL_Renderer* gRenderer, int Width, int Hei
 bool loadFromRenderedText(char* textureText, float Scale, SDL_Color textColor, TTF_Font* gFont , SDL_Renderer* gRenderer, XTexture* texture)
 {
 	//Get rid of preexisting texture
-	free(texture);
+	xfree(texture);
 
 	//Render text surface
 	SDL_Surface* textSurface = nullptr;
@@ -95,7 +96,7 @@ bool loadFromRenderedText(char* textureText, float Scale, SDL_Color textColor, T
 }
 #endif
 
-void free(XTexture* texture)
+void xfree(XTexture* texture)
 {
 	//Free texture if it exists
 	if( texture->mTexture != nullptr )
@@ -104,6 +105,7 @@ void free(XTexture* texture)
 		texture->mHeight = 0;
 
 		SDL_DestroyTexture(texture->mTexture);
+        texture->mTexture = nullptr;
 	}
 }
 

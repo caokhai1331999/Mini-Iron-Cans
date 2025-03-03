@@ -56,7 +56,6 @@ struct Game{
     TankInfo* userTank = nullptr;
     TankInfo* enemyTank = nullptr;
 
-    SDL_Event e;
     Game(){
         tileSet = new Tile[TOTAL_TILES];
         

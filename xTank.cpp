@@ -159,7 +159,9 @@ void respawn(TankInfo* Tank){
             // printf("Wait Time: %f\n", respawnTime);
             respawnTime = 0.0f;
             resetTank(Tank);
-
+            Tank->isHit = false;
+            Tank->destroyed = false;
+            
             Tank->mBox.x = rand()%LEVEL_WIDTH;
 
             if(Tank->mBox.x > LEVEL_WIDTH - Tank->mBox.w){
@@ -453,12 +455,12 @@ bool BiTankCheck(TankInfo* ATank, TankInfo* BTank){
     // NOTE: Put this function in the Moving function
     // ON WORK and Experiment
     bool TwoTankcollided = false;
-    if(!ATank->destroyed && !BTank->destroyed){
+    if(!ATank->isHit && !BTank->isHit){
         TwoTankcollided = checkCollision(&ATank->mBox, &BTank->mBox);
     // printf("Start checking the whether tank or bullet is collided\n");
     for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
 
-        if (ATank->Bullets[i].Launched && !BTank->destroyed){
+        if (ATank->Bullets[i].Launched && !BTank->isHit){
             if ((ATank->Bullets[i].blBox.x < 0)||(ATank->Bullets[i].blBox.x + ATank->Bullets[i].blBox.w > LEVEL_WIDTH||ATank->Bullets[i].blBox.y < 0)||(ATank->Bullets[i].blBox.y + ATank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
                 resetBullet(&ATank->Bullets[i]);
             }
@@ -473,7 +475,7 @@ bool BiTankCheck(TankInfo* ATank, TankInfo* BTank){
             }
         }
 
-        if (BTank->Bullets[i].Launched && !ATank->destroyed){
+        if (BTank->Bullets[i].Launched && !ATank->isHit){
 
             if ((BTank->Bullets[i].blBox.x < 0)||(BTank->Bullets[i].blBox.x + BTank->Bullets[i].blBox.w > LEVEL_WIDTH||BTank->Bullets[i].blBox.y < 0)||(BTank->Bullets[i].blBox.y + BTank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
                 BTank->BulletsNumber++;

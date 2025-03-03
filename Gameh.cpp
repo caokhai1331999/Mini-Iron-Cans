@@ -155,17 +155,17 @@ void ProcessInput(Game* g, bool* done){
     // printf("Start process input \n");
     KeyState PreviousBut = {};
     KeyState CurrentBut = {};
-    
-    while( SDL_PollEvent( &g->e ) != 0 )
+    SDL_Event e = {};    
+    while( SDL_PollEvent( &e ) != 0 )
     {
         //User requests quit
         // Modulize this part to reuse it
         //===================================================
 
         // NOTE: If I have time try to apply FSM to this input filter
-        if ((g->e.key.state == SDL_PRESSED || g->e.key.state == SDL_RELEASED) && g->e.key.keysym.scancode != SDL_SCANCODE_UNKNOWN || g->e.type == SDL_QUIT){                        
+        if ((e.key.state == SDL_PRESSED || e.key.state == SDL_RELEASED) && e.key.keysym.scancode != SDL_SCANCODE_UNKNOWN || e.type == SDL_QUIT){                        
             // NOTE: Forgot to add SDL_QUIT to filter conditions
-            if((!CurrentBut.pressed && g->e.key.state == SDL_PRESSED && CurrentBut.key != g->e.key.keysym.scancode) || (g->e.key.keysym.scancode == CurrentBut.key && CurrentBut.pressed != (g->e.key.state == SDL_PRESSED))|| CurrentBut.init == 0 || g->e.key.keysym.scancode == SDL_SCANCODE_SPACE)
+            if((!CurrentBut.pressed && e.key.state == SDL_PRESSED && CurrentBut.key != e.key.keysym.scancode) || (e.key.keysym.scancode == CurrentBut.key && CurrentBut.pressed != (e.key.state == SDL_PRESSED))|| CurrentBut.init == 0 || e.key.keysym.scancode == SDL_SCANCODE_SPACE)
 
                                 
                 if(CurrentBut.init == 0){
@@ -173,11 +173,11 @@ void ProcessInput(Game* g, bool* done){
                 }
             
             PreviousBut = CurrentBut;
-            CurrentBut.type = g->e.type;
+            CurrentBut.type = e.type;
 
-            CurrentBut.pressed = (g->e.key.state == SDL_PRESSED);
-            CurrentBut.key = g->e.key.keysym.scancode;
-            CurrentBut.repeat = g->e.key.repeat;
+            CurrentBut.pressed = (e.key.state == SDL_PRESSED);
+            CurrentBut.key = e.key.keysym.scancode;
+            CurrentBut.repeat = e.key.repeat;
 
             if(CurrentBut.type == SDL_QUIT){
                 *done = true;
@@ -362,7 +362,7 @@ void RenderMainScene(PlatformP* p, Game* g){
  k = 0;
  while(k < TOTAL_ENEMY_TANK)
  {
-     if(!g->enemyTank[k].isHit){
+     if(!g->enemyTank[k].isHit && !g->enemyTank[k].destroyed){
          renderTank(&g->enemyTank[k], frame[k], camera, p);                        
      } else {
      if(g->enemyTank[k].isHit && !g->enemyTank[k].destroyed){
