@@ -44,8 +44,8 @@ struct PlatformP {
     
 //The window renderer
     PlatformP(){
-        gTileTexture = new XTexture;
 
+        gTileTexture = new XTexture;
         // NOTE: Menu texture using the image or text string as the main display
         gMenuTexture = new XTexture;
         

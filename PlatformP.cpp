@@ -18,17 +18,17 @@ bool IsArrow(SDL_Scancode KeyCode){
 
 //Frees media and shuts down SDL
 void close( PlatformP* Platform){
-	//Deallocate tiles    
-    if(Platform != nullptr && Platform->gTileTexture != nullptr){
-        free(Platform->gTileTexture);
-    } else {
-        Platform == nullptr?printf("Platform pointer was already freed somewhere\n"):
-            printf("Platform was not freed but ");        
-    }    
-
 	//Free loaded images
 	// Platform->gDotTexture->free();
     // Don't know why this TileTexture free fx is
+
+	//Deallocate tiles    
+    if(Platform->gTileTexture != nullptr){
+        free(Platform->gTileTexture);
+        delete Platform->gTileTexture;
+        Platform->gTileTexture = nullptr;
+    }
+    
     if(Platform->gMenuTexture!=nullptr){
         free(Platform->gMenuTexture);
         delete Platform->gMenuTexture;
