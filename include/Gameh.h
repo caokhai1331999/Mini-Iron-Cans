@@ -50,11 +50,11 @@ struct Game{
     int k = 0;    
     uint8_t pointed_option;
     MENUCHOICE chosen_option;
-    Tile* tileSet = NULL;
+    Tile* tileSet = nullptr;
     
-    Position* TankPos = NULL;    
-    TankInfo* userTank = NULL;
-    TankInfo* enemyTank = NULL;
+    Position* TankPos = nullptr;    
+    TankInfo* userTank = nullptr;
+    TankInfo* enemyTank = nullptr;
 
     SDL_Event e;
     Game(){

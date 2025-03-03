@@ -116,6 +116,7 @@ void changeState(Game* g, KeyState* key){
                     g->state = EMPTY;
                 }
                 break;
+
             case PAUSE:
                 if(g->chosen_option == NEW_GAME){
                     // NOTE: Try to put Reset fx here to see anything different
@@ -128,9 +129,9 @@ void changeState(Game* g, KeyState* key){
                     g->chosen_option = NONE;
                 }else if (g->chosen_option == EXIT || key->type == SDL_QUIT){
                     g->state = EMPTY;
-                };
-                
+                };                
                 break;
+                
             case GAME_NEW:
                 if (key->key == SDL_SCANCODE_ESCAPE && key->pressed){
                     g->state = PAUSE;
@@ -152,14 +153,12 @@ void changeState(Game* g, KeyState* key){
 
 void ProcessInput(Game* g, bool* done){
     // printf("Start process input \n");
-    if (!*done){
     KeyState PreviousBut = {};
     KeyState CurrentBut = {};
     
     while( SDL_PollEvent( &g->e ) != 0 )
     {
         //User requests quit
-
         // Modulize this part to reuse it
         //===================================================
 
@@ -205,7 +204,6 @@ void ProcessInput(Game* g, bool* done){
                 changeState(g, &CurrentBut);
         }
     }                    
-    } 
 }
 
 void runMainScene(Game* g){
@@ -408,24 +406,7 @@ void Close(PlatformP* p, Game* g){
     // delete g->tileSet;
 
     close(p);        
-    SDL_DestroyRenderer(p->gRenderer);
-    
-    if(p->gRenderer != nullptr){
-        p->gRenderer = nullptr;
-    }
-
-    SDL_DestroyWindow(p->gWindow);
-    if(	p->gWindow != nullptr){        
-        p->gWindow = nullptr;
-
         // p->gWindow == nullptr?printf("Window is destroyed\n"):printf("Window is not destroyed yet. why??");
-    }
-
-	//Quit SDL subsystems
-    TTF_Quit();
-	IMG_Quit();
-	SDL_Quit();
-
 }
 
 

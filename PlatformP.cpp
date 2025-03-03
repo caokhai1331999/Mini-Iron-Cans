@@ -59,9 +59,23 @@ void close( PlatformP* Platform){
     free(Platform->gExplosionTexture);
     delete Platform->gExplosionTexture;
     Platform->gExplosionTexture = nullptr;
+
+    SDL_DestroyRenderer(Platform->gRenderer);
+    if(Platform->gRenderer != nullptr){
+        Platform->gRenderer = nullptr;
+    }
+
 	//Destroy window	
+    SDL_DestroyWindow(Platform->gWindow);
+    if(	Platform->gWindow != nullptr){        
+        Platform->gWindow = nullptr;
+    }
     // NOTE: Still don't know why this function immediately close the app
     // including terminal one
+ 	//Quit SDL subsystems
+    TTF_Quit();
+	IMG_Quit();
+	SDL_Quit();   
 }
 
 bool LoadMedia(Tile* tiles,PlatformP* Platform){
