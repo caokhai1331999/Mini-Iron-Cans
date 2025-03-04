@@ -110,16 +110,16 @@ struct XTexture{
     SDL_Texture* mTexture = nullptr;
 
     //Image dimensions
-    int mWidth;
-    int mHeight;
+    int mWidth = 0;
+    int mHeight = 0;
 
-    XTexture(){
-        if(mTexture != nullptr){
-            mTexture = nullptr;
-        }
-        mWidth = 0;
-        mHeight = 0;
-    };
+    // XTexture(){
+    //     if(mTexture != nullptr){
+    //         mTexture = nullptr;
+    //     }
+    //     mWidth = 0;
+    //     mHeight = 0;
+    // };
 };
 
 //Loads image at specified path

@@ -22,10 +22,10 @@ void displayMenu(PlatformP* p, Game* g){
             scale = 1.0f;
         }
 
-        if (!loadFromRenderedText(Menu[i], scale, TextColor, gFont, p->gRenderer, p->gMenuTexture)) {
+        if (!loadFromRenderedText(Menu[i], scale, TextColor, gFont, p->gRenderer, &p->gMenuTexture)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );
         } else {
-            render(p->gRenderer, 100, 30 + i*50, p->gMenuTexture);
+            render(p->gRenderer, 100, 30 + i*50, &p->gMenuTexture);
         }                       
 
     }    
@@ -314,13 +314,11 @@ void resetGame(Game*g){
         frame[i] = 0;
     };
     
-    delete []g->enemyTank;
-    g->enemyTank = nullptr;
-    g->enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
+    for(int i = 0; i < TOTAL_ENEMY_TANK; i++){
+        resetTank(&g->enemyTank[i]);
+    }
 
-    delete g->userTank;
-    g->userTank = nullptr;
-    g->userTank = new TankInfo(true);
+    resetTank(g->userTank);
 
     delete []g->TankPos;
     g->TankPos = nullptr;
@@ -343,7 +341,7 @@ void RenderMainScene(PlatformP* p, Game* g){
  for( int i = 0; i < TOTAL_TILES; ++i )
  {
      //touchesWall(&userTank->mBox, tileSet)
-     renderTile( camera, p->gRenderer, g->tileSet[ i ], p->gTileTexture,  p->gTileClips, false);
+     renderTile( camera, p->gRenderer, g->tileSet[ i ], &p->gTileTexture,  p->gTileClips, false);
      // tileSet[ i ]->render( camera, Platform->GetRenderer(),  Platform->GetgTileTexture(),  Platform->GetgTileClips(), checkCollision(&camera, tileSet[ i ]->getBox()));
  }
 
@@ -387,10 +385,18 @@ void Close(PlatformP* p, Game* g){
     
     delete[] g->TankPos;
     g->TankPos = nullptr;
-    
+
+    for(int i = 0; i < TOTAL_ENEMY_TANK; i++){
+        delete[] g->enemyTank->Bullets;
+        g->enemyTank->Bullets = nullptr;
+    }
+
     delete[] g->enemyTank;
     g->enemyTank = nullptr;
-    
+
+    delete[] g->userTank->Bullets;
+    g->userTank->Bullets = nullptr;
+
     delete g->userTank;
     g->userTank = nullptr;
     

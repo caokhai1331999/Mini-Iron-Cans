@@ -443,6 +443,10 @@ void resetTank(TankInfo* Tank){
     Tank->mBox.y = -1;
     Tank->isHit = true;
     Tank->destroyed = true;
+    // NOTE: Forgot to destroy bullet pointer. My bad!!!
+    for (int i = 0; i<TOTAL_BULLET_PER_TANK; i++){
+        resetBullet(&Tank->Bullets[i]);
+    };
 }
 
 void resetBullet(Bullet* bullet){

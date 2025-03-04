@@ -44,31 +44,35 @@ enum MENUCHOICE{
 
 
 struct Game{    
-
-    STATE state;
+    STATE state = MENU_INIT;
     float startTime = 0.0f;
     int k = 0;    
-    uint8_t pointed_option;
-    MENUCHOICE chosen_option;
-    Tile* tileSet = nullptr;
+    uint8_t pointed_option = 0;
+    MENUCHOICE chosen_option = NONE;
+
+    Tile* tileSet =  new Tile[TOTAL_TILES];
+    Position* TankPos =  new Position[TOTAL_ENEMY_TANK];
+    TankInfo* userTank =  new TankInfo(true);
+    TankInfo* enemyTank =  new TankInfo[TOTAL_ENEMY_TANK];
     
-    Position* TankPos = nullptr;    
-    TankInfo* userTank = nullptr;
-    TankInfo* enemyTank = nullptr;
+    // Game(){
+    //     state = MENU_INIT;
+    //     pointed_option = 0;
+    //     chosen_option = NONE;
 
-    Game(){
-        tileSet = new Tile[TOTAL_TILES];
+
+    //     tileSet = nullptr;
+    //     tileSet = new Tile[TOTAL_TILES];
         
-        userTank = new TankInfo(true);
+    //     userTank = nullptr;
+    //     userTank = new TankInfo(true);
 
-        TankPos = new Position[TOTAL_ENEMY_TANK];
+    //     TankPos = nullptr;    
+    //     TankPos = new Position[TOTAL_ENEMY_TANK];
 
-        enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
-        
-        state = MENU_INIT;
-        pointed_option = 0;
-        chosen_option = NONE;
-    };
+    //     enemyTank = nullptr;
+    //     enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
+    // };
 };
 
 void displayMenu(PlatformP* p, Game* g);

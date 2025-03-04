@@ -24,47 +24,54 @@ struct PlatformP {
    SDL_Rect gExplosionClips [ANIMATING_FRAMES];
    SDL_Rect gTileClips [TOTAL_TILE_SPRITES];
     
-    XTexture* gTileTexture = nullptr;
-    XTexture* gMenuTexture = nullptr;
-    XTexture* gTextTexture = nullptr;
-    XTexture* gUserTankTexture = nullptr;
-    XTexture* gUserBulletTexture = nullptr;
-    XTexture* gEnemyTankTexture = nullptr;
-    XTexture* gEnemyBulletTexture = nullptr;
-    XTexture* gExplosionTexture = nullptr;
+    XTexture gTileTexture = {};
+    XTexture gMenuTexture = {};
+    XTexture gTextTexture = {};
+    XTexture gUserTankTexture = {};
+    XTexture gUserBulletTexture = {};
+    XTexture gEnemyTankTexture = {};
+    XTexture gEnemyBulletTexture = {};
+    XTexture gExplosionTexture = {};
 
 //The window we'll be rendering to
     SDL_Window* gWindow = nullptr;
     SDL_Renderer* gRenderer = nullptr;
     
 //The window renderer
-    PlatformP(){
-        gTileTexture = new XTexture;
-
-        // NOTE: Menu texture using the image or text string as the main display
-        gMenuTexture = new XTexture;
+    // PlatformP(){
         
-        gTextTexture = new XTexture;
+    //     gTileTexture = nullptr;
+    //     gTileTexture = new XTexture;
 
-        gUserTankTexture = new XTexture;
+    //     // NOTE: Menu texture using the image or text string as the main display
+    //     gMenuTexture = nullptr;
+    //     gMenuTexture = new XTexture;
+        
+    //     gTextTexture = nullptr;
+    //     gTextTexture = new XTexture;
 
-        gEnemyTankTexture = new XTexture;
+    //     gUserTankTexture = nullptr;
+    //     gUserTankTexture = new XTexture;
 
-        gEnemyBulletTexture = new XTexture;
+    //     gEnemyTankTexture = nullptr;
+    //     gEnemyTankTexture = new XTexture;
 
-        gUserBulletTexture = new XTexture;
+    //     gEnemyBulletTexture = nullptr;
+    //     gEnemyBulletTexture = new XTexture;
 
-        gTextTexture = new XTexture;
+    //     gUserBulletTexture = nullptr;
+    //     gUserBulletTexture = new XTexture;
 
-        gExplosionTexture = new XTexture;
+    //     gExplosionTexture = nullptr;
+    //     gExplosionTexture = new XTexture;
 
-        if(gWindow!=nullptr){
-            gWindow = nullptr;
-        }
-        if(gRenderer = nullptr){
-            gRenderer = nullptr;
-        }
-        };
+    //     if(gWindow!=nullptr){
+    //         gWindow = nullptr;
+    //     }
+    //     if(gRenderer = nullptr){
+    //         gRenderer = nullptr;
+    //     }
+    //     };
 };
 
 // NOTE: BE CAREFUL this part (This can mess the whole thing up)

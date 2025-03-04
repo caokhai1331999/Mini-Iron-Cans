@@ -45,9 +45,10 @@ struct Position{
 struct Bullet{
     // TODO: How to properly decide which is bot and which is user bullet
     BulletType type;
-    int BlVelX, BlVelY;
-    bool Launched;
-    SDL_Rect blBox;
+    int BlVelX = 0;
+    int BlVelY = 0;
+    bool Launched = false;
+    SDL_Rect blBox = {};
 
     Bullet(int TankX = 0, int TankY = 0, bool launched = false, bool userBelong = false): blBox({TankX, TankY, BULLET_WIDTH, BULLET_HEIGHT}), Launched(launched)
     {
@@ -65,7 +66,7 @@ struct TankInfo
     int mVelX, mVelY;
     TANKFACE face;
     int BulletsNumber = TOTAL_BULLET_PER_TANK;
-    Bullet* Bullets = nullptr;
+    Bullet* Bullets;
     // NOTE: Bullet created when Tank is created, follow them until being fired
     // after fire, create the second bullet to follow it when the previous is sent
     //flied
@@ -79,6 +80,8 @@ struct TankInfo
         mBox.h = TANK_HEIGHT;
         mVelX = 0;
         mVelY = 0;
+
+        Bullets = nullptr;
         Bullets = new Bullet[TOTAL_BULLET_PER_TANK];
         
         // TODO: figure out how to effectively flag these bullets as user's

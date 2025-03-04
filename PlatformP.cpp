@@ -24,54 +24,54 @@ void close( PlatformP* Platform){
 
 	//Deallocate tiles
     //NOTE: Something off about gTileTexture
-    if(Platform->gTileTexture != nullptr){
-        xfree(Platform->gTileTexture);
-        delete Platform->gTileTexture;
-        Platform->gTileTexture = nullptr;
-    }
+    // if(Platform->gTileTexture != nullptr){
+        xfree(&Platform->gTileTexture);
+    //     delete Platform->gTileTexture;
+    //     Platform->gTileTexture = nullptr;
+    // }
     
-    if(Platform->gMenuTexture!=nullptr){
-        xfree(Platform->gMenuTexture);
-        delete Platform->gMenuTexture;
-        Platform->gMenuTexture = nullptr;
-    }
+    // if(Platform->gMenuTexture!=nullptr){
+        xfree(&Platform->gMenuTexture);
+    //     delete &Platform->gMenuTexture;
+    //     &Platform->gMenuTexture = nullptr;
+    // }
     // ================================================
 
-    if (Platform->gTextTexture!=nullptr){
-        xfree(Platform->gTextTexture);
-        delete Platform->gTextTexture;
-        Platform->gTextTexture = nullptr;        
-    }
+    // if (&Platform->gTextTexture!=nullptr){
+        xfree(&Platform->gTextTexture);
+    //     delete &Platform->gTextTexture;
+    //     &Platform->gTextTexture = nullptr;        
+    // }
     
-    if (Platform->gUserTankTexture!=nullptr){
-        xfree(Platform->gUserTankTexture);
-        delete Platform->gUserTankTexture;
-        Platform->gUserTankTexture = nullptr;        
-    }
+    // if (&Platform->gUserTankTexture!=nullptr){
+        xfree(&Platform->gUserTankTexture);
+    //     delete &Platform->gUserTankTexture;
+    //     &Platform->gUserTankTexture = nullptr;        
+    // }
 
-    if (Platform->gEnemyTankTexture!=nullptr){
-        xfree(Platform->gEnemyTankTexture);
-        delete Platform->gEnemyTankTexture;
-        Platform->gEnemyTankTexture = nullptr;        
-    }
+    // if (&Platform->gEnemyTankTexture!=nullptr){
+        xfree(&Platform->gEnemyTankTexture);
+    //     delete &Platform->gEnemyTankTexture;
+    //     &Platform->gEnemyTankTexture = nullptr;        
+    // }
 
-    if (Platform->gUserBulletTexture!=nullptr){
-        xfree(Platform->gUserBulletTexture);
-        delete Platform->gUserBulletTexture;
-        Platform->gUserBulletTexture = nullptr;        
-    }    
+    // if (&Platform->gUserBulletTexture!=nullptr){
+        xfree(&Platform->gUserBulletTexture);
+    //     delete &Platform->gUserBulletTexture;
+    //     &Platform->gUserBulletTexture = nullptr;        
+    // }    
 
-    if (Platform->gEnemyBulletTexture!=nullptr){
-        xfree(Platform->gEnemyBulletTexture);
-        delete Platform->gEnemyBulletTexture;
-        Platform->gEnemyBulletTexture = nullptr;        
-    }    
+    // if (&Platform->gEnemyBulletTexture!=nullptr){
+        xfree(&Platform->gEnemyBulletTexture);
+    //     delete &Platform->gEnemyBulletTexture;
+    //     &Platform->gEnemyBulletTexture = nullptr;        
+    // }    
 
-    if (Platform->gExplosionTexture!=nullptr){
-        xfree(Platform->gExplosionTexture);
-        delete Platform->gExplosionTexture;
-        Platform->gExplosionTexture = nullptr;        
-    }    
+    // if (&Platform->gExplosionTexture!=nullptr){
+        xfree(&Platform->gExplosionTexture);
+    //     delete &Platform->gExplosionTexture;
+    //     &Platform->gExplosionTexture = nullptr;        
+    // }    
 
 	//Destroy window	
     SDL_DestroyRenderer(Platform->gRenderer);
@@ -90,7 +90,7 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
 
 	//Load dot texture
     // NOTE: The Bugs lied here
-	if( !loadFromFile( "media/myTank.png", Platform->gRenderer, (int)100, (int)100, Platform->gUserTankTexture) )
+	if( !loadFromFile( "media/myTank.png", Platform->gRenderer, (int)100, (int)100, &Platform->gUserTankTexture) )
 	{
 		printf( "Failed to load User tank texture!\n" );
 		success = false;
@@ -124,7 +124,7 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
      
     // }
 
-	if( !loadFromFile( "media/enemyTank.png", Platform->gRenderer, (int)100, (int)100, Platform->gEnemyTankTexture))
+	if( !loadFromFile( "media/enemyTank.png", Platform->gRenderer, (int)100, (int)100, &Platform->gEnemyTankTexture))
 	{
 		printf( "Failed to load Enemy tank texture!\n" );
 		success = false;
@@ -140,21 +140,21 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
 
 
 	//Load tile texture
-    if( !loadFromFile( "media/32x32_map_tile v3.1 [MARGINLESS].bmp", Platform->gRenderer, (int)30, (int)30, Platform->gTileTexture) )
+    if( !loadFromFile( "media/32x32_map_tile v3.1 [MARGINLESS].bmp", Platform->gRenderer, (int)30, (int)30, &Platform->gTileTexture) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
 	}
 
 	//Load tile texture
-	if( !loadFromFile( "media/myBullet.png", Platform->gRenderer, (int)20, (int)20, Platform->gUserBulletTexture) )
+	if( !loadFromFile( "media/myBullet.png", Platform->gRenderer, (int)20, (int)20, &Platform->gUserBulletTexture) )
 	{
 		printf( "Failed to load user bullet set texture!\n" );
 		success = false;
 	}
 
 	//Load tile texture
-	if( !loadFromFile( "media/EnemyBullet.png", Platform->gRenderer, (int)20, (int)20, Platform->gEnemyBulletTexture) )
+	if( !loadFromFile( "media/EnemyBullet.png", Platform->gRenderer, (int)20, (int)20, &Platform->gEnemyBulletTexture) )
 	{
 		printf( "Failed to load enemy bullet set texture!\n" );
 		success = false;
@@ -162,7 +162,7 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
 
 
 	//Load explosion texture
-	if( !loadFromFile( "media/explosion3(background removed).png", Platform->gRenderer, (int)100, (int)100, Platform->gExplosionTexture) )
+	if( !loadFromFile( "media/explosion3(background removed).png", Platform->gRenderer, (int)100, (int)100, &Platform->gExplosionTexture) )
 	{
 		printf( "Failed to load explosion texture!\n" );
 		success = false;
@@ -488,32 +488,32 @@ void renderTank(TankInfo* Tank, int frame, SDL_Rect& camera, PlatformP* Platform
 
     if(!Tank->destroyed) {
     //NOTE: Show the tank and bullet here
-    if (Tank->userBelong && Platform->gUserTankTexture!=nullptr) {
+    if (Tank->userBelong && &Platform->gUserTankTexture!=nullptr) {
         // printf("User Tank image is being rendered\n");
-        render( Platform->gRenderer ,(Tank->mBox.x - camera.x), (Tank->mBox.y - camera.y), Platform->gUserTankTexture, nullptr,Tank->face);
+        render( Platform->gRenderer ,(Tank->mBox.x - camera.x), (Tank->mBox.y - camera.y), &Platform->gUserTankTexture, nullptr,Tank->face);
 
         // NOTE: Now the bullets
         // TODO: The bullet not show, Time to check this one
         // The bullet stuck with number 0 while get near bot Tank
-        if(Platform->gUserBulletTexture!=nullptr) {             
+        if(&Platform->gUserBulletTexture!=nullptr) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){                
                 // printf("Bullets %d image is being rendered\n", i);
-                render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), Platform->gUserBulletTexture, nullptr, Tank->face);
+                render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), &Platform->gUserBulletTexture, nullptr, Tank->face);
             }
         }
     }
 
   }
-else if (!Tank->userBelong && Platform->gEnemyTankTexture != nullptr) {
+else if (!Tank->userBelong && &Platform->gEnemyTankTexture != nullptr) {
         // SOMEHOW the enemy tank positions changed to keep in bound while the text one is not
         // if (((Tank->mBox.x >= camera.x) && (Tank->mBox.x <= camera.x + camera.w)) &&((Tank->mBox.y >= camera.y) && (Tank->mBox.y <= camera.y + camera.w)) ){
     // printf("Tank is being rendered\n");
-    render( Platform->gRenderer ,Tank->mBox.x - camera.x,Tank->mBox.y - camera.y, Platform->gEnemyTankTexture, nullptr, Tank->face);
-        if(Platform->gEnemyBulletTexture!=nullptr) {             
+    render( Platform->gRenderer ,Tank->mBox.x - camera.x,Tank->mBox.y - camera.y, &Platform->gEnemyTankTexture, nullptr, Tank->face);
+        if(&Platform->gEnemyBulletTexture!=nullptr) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){                
-                render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), Platform->gEnemyBulletTexture, nullptr, Tank->face);
+                render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), &Platform->gEnemyBulletTexture, nullptr, Tank->face);
                 // printf("Enemy tanks and Bullets %d image is being rendered\n", i);
             }
         }
@@ -547,28 +547,28 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
 
     // printf(OutPut);
                 
-    if (!loadFromRenderedText(OutPut, 0.0f, TextColor, gFont, Platform->gRenderer, Platform->gTextTexture)) {
+    if (!loadFromRenderedText(OutPut, 0.0f, TextColor, gFont, Platform->gRenderer, &Platform->gTextTexture)) {
         printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
     } else {
-        render(Platform->gRenderer, 0, 0, Platform->gTextTexture);                    
+        render(Platform->gRenderer, 0, 0, &Platform->gTextTexture);                    
     }
 
     if(userTank->BulletsNumber == 0){
         sprintf(OutPut, "Tank Bullets: Loading\n");
+        if (!loadFromRenderedText(OutPut, 0.0f, TextColor, gFont, Platform->gRenderer, &Platform->gTextTexture)) {
         //Update screen
-        if (!loadFromRenderedText(OutPut, 0.0f, TextColor, gFont, Platform->gRenderer, Platform->gTextTexture)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
         } else {
-            render(Platform->gRenderer, SCREEN_WIDTH - 300, 0, Platform->gTextTexture);                    
+            render(Platform->gRenderer, SCREEN_WIDTH - 300, 0, &Platform->gTextTexture);                    
         }                    
         // printf(OutPut);
     } else {                    
         sprintf(OutPut, "Tank Bullets :%d \n", int(userTank->BulletsNumber));
         //Update screen
-        if (!loadFromRenderedText(OutPut, 0.0f, TextColor, gFont, Platform->gRenderer, Platform->gTextTexture)) {
+        if (!loadFromRenderedText(OutPut, 0.0f, TextColor, gFont, Platform->gRenderer, &Platform->gTextTexture)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
         } else {
-            render(Platform->gRenderer, SCREEN_WIDTH - 200, 0, Platform->gTextTexture);                    
+            render(Platform->gRenderer, SCREEN_WIDTH - 200, 0, &Platform->gTextTexture);                    
         }                    
         // printf(OutPut);
     } 
@@ -587,7 +587,7 @@ void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera 
          }
 
          if(frame[frameIndex]/12 < ANIMATING_FRAMES+1 && frame[frameIndex]/12 != -1){
-             render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), Platform->gExplosionTexture, &Platform->gExplosionClips[frame[frameIndex]/12]);            
+             render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), &Platform->gExplosionTexture, &Platform->gExplosionClips[frame[frameIndex]/12]);            
 
              (frame[frameIndex])++;
          }
