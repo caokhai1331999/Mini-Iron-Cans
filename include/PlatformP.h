@@ -23,7 +23,6 @@ struct PlatformP {
     
    SDL_Rect gExplosionClips [ANIMATING_FRAMES];
    SDL_Rect gTileClips [TOTAL_TILE_SPRITES];
-    
     XTexture gTileTexture = {};
     XTexture gMenuTexture = {};
     XTexture gTextTexture = {};
@@ -36,6 +35,7 @@ struct PlatformP {
 //The window we'll be rendering to
     SDL_Window* gWindow = nullptr;
     SDL_Renderer* gRenderer = nullptr;
+    TTF_Font* gFont = nullptr;    
     
 //The window renderer
     // PlatformP(){

@@ -8,9 +8,13 @@
 #include <Gameh.h>
 
 void displayMenu(PlatformP* p, Game* g){
-    gFont = TTF_OpenFont( "Roboto.ttf", 28 );
-    // SDL_Color TextColor = {249 ,166 ,2};
-    SDL_Color TextColor = {0 ,0 ,0};
+
+    if(!p->gFont != NULL){
+        p->gFont = NULL;
+    }
+    p->gFont = TTF_OpenFont( "Roboto.ttf", 28 );
+    SDL_Color TextColor = {249 ,166 ,2};
+    // SDL_Color TextColor = {0 ,0 ,0};
     float scale = 0.0f;
 
     for(uint8_t i = 0; i < 4; ++i){
@@ -22,7 +26,7 @@ void displayMenu(PlatformP* p, Game* g){
             scale = 1.0f;
         }
 
-        if (!loadFromRenderedText(Menu[i], scale, TextColor, gFont, p->gRenderer, &p->gMenuTexture)) {
+        if (!loadFromRenderedText(Menu[i], scale, TextColor, p->gFont, p->gRenderer, &p->gMenuTexture)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );
         } else {
             render(p->gRenderer, 100, 30 + i*50, &p->gMenuTexture);

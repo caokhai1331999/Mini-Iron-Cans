@@ -37,6 +37,9 @@ void close( PlatformP* Platform){
     // }
     // ================================================
 
+        TTF_CloseFont( Platform->gFont );
+        Platform->gFont = NULL;
+        
     // if (&Platform->gTextTexture!=nullptr){
         xfree(&Platform->gTextTexture);
     //     delete &Platform->gTextTexture;
@@ -538,7 +541,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
     // carefull to link, remember to put dll files in system32 folder
                 
     char OutPut[256];
-    gFont = TTF_OpenFont( "Roboto.ttf", 26);
+    Platform->gFont = TTF_OpenFont( "Roboto.ttf", 26);
     // SDL_Color TextColor = {249 ,166 ,2};
     SDL_Color TextColor = {0 ,0 ,0};                
     // NOTE: Somehow The exe file can't find out the TTF_OpenFont and TTF_Solid_Render which is in the ttf lib. Got to find out and fix
@@ -547,7 +550,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
 
     // printf(OutPut);
                 
-    if (!loadFromRenderedText(OutPut, 0.0f, TextColor, gFont, Platform->gRenderer, &Platform->gTextTexture)) {
+    if (!loadFromRenderedText(OutPut, 0.0f, TextColor, Platform->gFont, Platform->gRenderer, &Platform->gTextTexture)) {
         printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
     } else {
         render(Platform->gRenderer, 0, 0, &Platform->gTextTexture);                    
@@ -555,7 +558,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
 
     if(userTank->BulletsNumber == 0){
         sprintf(OutPut, "Tank Bullets: Loading\n");
-        if (!loadFromRenderedText(OutPut, 0.0f, TextColor, gFont, Platform->gRenderer, &Platform->gTextTexture)) {
+        if (!loadFromRenderedText(OutPut, 0.0f, TextColor, Platform->gFont, Platform->gRenderer, &Platform->gTextTexture)) {
         //Update screen
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
         } else {
@@ -565,7 +568,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
     } else {                    
         sprintf(OutPut, "Tank Bullets :%d \n", int(userTank->BulletsNumber));
         //Update screen
-        if (!loadFromRenderedText(OutPut, 0.0f, TextColor, gFont, Platform->gRenderer, &Platform->gTextTexture)) {
+        if (!loadFromRenderedText(OutPut, 0.0f, TextColor, Platform->gFont, Platform->gRenderer, &Platform->gTextTexture)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
         } else {
             render(Platform->gRenderer, SCREEN_WIDTH - 200, 0, &Platform->gTextTexture);                    

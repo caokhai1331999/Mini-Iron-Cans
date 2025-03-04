@@ -24,7 +24,6 @@
 //Screen dimension constants
 global_variable int SCREEN_WIDTH = 450;
 global_variable int SCREEN_HEIGHT = 300;
-global_variable TTF_Font* gFont = nullptr;
 
 //The dimensions of the level
 const global_variable int LEVEL_WIDTH = 1800;
