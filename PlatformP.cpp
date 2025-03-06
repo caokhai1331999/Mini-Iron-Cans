@@ -19,62 +19,17 @@ bool IsArrow(SDL_Scancode KeyCode){
 //Frees media and shuts down SDL
 void close( PlatformP* Platform){
 	//Free loaded images
-	// Platform->gDotTexture->free();
-    // Don't know why this TileTexture free fx is
-
-	//Deallocate tiles
-    //NOTE: Something off about gTileTexture
-    // if(Platform->gTileTexture != nullptr){
-        xfree(&Platform->gTileTexture);
-    //     delete Platform->gTileTexture;
-    //     Platform->gTileTexture = nullptr;
-    // }
-    
-    // if(Platform->gMenuTexture!=nullptr){
-        xfree(&Platform->gMenuTexture);
-    //     delete &Platform->gMenuTexture;
-    //     &Platform->gMenuTexture = nullptr;
-    // }
-    // ================================================
-
         TTF_CloseFont( Platform->gFont );
         Platform->gFont = NULL;
         
-    // if (&Platform->gTextTexture!=nullptr){
+        xfree(&Platform->gTileTexture);
+        xfree(&Platform->gMenuTexture);
         xfree(&Platform->gTextTexture);
-    //     delete &Platform->gTextTexture;
-    //     &Platform->gTextTexture = nullptr;        
-    // }
-    
-    // if (&Platform->gUserTankTexture!=nullptr){
         xfree(&Platform->gUserTankTexture);
-    //     delete &Platform->gUserTankTexture;
-    //     &Platform->gUserTankTexture = nullptr;        
-    // }
-
-    // if (&Platform->gEnemyTankTexture!=nullptr){
         xfree(&Platform->gEnemyTankTexture);
-    //     delete &Platform->gEnemyTankTexture;
-    //     &Platform->gEnemyTankTexture = nullptr;        
-    // }
-
-    // if (&Platform->gUserBulletTexture!=nullptr){
         xfree(&Platform->gUserBulletTexture);
-    //     delete &Platform->gUserBulletTexture;
-    //     &Platform->gUserBulletTexture = nullptr;        
-    // }    
-
-    // if (&Platform->gEnemyBulletTexture!=nullptr){
         xfree(&Platform->gEnemyBulletTexture);
-    //     delete &Platform->gEnemyBulletTexture;
-    //     &Platform->gEnemyBulletTexture = nullptr;        
-    // }    
-
-    // if (&Platform->gExplosionTexture!=nullptr){
         xfree(&Platform->gExplosionTexture);
-    //     delete &Platform->gExplosionTexture;
-    //     &Platform->gExplosionTexture = nullptr;        
-    // }    
 
 	//Destroy window	
     SDL_DestroyRenderer(Platform->gRenderer);
@@ -301,7 +256,13 @@ bool init(PlatformP* Platform)
                     printf( "Unable to Init TTF subsystem  ! SDL_ttf Error: %s\n", TTF_GetError());
                     success = false;
                 };
-#endif                                
+#endif
+    if(!Platform->gFont != NULL){
+        Platform->gFont = NULL;
+    }
+    Platform->gFont = TTF_OpenFont( "Roboto.ttf", 28 );
+    Platform->TextColor = {249 ,166 ,2};
+    // SDL_Color TextColor = {0 ,0 ,0};
 			}
 		}
 	}
@@ -331,8 +292,7 @@ bool setTiles( Tile *tiles,PlatformP* Platform){
 	else
 	{
         int i = 0, k = 0;
-        char* TileType = nullptr;
-        TileType = new char [2];
+        char TileType[2] = {};
 		//Initialize the tiles
 		for (int i = 0; i < TOTAL_TILES; i ++ )
 		{
@@ -372,9 +332,8 @@ bool setTiles( Tile *tiles,PlatformP* Platform){
                 // }else{
                 // tiles[ i ] = new Tile( x , y, tileType);                    
                 // }
-                Tile* tempTile = new Tile( x , y, tileType);
-                tiles[i] = *tempTile;
-                delete tempTile;
+                tiles[i].mBox = {x, y, SMALL_TILE_WIDTH, SMALL_TILE_HEIGHT};
+                tiles[i].mType = tileType;
 			}
 			//If we don't recognize the tile type
 			else
@@ -476,7 +435,6 @@ bool setTiles( Tile *tiles,PlatformP* Platform){
 			Platform->gTileClips[ SMALL_WOOD_PATH_1 ].w = SMALL_TILE_WIDTH;
 			Platform->gTileClips[ SMALL_WOOD_PATH_1 ].h = SMALL_TILE_HEIGHT;
 		}
-    delete[] TileType;
 	}
 
     //Close the file
@@ -491,7 +449,7 @@ void renderTank(TankInfo* Tank, int frame, SDL_Rect& camera, PlatformP* Platform
 
     if(!Tank->destroyed) {
     //NOTE: Show the tank and bullet here
-    if (Tank->userBelong && &Platform->gUserTankTexture!=nullptr) {
+    if (Tank->Belong && &Platform->gUserTankTexture!=nullptr) {
         // printf("User Tank image is being rendered\n");
         render( Platform->gRenderer ,(Tank->mBox.x - camera.x), (Tank->mBox.y - camera.y), &Platform->gUserTankTexture, nullptr,Tank->face);
 
@@ -508,7 +466,7 @@ void renderTank(TankInfo* Tank, int frame, SDL_Rect& camera, PlatformP* Platform
     }
 
   }
-else if (!Tank->userBelong && &Platform->gEnemyTankTexture != nullptr) {
+else if (!Tank->Belong && &Platform->gEnemyTankTexture != nullptr) {
         // SOMEHOW the enemy tank positions changed to keep in bound while the text one is not
         // if (((Tank->mBox.x >= camera.x) && (Tank->mBox.x <= camera.x + camera.w)) &&((Tank->mBox.y >= camera.y) && (Tank->mBox.y <= camera.y + camera.w)) ){
     // printf("Tank is being rendered\n");
@@ -590,7 +548,7 @@ void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera 
          }
 
          if(frame[frameIndex]/12 < ANIMATING_FRAMES+1 && frame[frameIndex]/12 != -1){
-             render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), &Platform->gExplosionTexture, &Platform->gExplosionClips[frame[frameIndex]/12]);            
+             render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), &Platform->gExplosionTexture, &Platform->gExplosionClips[frame[frameIndex]/9]);            
 
              (frame[frameIndex])++;
          }

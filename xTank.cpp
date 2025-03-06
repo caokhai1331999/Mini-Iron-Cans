@@ -31,7 +31,8 @@ void InitializeTankPos(Position* RealTankPos){
     bool valid = true;
     std::srand(std::time(nullptr));
     RealTankPos[0] = GeneratePosition();
-    Position* TempPos = new Position;
+    Position* TempPos = nullptr;
+    TempPos = new Position;
         // Loop comparing newly created pos to the previous valid one
     for (int i= 1; i < TOTAL_ENEMY_TANK; i++){
         valid = false;
@@ -56,14 +57,25 @@ void InitializeTankPos(Position* RealTankPos){
    delete TempPos;
 }                                 
 
-TankInfo InitializeTankInfo(int x, int y){
-    TankInfo* Tank = nullptr;
-    Tank = new TankInfo;
-    // TODO: Mark the Tank bullet
-    Tank->mBox.x = x;
-    Tank->mBox.y = y;
-    return *Tank;
-    delete Tank;
+TankInfo InitializeTankInfo(int x, int y, bool userBelong){
+
+        // Initialize the collision box
+        // Bullets = malloc(sizeof(Bullets)*TOTAL_BULLET_PER_TANK);
+        // TODO: figure out how to effectively flag these bullets as user's
+    TankInfo TempInfo = {};
+    
+    if(!userBelong){
+        TempInfo.Belong = userBelong;
+        TempInfo.mBox.x = x;
+        TempInfo.mBox.y = y;
+    }
+
+        for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
+            TempInfo.Bullets[i].blBox = {TempInfo.mBox.x, TempInfo.mBox.y, BULLET_WIDTH, BULLET_HEIGHT};
+            userBelong?TempInfo.Bullets[i].type = userB:TempInfo.Bullets[i].type = enemyB;
+        };
+        // NOTE: Turn out I can not delete any single element on array without changing the others. Got to rewrite it
+        return TempInfo;    
 }
 
 void fire(TankInfo* Tank){
@@ -183,7 +195,7 @@ void respawn(TankInfo* Tank){
 
 void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank) {
     //If a key was pressed
-    if (Tank->userBelong) {
+    if (Tank->Belong) {
          if( CurrentBut->pressed && CurrentBut->repeat == 0)
         {
             //Adjust the velocity
@@ -430,7 +442,7 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided){
                         }
                     }
 
-            if(!targetTank->userBelong){
+            if(!targetTank->Belong){
                 // NOTE: How to make bot tank look less stupid when they firing
                 // and how to make fire less frequent
                 fire(targetTank);

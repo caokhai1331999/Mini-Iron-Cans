@@ -36,7 +36,7 @@ struct PlatformP {
     SDL_Window* gWindow = nullptr;
     SDL_Renderer* gRenderer = nullptr;
     TTF_Font* gFont = nullptr;    
-    
+    SDL_Color TextColor = {0 , 0 , 0};
 //The window renderer
     // PlatformP(){
         

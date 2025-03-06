@@ -49,29 +49,25 @@ struct Game{
     int k = 0;    
     uint8_t pointed_option = 0;
     MENUCHOICE chosen_option = NONE;
+    // NOTE: Manually set Init game stats here!!!
 
-    Tile* tileSet =  new Tile[TOTAL_TILES];
-    Position* TankPos =  new Position[TOTAL_ENEMY_TANK];
-    TankInfo* userTank =  new TankInfo(true);
-    TankInfo* enemyTank =  new TankInfo[TOTAL_ENEMY_TANK];
+    Tile tileSet[TOTAL_TILES] = {};   
+    Position TankPos[TOTAL_ENEMY_TANK] = {};
+    TankInfo userTank = {};
+    TankInfo enemyTank[TOTAL_ENEMY_TANK];
     
     // Game(){
     //     state = MENU_INIT;
     //     pointed_option = 0;
     //     chosen_option = NONE;
 
+    //     tileSet = (Tile*)malloc(sizeof(*tileSet)*TOTAL_TILES);
+       
+    //     userTank = (TankInfo*)malloc(sizeof(*userTank));
 
-    //     tileSet = nullptr;
-    //     tileSet = new Tile[TOTAL_TILES];
-        
-    //     userTank = nullptr;
-    //     userTank = new TankInfo(true);
+    //     TankPos = (Position*)malloc(sizeof(*TankPos)*TOTAL_ENEMY_TANK);
 
-    //     TankPos = nullptr;    
-    //     TankPos = new Position[TOTAL_ENEMY_TANK];
-
-    //     enemyTank = nullptr;
-    //     enemyTank = new TankInfo[TOTAL_ENEMY_TANK];
+    //     enemyTank = (TankInfo*)malloc(sizeof(*enemyTank)*TOTAL_ENEMY_TANK);
     // };
 };
 

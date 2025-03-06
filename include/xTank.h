@@ -50,66 +50,35 @@ struct Bullet{
     bool Launched = false;
     SDL_Rect blBox = {};
 
-    Bullet(int TankX = 0, int TankY = 0, bool launched = false, bool userBelong = false): blBox({TankX, TankY, BULLET_WIDTH, BULLET_HEIGHT}), Launched(launched)
-    {
-        type = userBelong?userB:enemyB;
-    }    
+    // Bullet(int TankX = 0, int TankY = 0, bool launched = false, bool userBelong = false): blBox({TankX, TankY, BULLET_WIDTH, BULLET_HEIGHT}), Launched(launched)
+    // {
+    //     type = userBelong?userB:enemyB;
+    // }
+    
 };
 
 struct TankInfo
 {
-    bool userBelong;
-    int name;
-    bool destroyed;
-    bool isHit;
-    SDL_Rect mBox;
-    int mVelX, mVelY;
-    TANKFACE face;
+    // int name;
+    bool Belong = true;
+    bool destroyed = false;
+    bool isHit = false;
+    SDL_Rect mBox = {rand()%LEVEL_WIDTH - (TANK_WIDTH + 20), rand()% LEVEL_HEIGHT - (TANK_HEIGHT + 20), TANK_WIDTH, TANK_HEIGHT};
+    int mVelX = 0;
+    int mVelY = 0;
+    TANKFACE face = (TANKFACE)(rand()%3) ;
     int BulletsNumber = TOTAL_BULLET_PER_TANK;
-    Bullet* Bullets;
+    Bullet Bullets[TOTAL_BULLET_PER_TANK];
     // NOTE: Bullet created when Tank is created, follow them until being fired
     // after fire, create the second bullet to follow it when the previous is sent
-    //flied
-
-    TankInfo(bool userBelongx = false):userBelong(userBelongx){
-
-        // Initialize the collision box
-        destroyed = false;
-        isHit = false;
-        mBox.w = TANK_WIDTH;
-        mBox.h = TANK_HEIGHT;
-        mVelX = 0;
-        mVelY = 0;
-
-        Bullets = nullptr;
-        Bullets = new Bullet[TOTAL_BULLET_PER_TANK];
-        
-        // TODO: figure out how to effectively flag these bullets as user's
-        if(userBelong){
-            mBox.x = rand()%SCREEN_WIDTH;
-            mBox.y = rand()%SCREEN_HEIGHT;
-        }
-
-        switch(rand()%3){
-            case 0: face = UP;break;
-            case 1: face = RIGHT;break;
-            case 2: face = DOWN;break;
-            case 3: face = LEFT;break;
-        };
-
-        for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
-            userBelong?Bullets[i].type = userB:Bullets[i].type = enemyB;
-        };
-        // NOTE: Turn out I can not delete any single element on array without changing the others. Got to rewrite it
-    };
+    //flied    
 };
 
 // bool OtherReleased(SDL_KeyboardEvent key);
 
 // Randomize Tank Positions that far enough
 void InitializeTankPos(Position* RealTankPos);
-
-TankInfo InitializeTankInfo(int x, int y);
+TankInfo InitializeTankInfo(int x = 0, int y = 0, bool userBelong = true);
 
 //Takes key presses and adjusts the Tank's velocity
 void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank );

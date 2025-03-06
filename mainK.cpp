@@ -19,7 +19,8 @@ int main( int argc, char* args[] )
     // Game* game = nullptr;
     // game = new Game;
     PlatformP Platform = {};
-    Game game = {};    
+    Game game = {};
+    // game = (Game*)malloc(sizeof(*game));    
     bool done = false;
     // Platform = new PlatformP;
     if(!Start(&Platform, &game)) {
@@ -27,15 +28,15 @@ int main( int argc, char* args[] )
         } else {
         printf("Init &game successfully\n");
         // NOTE:
-            while(game.state != EMPTY) {
-                
+            while(game.state != EMPTY) {                
                 ProcessInput(&game, &done);
                 Update(&game);
                 Render(&Platform, &game);
             }
             Close(&Platform, &game);
-    // delete game;
-    // game = nullptr;
+            // free(&game);
+            // delete &game;
+            // &game = nullptr;
     // delete Platform;
     // Platform = nullptr;
     }
