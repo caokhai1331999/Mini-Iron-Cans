@@ -11,8 +11,7 @@
 // Move this function to PlatForm one
 
 Position GeneratePosition(){
-    Position Tem;
-    
+    Position Tem;    
     Tem.x = std::rand()%LEVEL_WIDTH;
 
     if(Tem.x > LEVEL_WIDTH - TANK_WIDTH){
@@ -32,7 +31,7 @@ void InitializeTankPos(Position* RealTankPos){
     std::srand(std::time(nullptr));
     RealTankPos[0] = GeneratePosition();
     Position* TempPos = nullptr;
-    TempPos = new Position;
+    TempPos = (struct Position*)malloc(sizeof(struct Position ));
         // Loop comparing newly created pos to the previous valid one
     for (int i= 1; i < TOTAL_ENEMY_TANK; i++){
         valid = false;
@@ -54,28 +53,34 @@ void InitializeTankPos(Position* RealTankPos){
         RealTankPos[i] = *TempPos;
     }
 
-   delete TempPos;
+   // delete TempPos;
+    free(TempPos);
 }                                 
 
-TankInfo InitializeTankInfo(int x, int y, bool userBelong){
+void InitializeTankInfo(Position* TankPos,TankInfo* Tank){
 
         // Initialize the collision box
         // Bullets = malloc(sizeof(Bullets)*TOTAL_BULLET_PER_TANK);
-        // TODO: figure out how to effectively flag these bullets as user's
-    TankInfo TempInfo = {};
+    // NOTE: Messed up at Tank initialization stage
+    // TankInfo* TempInfo = nullptr;
+    // TempInfo = new TankInfo();
+    // printf("Size of The Temporary Tank info is:%d\n", (int)sizeof(*TempInfo));
     
-    if(!userBelong){
-        TempInfo.Belong = userBelong;
-        TempInfo.mBox.x = x;
-        TempInfo.mBox.y = y;
-    }
+    // if(!userBelong){
+    //     TempInfo->Belong = userBelong;
+    //     TempInfo->mBox.x = x;
+    //     TempInfo->mBox.y = y;
+    // }
 
-        for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
-            TempInfo.Bullets[i].blBox = {TempInfo.mBox.x, TempInfo.mBox.y, BULLET_WIDTH, BULLET_HEIGHT};
-            userBelong?TempInfo.Bullets[i].type = userB:TempInfo.Bullets[i].type = enemyB;
-        };
+    for(int i = 0; i < TOTAL_ENEMY_TANK; i++){        
+            Tank[i].Bullets[i].blBox = {TankPos[i].x, TankPos[i].y, BULLET_WIDTH, BULLET_HEIGHT};
+            // userBelong?&Tank[i]->Bullets[i].type = userB:&Tank[i]->Bullets[i].type = enemyB;
+    }
         // NOTE: Turn out I can not delete any single element on array without changing the others. Got to rewrite it
-        return TempInfo;    
+        // return *TempInfo;
+
+        // delete TempInfo;
+        // TempInfo = nullptr;
 }
 
 void fire(TankInfo* Tank){
@@ -346,10 +351,18 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided){
     std::srand(std::time(nullptr));
     if(targetTank->mVelX == 0 && targetTank->mVelY == 0){        
         switch((int)targetTank->face){
-            case (int)UP: targetTank->mVelY = 0; targetTank->mVelY = -TANK_VEL;
-            case (int)DOWN: targetTank->mVelY = 0;targetTank->mVelY = TANK_VEL;
-            case (int)RIGHT: targetTank->mVelX = 0;targetTank->mVelX = TANK_VEL;
-            case (int)LEFT: targetTank->mVelX = 0; targetTank->mVelX = -TANK_VEL;
+            case (int)UP: targetTank->mVelY = 0;
+                targetTank->mVelY = -TANK_VEL;
+                break;
+            case (int)DOWN: targetTank->mVelY = 0;
+                targetTank->mVelY = TANK_VEL;
+                break;
+            case (int)RIGHT: targetTank->mVelX = 0;
+                targetTank->mVelX = TANK_VEL;
+                break;                
+            case (int)LEFT: targetTank->mVelX = 0;
+                targetTank->mVelX = -TANK_VEL;
+                break;
         }
     }
     

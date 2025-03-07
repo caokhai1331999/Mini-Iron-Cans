@@ -35,15 +35,15 @@ void get_Menu_choice(Game* g, KeyState* currentKey){
                     g->pointed_option = 1;
                 }
                 break;
+                
             case SDL_SCANCODE_UP :
-
                 if(g->pointed_option == 1 || g->pointed_option == 0){
                     g->pointed_option = 4;
                 }else {
                     g->pointed_option--;
-                }
-                
+                }                
                 break;
+
             case SDL_SCANCODE_RETURN:
                 if(g->pointed_option > 0 && g->pointed_option < 5){                    
                     if(g->chosen_option != g->pointed_option)
@@ -71,10 +71,32 @@ bool Start(PlatformP* p, Game* g){
             }
             else
             {
-                InitializeTankPos(g->TankPos);                
-                for (int i = 0 ; i < TOTAL_ENEMY_TANK; i++){
-                    g->enemyTank[i] = InitializeTankInfo(g->TankPos[i].x, g->TankPos[i].y, false);
+                if(g->TankPos != nullptr){
+                    g->TankPos = nullptr;
                 }
+                g->TankPos = new Position[TOTAL_ENEMY_TANK]();
+                printf("Size of The Temporary Tank info is:%d\n", (int)sizeof(*g->TankPos));;
+                InitializeTankPos(g->TankPos);
+
+                Position* userTankPos = new Position();
+                *userTankPos = GeneratePosition();
+
+                if(g->userTank != nullptr){
+                    g->userTank = nullptr;
+                }
+                
+                g->userTank = new TankInfo(userTankPos->x, userTankPos->y,true);
+
+                delete userTankPos;
+                userTankPos = nullptr;
+
+                if(g->enemyTank != nullptr){
+                    g->enemyTank = nullptr;
+                }
+                
+                g->enemyTank = new TankInfo[TOTAL_ENEMY_TANK]();
+                
+                InitializeTankInfo(g->TankPos, g->enemyTank);
                 
                 //Level camera
                 camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
@@ -84,7 +106,7 @@ bool Start(PlatformP* p, Game* g){
                     frame = nullptr;
                 }
 
-                frame = new uint8_t[5];
+                frame = new uint8_t[5]();
 
                 for(int i = 0; i < 5; i++){
                     frame[i] = -1;
@@ -189,12 +211,12 @@ void ProcessInput(Game* g, bool* done){
                         break;
                     case GAME_NEW:
                         if (CurrentBut.key != 41){
-                            handleEventForTank(&CurrentBut, &g->userTank);
+                            handleEventForTank(&CurrentBut, g->userTank);
                         }
                         break;
                     case GAME_RELOADED:
                         if (CurrentBut.key != 41){
-                            handleEventForTank(&CurrentBut, &g->userTank);
+                            handleEventForTank(&CurrentBut, g->userTank);
                         }
                         break;
                 };
@@ -205,15 +227,15 @@ void ProcessInput(Game* g, bool* done){
 
 void runMainScene(Game* g){
 
-    if(!g->userTank.destroyed && !g->userTank.isHit){
-        move(false, Ucollided, &g->userTank);
+    if(!g->userTank->destroyed && !g->userTank->isHit){
+        move(false, Ucollided, g->userTank);
     }else{
         // NOTE:
-        if(&g->userTank.destroyed){
+        if(g->userTank->destroyed){
             // NOTE: The SDL_GetTicks() give the current time output
             // So how to calculate right spawn time every time user Tank
             // is hit
-            respawn(&g->userTank);
+            respawn(g->userTank);
         };
     }
     
@@ -221,17 +243,17 @@ void runMainScene(Game* g){
         // NOTE: a Sole Ecollided is not enough
         // Rewrite the collision check and moving system
         
-        Ucollided = BiTankCheck(&g->enemyTank[i], &g->userTank);
+        Ucollided = BiTankCheck(&g->enemyTank[i], g->userTank);
 
         // ===============================================================
         // for (int p = 0; p < i; p++){
         //     if (i > 1 && p < i){
 
-        //         Ecollided = checkCollision(&g->enemyTank[i].mBox, &g->enemyTank[p].mBox) | checkCollision(&g->userTank.mBox, &g->enemyTank[i].mBox);
+        //         Ecollided = checkCollision(&g->enemyTank[i].mBox, &g->enemyTank[p].mBox) | checkCollision(g->userTank->mBox, &g->enemyTank[i].mBox);
                 
         //         // printf(Ecollided?"EnemyTank collide each other in minor loop\n":"No collision detected\n");                            
         //     }
-        //     // littleGuide(&g->enemyTank[i], &g->userTank, collided);
+        //     // littleGuide(&g->enemyTank[i], g->userTank, collided);
         //     // move(false, collided, &g->enemyTank[p]);
         // }
         //========================================================================
@@ -239,14 +261,14 @@ void runMainScene(Game* g){
         // NOTE: AI ways
         for (int j = i+1; j < TOTAL_ENEMY_TANK; j++){
 
-            Ecollided = checkCollision(&g->enemyTank[i].mBox, &(g->enemyTank[j].mBox)) | checkCollision(&g->userTank.mBox, &g->enemyTank[i].mBox);
+            Ecollided = checkCollision(&g->enemyTank[i].mBox, &(g->enemyTank[j].mBox)) | checkCollision(&g->userTank->mBox, &g->enemyTank[i].mBox);
                 
                 // printf(Ecollided?"EnemyTank collide each other in minor loop\n":"No collision detected\n");                            
             }
-            // littleGuide(&g->enemyTank[i], &g->userTank, collided);
+            // littleGuide(&g->enemyTank[i], g->userTank, collided);
             // NOTE: BUG lies inside this fx
             // add the solution to the specific colliding case 
-        littleGuide(&g->enemyTank[i], &g->userTank, Ecollided);
+        littleGuide(&g->enemyTank[i], g->userTank, Ecollided);
 
         // NOTE: Temporary not use touchwall here
         if(!g->enemyTank[i].destroyed){
@@ -258,7 +280,7 @@ void runMainScene(Game* g){
         // printf(Ucollided?"EnemyTank collide each other out of minor loop\n":"No collision detected\n");
 
     }    
-    setCamera(camera, &g->userTank);        
+    setCamera(camera, g->userTank);        
 }
 
 void Update(Game* g){
@@ -315,17 +337,13 @@ void resetGame(Game*g){
     for(int i = 0; i < TOTAL_ENEMY_TANK; i++){
         resetTank(&g->enemyTank[i]);
     }
-    resetTank(&g->userTank);
+    resetTank(g->userTank);
     // delete []g->TankPos;
     // g->TankPos = nullptr;
     // g->TankPos = new Position[TOTAL_ENEMY_TANK];
     
-
-    InitializeTankPos(g->TankPos);
-            
-    for (int i = 0 ; i < TOTAL_ENEMY_TANK; i++){
-        g->enemyTank[i] = InitializeTankInfo(g->TankPos[i].x, g->TankPos[i].y);
-    };
+    InitializeTankPos(g->TankPos);            
+    InitializeTankInfo(g->TankPos, g->enemyTank);
 
 }        
 
@@ -336,20 +354,20 @@ void RenderMainScene(PlatformP* p, Game* g){
      // NOTE: Render main scene
  for( int i = 0; i < TOTAL_TILES; ++i )
  {
-     //touchesWall(&userTank.mBox, tileSet)
+     //touchesWall(&userTank->mBox, tileSet)
      renderTile( camera, p->gRenderer, g->tileSet[ i ], &p->gTileTexture,  p->gTileClips, false);
      // tileSet[ i ]->render( camera, Platform->GetRenderer(),  Platform->GetgTileTexture(),  Platform->GetgTileClips(), checkCollision(&camera, tileSet[ i ]->getBox()));
  }
 
- if(!g->userTank.isHit){
-     renderTank(&g->userTank, Uframe, camera, p);
+ if(!g->userTank->isHit){
+     renderTank(g->userTank, Uframe, camera, p);
  }else{
      // The additional loop just make the explostion clip run incredibly faster
      // I didn't understand the game loop up until now
      // Just need the checking cycle for that explosion effect
-     if(&g->userTank.isHit && !g->userTank.destroyed){
+     if(g->userTank->isHit && !g->userTank->destroyed){
          if(frame!=nullptr){
-             renderExplosionFrame(&g->userTank, p, &camera, frame, 4);
+             renderExplosionFrame(g->userTank, p, &camera, frame, 4);
          }
      }     
  }
@@ -369,7 +387,7 @@ void RenderMainScene(PlatformP* p, Game* g){
      k++;
  };
                                    
- renderText(FPS, &g->userTank, p);
+ renderText(FPS, g->userTank, p);
  TimeElapsed = EndTime - StartTime;
  FPS = 1/(TimeElapsed/1000.0f);
  StartTime = EndTime;         
@@ -379,18 +397,24 @@ void RenderMainScene(PlatformP* p, Game* g){
 void Close(PlatformP* p, Game* g){
     delete []frame;
     frame = nullptr;    
-    
-    // delete[] g->enemyTank;
-    // g->enemyTank = nullptr;
+
+    delete[] g->TankPos;
+    g->TankPos = nullptr;
+
+    delete g->userTank;
+    g->userTank = nullptr;
+
+    delete[] g->enemyTank;
+    g->enemyTank = nullptr;
     // free(g->enemyTank);
     // g->enemyTank = NULL;
     
-    // delete[] g->userTank.Bullets;
-    // g->userTank.Bullets = NULL;
-    // free(&g->userTank.Bullets);
-    // g->userTank.Bullets = NULL;
+    // delete[] g->userTank->Bullets;
+    // g->userTank->Bullets = nullptr;
+    // free(g->userTank->Bullets);
+    // g->userTank->Bullets = NULL;
     
-    // free(&g->userTank);
+    // free(g->userTank);
     // g->userTank = NULL;
     
     // free(g->tileSet);

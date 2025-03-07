@@ -34,6 +34,9 @@ void close( PlatformP* Platform){
 	//Destroy window	
     SDL_DestroyRenderer(Platform->gRenderer);
     SDL_DestroyWindow(Platform->gWindow);
+
+    Platform->gRenderer = nullptr;
+    Platform->gWindow = nullptr;
     // NOTE: Still don't know why this function immediately close the app
     // including terminal one
  	//Quit SDL subsystems
@@ -222,6 +225,10 @@ bool init(PlatformP* Platform)
 		// }
 
 		//Create window
+        if (Platform->gWindow != nullptr){
+            Platform->gWindow = nullptr;
+        }
+        // Platform->gWindow = (struct SDL_Window*)malloc(struct SDL_Window);
 		Platform->gWindow = SDL_CreateWindow( "SDL Tank Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE );
 		if( Platform->gWindow == nullptr )
 		{
@@ -231,6 +238,9 @@ bool init(PlatformP* Platform)
 		else
 		{
 			//Create renderer for window
+            if (Platform->gRenderer != nullptr){
+                Platform->gRenderer = nullptr;
+            }
 			Platform->gRenderer = SDL_CreateRenderer( Platform->gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
 			if( Platform->gRenderer == nullptr )
 			{
@@ -257,12 +267,12 @@ bool init(PlatformP* Platform)
                     success = false;
                 };
 #endif
-    if(!Platform->gFont != NULL){
-        Platform->gFont = NULL;
-    }
-    Platform->gFont = TTF_OpenFont( "Roboto.ttf", 28 );
-    Platform->TextColor = {249 ,166 ,2};
-    // SDL_Color TextColor = {0 ,0 ,0};
+                if(Platform->gFont != nullptr){
+                    Platform->gFont = nullptr;
+                }
+                Platform->gFont = TTF_OpenFont( "Roboto.ttf", 28 );
+                Platform->TextColor = {249 ,166 ,2};
+                // SDL_Color TextColor = {0 ,0 ,0};
 			}
 		}
 	}
@@ -508,7 +518,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
 
     // printf(OutPut);
                 
-    if (!loadFromRenderedText(OutPut, 0.0f, TextColor, Platform->gFont, Platform->gRenderer, &Platform->gTextTexture)) {
+    if (!loadFromRenderedText(OutPut, 1.0f, TextColor, Platform->gFont, Platform->gRenderer, &Platform->gTextTexture)) {
         printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
     } else {
         render(Platform->gRenderer, 0, 0, &Platform->gTextTexture);                    
@@ -516,7 +526,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
 
     if(userTank->BulletsNumber == 0){
         sprintf(OutPut, "Tank Bullets: Loading\n");
-        if (!loadFromRenderedText(OutPut, 0.0f, TextColor, Platform->gFont, Platform->gRenderer, &Platform->gTextTexture)) {
+        if (!loadFromRenderedText(OutPut, 1.0f, TextColor, Platform->gFont, Platform->gRenderer, &Platform->gTextTexture)) {
         //Update screen
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
         } else {
@@ -526,7 +536,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
     } else {                    
         sprintf(OutPut, "Tank Bullets :%d \n", int(userTank->BulletsNumber));
         //Update screen
-        if (!loadFromRenderedText(OutPut, 0.0f, TextColor, Platform->gFont, Platform->gRenderer, &Platform->gTextTexture)) {
+        if (!loadFromRenderedText(OutPut, 1.0f, TextColor, Platform->gFont, Platform->gRenderer, &Platform->gTextTexture)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
         } else {
             render(Platform->gRenderer, SCREEN_WIDTH - 200, 0, &Platform->gTextTexture);                    

@@ -73,12 +73,12 @@ bool loadFromRenderedText(char* textureText, float Scale, SDL_Color textColor, T
 		}
 		else
 		{
-                if(Scale != 0.0f){
+                if(Scale != 1.0f){
                     texture->mWidth = (int)(textSurface->w)* Scale;
                     texture->mHeight = (int)(textSurface->h)* Scale;                
                 } else {
-                    texture->mWidth = (int)(textSurface->w);
-                    texture->mHeight = (int)(textSurface->h);                
+                    texture->mWidth = textSurface->w;
+                    texture->mHeight = textSurface->h;                
                 }
 		}
 
