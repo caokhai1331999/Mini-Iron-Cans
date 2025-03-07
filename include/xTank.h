@@ -63,12 +63,18 @@ struct TankInfo
     bool Belong = true;
     bool destroyed = false;
     bool isHit = false;
-    SDL_Rect mBox = {rand()%LEVEL_WIDTH - (TANK_WIDTH + 20), rand()% LEVEL_HEIGHT - (TANK_HEIGHT + 20), TANK_WIDTH, TANK_HEIGHT};
+    // NOTE: Don't know why this doesn't trigger default value
+    SDL_Rect mBox;
     int mVelX = 0;
     int mVelY = 0;
     TANKFACE face = (TANKFACE)(rand()%3) ;
     int BulletsNumber = TOTAL_BULLET_PER_TANK;
-    Bullet Bullets[TOTAL_BULLET_PER_TANK];
+    Bullet* Bullets;
+    TankInfo(int x = 0, int y = 0, bool userBelong = false):Belong(userBelong), mBox({x , y, TANK_WIDTH, TANK_HEIGHT}){
+        Bullets = nullptr;
+        Bullets = new Bullet[TOTAL_BULLET_PER_TANK]();
+        printf("Size of Bullet set is: %d\n", (int)(sizeof(Bullets)));
+    };
     // NOTE: Bullet created when Tank is created, follow them until being fired
     // after fire, create the second bullet to follow it when the previous is sent
     //flied    
@@ -78,7 +84,9 @@ struct TankInfo
 
 // Randomize Tank Positions that far enough
 void InitializeTankPos(Position* RealTankPos);
-TankInfo InitializeTankInfo(int x = 0, int y = 0, bool userBelong = true);
+void InitializeTankInfo(Position* Tankpos, TankInfo* Tank);
+
+Position GeneratePosition();
 
 //Takes key presses and adjusts the Tank's velocity
 void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank );

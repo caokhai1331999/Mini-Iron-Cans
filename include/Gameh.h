@@ -51,10 +51,10 @@ struct Game{
     MENUCHOICE chosen_option = NONE;
     // NOTE: Manually set Init game stats here!!!
 
-    Tile tileSet[TOTAL_TILES] = {};   
-    Position TankPos[TOTAL_ENEMY_TANK] = {};
-    TankInfo userTank = {};
-    TankInfo enemyTank[TOTAL_ENEMY_TANK];
+    Tile tileSet[TOTAL_TILES];   
+    Position* TankPos = nullptr;
+    TankInfo* userTank = nullptr;
+    TankInfo* enemyTank = nullptr;
     
     // Game(){
     //     state = MENU_INIT;

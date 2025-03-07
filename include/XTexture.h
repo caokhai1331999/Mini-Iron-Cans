@@ -126,7 +126,7 @@ bool loadFromFile( std::string path, SDL_Renderer* gRenderer, int Width = 0, int
 		
 #if defined(SDL_TTF_MAJOR_VERSION)
 //Creates image from font string
-bool loadFromRenderedText(char* textureText, float Scale, SDL_Color textColor , TTF_Font* gFont , SDL_Renderer* gRenderer, XTexture* texture = nullptr);
+bool loadFromRenderedText(char* textureText = nullptr, float Scale = 1.0f, SDL_Color textColor = {0, 0, 0}, TTF_Font* gFont = nullptr, SDL_Renderer* gRenderer = nullptr, XTexture* texture = nullptr);
 #endif
 
 //Set color modulation
