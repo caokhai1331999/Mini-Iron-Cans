@@ -23,14 +23,22 @@ void close( PlatformP* Platform){
         Platform->gFont = NULL;
         
         xfree(&Platform->gTileTexture);
+        Platform->gTileTexture.mTexture = nullptr;
         xfree(&Platform->gMenuTexture);
+        Platform->gMenuTexture.mTexture = nullptr;
         xfree(&Platform->gTextTexture);
+        Platform->gTextTexture.mTexture = nullptr;
         xfree(&Platform->gUserTankTexture);
+        Platform->gUserTankTexture.mTexture = nullptr;
         xfree(&Platform->gEnemyTankTexture);
+        Platform->gEnemyTankTexture.mTexture = nullptr;
         xfree(&Platform->gUserBulletTexture);
+        Platform->gUserBulletTexture.mTexture = nullptr;
         xfree(&Platform->gEnemyBulletTexture);
+        Platform->gEnemyBulletTexture.mTexture = nullptr;
         xfree(&Platform->gExplosionTexture);
-
+        Platform->gExplosionTexture.mTexture = nullptr;
+        
 	//Destroy window	
     SDL_DestroyRenderer(Platform->gRenderer);
     SDL_DestroyWindow(Platform->gWindow);
@@ -51,6 +59,10 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
 
 	//Load dot texture
     // NOTE: The Bugs lied here
+    if(Platform->gUserTankTexture.mTexture != nullptr)
+    {
+        Platform->gUserTankTexture.mTexture = nullptr;
+    }
 	if( !loadFromFile( "media/myTank.png", Platform->gRenderer, (int)100, (int)100, &Platform->gUserTankTexture) )
 	{
 		printf( "Failed to load User tank texture!\n" );
@@ -85,6 +97,11 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
      
     // }
 
+    if(Platform->gEnemyTankTexture.mTexture != nullptr)
+    {
+        Platform->gEnemyTankTexture.mTexture = nullptr;
+    }
+    
 	if( !loadFromFile( "media/enemyTank.png", Platform->gRenderer, (int)100, (int)100, &Platform->gEnemyTankTexture))
 	{
 		printf( "Failed to load Enemy tank texture!\n" );
@@ -101,20 +118,35 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
 
 
 	//Load tile texture
+    if(Platform->gTileTexture.mTexture != nullptr)
+    {
+        Platform->gTileTexture.mTexture = nullptr;
+    }
+
     if( !loadFromFile( "media/32x32_map_tile v3.1 [MARGINLESS].bmp", Platform->gRenderer, (int)30, (int)30, &Platform->gTileTexture) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
 	}
 
-	//Load tile texture
+	
+    if(Platform->gUserBulletTexture.mTexture != nullptr)
+    {
+        Platform->gUserBulletTexture.mTexture = nullptr;
+    }
+    
 	if( !loadFromFile( "media/myBullet.png", Platform->gRenderer, (int)20, (int)20, &Platform->gUserBulletTexture) )
 	{
 		printf( "Failed to load user bullet set texture!\n" );
 		success = false;
 	}
 
-	//Load tile texture
+	
+    if(Platform->gEnemyBulletTexture.mTexture != nullptr)
+    {
+        Platform->gEnemyBulletTexture.mTexture = nullptr;
+    }
+    
 	if( !loadFromFile( "media/EnemyBullet.png", Platform->gRenderer, (int)20, (int)20, &Platform->gEnemyBulletTexture) )
 	{
 		printf( "Failed to load enemy bullet set texture!\n" );
@@ -122,6 +154,11 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
 	}
 
 
+    if(Platform->gExplosionTexture.mTexture != nullptr)
+    {
+        Platform->gExplosionTexture.mTexture = nullptr;
+    }
+    
 	//Load explosion texture
 	if( !loadFromFile( "media/explosion3(background removed).png", Platform->gRenderer, (int)100, (int)100, &Platform->gExplosionTexture) )
 	{
@@ -508,17 +545,14 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
     // that I forgot to link ttf.lib in compile link
     // carefull to link, remember to put dll files in system32 folder
                 
-    char OutPut[256];
-    Platform->gFont = TTF_OpenFont( "Roboto.ttf", 26);
-    // SDL_Color TextColor = {249 ,166 ,2};
-    SDL_Color TextColor = {0 ,0 ,0};                
+    char OutPut[50];
     // NOTE: Somehow The exe file can't find out the TTF_OpenFont and TTF_Solid_Render which is in the ttf lib. Got to find out and fix
                 
     sprintf(OutPut ,"FPS: %d \n",int(FPS));
 
     // printf(OutPut);
                 
-    if (!loadFromRenderedText(OutPut, 1.0f, TextColor, Platform->gFont, Platform->gRenderer, &Platform->gTextTexture)) {
+    if (!loadFromRenderedText(OutPut, 1.0f, Platform->TextColor, Platform->gFont, Platform->gRenderer, &Platform->gTextTexture)) {
         printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
     } else {
         render(Platform->gRenderer, 0, 0, &Platform->gTextTexture);                    
@@ -526,7 +560,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
 
     if(userTank->BulletsNumber == 0){
         sprintf(OutPut, "Tank Bullets: Loading\n");
-        if (!loadFromRenderedText(OutPut, 1.0f, TextColor, Platform->gFont, Platform->gRenderer, &Platform->gTextTexture)) {
+        if (!loadFromRenderedText(OutPut, 1.0f, Platform->TextColor, Platform->gFont, Platform->gRenderer, &Platform->gTextTexture)) {
         //Update screen
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
         } else {
@@ -536,7 +570,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
     } else {                    
         sprintf(OutPut, "Tank Bullets :%d \n", int(userTank->BulletsNumber));
         //Update screen
-        if (!loadFromRenderedText(OutPut, 1.0f, TextColor, Platform->gFont, Platform->gRenderer, &Platform->gTextTexture)) {
+        if (!loadFromRenderedText(OutPut, 1.0f, Platform->TextColor, Platform->gFont, Platform->gRenderer, &Platform->gTextTexture)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
         } else {
             render(Platform->gRenderer, SCREEN_WIDTH - 200, 0, &Platform->gTextTexture);                    

@@ -69,11 +69,10 @@ struct TankInfo
     int mVelY = 0;
     TANKFACE face = (TANKFACE)(rand()%3) ;
     int BulletsNumber = TOTAL_BULLET_PER_TANK;
-    Bullet* Bullets;
+    Bullet Bullets[TOTAL_BULLET_PER_TANK] = {};
+
     TankInfo(int x = 0, int y = 0, bool userBelong = false):Belong(userBelong), mBox({x , y, TANK_WIDTH, TANK_HEIGHT}){
-        Bullets = nullptr;
-        Bullets = new Bullet[TOTAL_BULLET_PER_TANK]();
-        printf("Size of Bullet set is: %d\n", (int)(sizeof(Bullets)));
+    printf("Size of Bullet set is: %d\n", (int)(sizeof(Bullets)));
     };
     // NOTE: Bullet created when Tank is created, follow them until being fired
     // after fire, create the second bullet to follow it when the previous is sent

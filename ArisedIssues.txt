@@ -84,6 +84,5 @@ time drawing from SDL_GetTicks hold game down really much
    stop at 600 mb and no more. May be the problem related to the array of
    pointer and the way class work
 
- ** Seemed like new and delete method is not compatible with old struct
-    type. Then we go with old method malloc and free. There no memory leaked
-    until now
+   ** FIXED: FOUND OUT THE MEMORY ISSUED. I Constanstly loaded the font value in
+      the game loop. (Which should be loaded just one time )
