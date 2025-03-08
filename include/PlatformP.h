@@ -41,29 +41,29 @@ struct PlatformP {
     PlatformP(){
         
         gTileTexture = nullptr;
-        gTileTexture = new XTexture;
+        gTileTexture = new XTexture();
 
         // NOTE: Menu texture using the image or text string as the main display
         gMenuTexture = nullptr;
-        gMenuTexture = new XTexture;
+        gMenuTexture = new XTexture();
         
         gTextTexture = nullptr;
-        gTextTexture = new XTexture;
+        gTextTexture = new XTexture();
 
         gUserTankTexture = nullptr;
-        gUserTankTexture = new XTexture;
+        gUserTankTexture = new XTexture();
 
         gEnemyTankTexture = nullptr;
-        gEnemyTankTexture = new XTexture;
+        gEnemyTankTexture = new XTexture();
 
         gEnemyBulletTexture = nullptr;
-        gEnemyBulletTexture = new XTexture;
+        gEnemyBulletTexture = new XTexture();
 
         gUserBulletTexture = nullptr;
-        gUserBulletTexture = new XTexture;
+        gUserBulletTexture = new XTexture();
 
         gExplosionTexture = nullptr;
-        gExplosionTexture = new XTexture;
+        gExplosionTexture = new XTexture();
 
         if(gWindow!=nullptr){
             gWindow = nullptr;
@@ -71,6 +71,7 @@ struct PlatformP {
         if(gRenderer = nullptr){
             gRenderer = nullptr;
         }
+        
         };
 };
 

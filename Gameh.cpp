@@ -18,10 +18,10 @@ void displayMenu(PlatformP* p, Game* g){
             scale = 1.0f;
         }
             
-        if (!loadFromRenderedText(Menu[i], scale, p->TextColor, p->gFont, p->gRenderer, &p->gMenuTexture)) {
+        if (!loadFromRenderedText(Menu[i], scale, p->TextColor, p->gFont, p->gRenderer, p->gMenuTexture)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );
         } else{
-            render(p->gRenderer, 100, 30 + i*50, &p->gMenuTexture);
+            render(p->gRenderer, 100, 30 + i*50, p->gMenuTexture);
         }
     }    
 }
@@ -71,31 +71,14 @@ bool Start(PlatformP* p, Game* g){
             }
             else
             {
-                if(g->TankPos != nullptr){
-                    g->TankPos = nullptr;
-                }
-                g->TankPos = new Position[TOTAL_ENEMY_TANK]();
                 printf("Size of The Temporary Tank info is:%d\n", (int)sizeof(*g->TankPos));;
-                InitializeTankPos(g->TankPos);
 
-                Position* userTankPos = new Position();
-                *userTankPos = GeneratePosition();
-
-                if(g->userTank != nullptr){
-                    g->userTank = nullptr;
-                }
                 
-                g->userTank = new TankInfo(userTankPos->x, userTankPos->y,true);
+                GenerateSinglePosition(&g->userTank->mBox.x, &g->userTank->mBox.y);
 
-                delete userTankPos;
-                userTankPos = nullptr;
-
-                if(g->enemyTank != nullptr){
-                    g->enemyTank = nullptr;
-                }
-                
-                g->enemyTank = new TankInfo[TOTAL_ENEMY_TANK]();
-                
+                int TankNumber = (int)(sizeof(*(g->TankPos))/8);
+                printf("BOT Tank number is : %d\n", TankNumber);                
+                InitializeTankPos(g->TankPos);                                
                 InitializeTankInfo(g->TankPos, g->enemyTank);
                 
                 //Level camera
@@ -337,12 +320,14 @@ void resetGame(Game*g){
     for(int i = 0; i < TOTAL_ENEMY_TANK; i++){
         resetTank(&g->enemyTank[i]);
     }
+
     resetTank(g->userTank);
+    GenerateSinglePosition(&g->userTank->mBox.x, &g->userTank->mBox.y);
     // delete []g->TankPos;
     // g->TankPos = nullptr;
     // g->TankPos = new Position[TOTAL_ENEMY_TANK];
-    
-    InitializeTankPos(g->TankPos);            
+
+    InitializeTankPos(g->TankPos);    
     InitializeTankInfo(g->TankPos, g->enemyTank);
 
 }        
@@ -355,7 +340,7 @@ void RenderMainScene(PlatformP* p, Game* g){
  for( int i = 0; i < TOTAL_TILES; ++i )
  {
      //touchesWall(&userTank->mBox, tileSet)
-     renderTile( camera, p->gRenderer, g->tileSet[ i ], &p->gTileTexture,  p->gTileClips, false);
+     renderTile( camera, p->gRenderer, g->tileSet[ i ], p->gTileTexture,  p->gTileClips, false);
      // tileSet[ i ]->render( camera, Platform->GetRenderer(),  Platform->GetgTileTexture(),  Platform->GetgTileClips(), checkCollision(&camera, tileSet[ i ]->getBox()));
  }
 
@@ -401,37 +386,23 @@ void Close(PlatformP* p, Game* g){
     delete[] g->TankPos;
     g->TankPos = nullptr;
 
+    delete[] g->userTank->Bullets;
+    g->userTank->Bullets = nullptr;
     delete g->userTank;
     g->userTank = nullptr;
 
+    for(int i = 0; i < TOTAL_ENEMY_TANK; i++){
+        delete[] g->enemyTank[i].Bullets;
+        g->enemyTank[i].Bullets = nullptr;      
+    }
+
     delete[] g->enemyTank;
     g->enemyTank = nullptr;
-    // free(g->enemyTank);
-    // g->enemyTank = NULL;
     
-    // delete[] g->userTank->Bullets;
-    // g->userTank->Bullets = nullptr;
-    // free(g->userTank->Bullets);
-    // g->userTank->Bullets = NULL;
+    delete[] g->tileSet;
+    g->tileSet = NULL;
     
-    // free(g->userTank);
-    // g->userTank = NULL;
-    
-    // free(g->tileSet);
-    // g->tileSet = NULL;
-    // delete[] g->tileSet;
-    // g->tileSet = NULL;
-
-    
-    // NOTE: Still leak memmory????
-    // =====================
-    
-// NOTE: I think I see the problem now. I delete platform before I properly
-    // close everything in it
-    // delete g->tileSet;
-
     close(p);        
-        // p->gWindow == nullptr?printf("Window is destroyed\n"):printf("Window is not destroyed yet. why??");
 }
 
 

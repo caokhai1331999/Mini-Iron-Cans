@@ -16,18 +16,19 @@ struct Tile{
 
     //The tile type
     int mType = 0;
-    // Tile( int x = 0, int y = 0, int tileType = 0 ){
-    //     //Get the offsets
-    //     mBox.x = x;
-    //     mBox.y = y;
 
-    //     //Set the collision box
-    //     mBox.w = SMALL_TILE_WIDTH;
-    //     mBox.h = SMALL_TILE_HEIGHT;
+    Tile( int x = 0, int y = 0, int tileType = 0 ):mBox({x, y, SMALL_TILE_WIDTH, SMALL_TILE_HEIGHT}), mType(tileType){
+        // //Get the offsets
+        // mBox.x = x;
+        // mBox.y = y;
 
-    //     //Get the tile type
-    //     mType = tileType;        
-    // };
+        // //Set the collision box
+        // mBox.w = SMALL_TILE_WIDTH;
+        // mBox.h = SMALL_TILE_HEIGHT;
+
+        // //Get the tile type
+        // mType = tileType;        
+    };
 };
 
 void renderTile( SDL_Rect& camera, SDL_Renderer* gRenderer, Tile tile, XTexture* gTileTexture, SDL_Rect* gTileClips = NULL, bool checkCollision = false);

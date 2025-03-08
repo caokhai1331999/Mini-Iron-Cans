@@ -10,33 +10,31 @@
 //Takes key presses and adjusts the Tank's velocity
 // Move this function to PlatForm one
 
-Position GeneratePosition(){
-    Position Tem;    
-    Tem.x = std::rand()%LEVEL_WIDTH;
+void GenerateSinglePosition(int* x, int* y){
+    *x = std::rand()%LEVEL_WIDTH;
 
-    if(Tem.x > LEVEL_WIDTH - TANK_WIDTH){
-        Tem.x = LEVEL_WIDTH - TANK_WIDTH;
+    if(*x > LEVEL_WIDTH - TANK_WIDTH){
+        *x = LEVEL_WIDTH - TANK_WIDTH;
     }
-    Tem.y = std::rand()%LEVEL_HEIGHT;
+    *y = std::rand()%LEVEL_HEIGHT;
 
-    if(Tem.y > LEVEL_HEIGHT - TANK_HEIGHT){
-        Tem.y = LEVEL_HEIGHT - TANK_HEIGHT;                        
+    if(*y > LEVEL_HEIGHT - TANK_HEIGHT){
+        *y = LEVEL_HEIGHT - TANK_HEIGHT;                        
     }
-    return Tem ;
 }
 
 
 void InitializeTankPos(Position* RealTankPos){
     bool valid = true;
     std::srand(std::time(nullptr));
-    RealTankPos[0] = GeneratePosition();
+    GenerateSinglePosition(&RealTankPos[0].x, &RealTankPos[0].y);
     Position* TempPos = nullptr;
     TempPos = (struct Position*)malloc(sizeof(struct Position ));
         // Loop comparing newly created pos to the previous valid one
     for (int i= 1; i < TOTAL_ENEMY_TANK; i++){
         valid = false;
         while (!valid) {
-            *TempPos = GeneratePosition();
+            GenerateSinglePosition(&TempPos->x, &TempPos->y);
             for (int p = 0; p < i; p++) {
                 if (((TempPos->x - RealTankPos[p].x) > ( 200)) || (abs(TempPos->y - RealTankPos[p].y) > (150))) {
                     if ( i - p > 1) {
@@ -59,28 +57,19 @@ void InitializeTankPos(Position* RealTankPos){
 
 void InitializeTankInfo(Position* TankPos,TankInfo* Tank){
 
-        // Initialize the collision box
-        // Bullets = malloc(sizeof(Bullets)*TOTAL_BULLET_PER_TANK);
-    // NOTE: Messed up at Tank initialization stage
-    // TankInfo* TempInfo = nullptr;
-    // TempInfo = new TankInfo();
-    // printf("Size of The Temporary Tank info is:%d\n", (int)sizeof(*TempInfo));
-    
-    // if(!userBelong){
-    //     TempInfo->Belong = userBelong;
-    //     TempInfo->mBox.x = x;
-    //     TempInfo->mBox.y = y;
-    // }
+    int TankNumber = (int)(sizeof(*TankPos)/8);
+    printf("Tank number is : %d\n", TankNumber);
 
-    for(int i = 0; i < TOTAL_ENEMY_TANK; i++){        
-            Tank[i].Bullets[i].blBox = {TankPos[i].x, TankPos[i].y, BULLET_WIDTH, BULLET_HEIGHT};
+    if(TankNumber > 1){
+        for(int i = 0; i < TankNumber; i++){        
+            Tank[i].mBox = {TankPos[i].x, TankPos[i].y, TANK_WIDTH, TANK_HEIGHT};
             // userBelong?&Tank[i]->Bullets[i].type = userB:&Tank[i]->Bullets[i].type = enemyB;
+        }        
     }
-        // NOTE: Turn out I can not delete any single element on array without changing the others. Got to rewrite it
-        // return *TempInfo;
-
-        // delete TempInfo;
-        // TempInfo = nullptr;
+    else {
+        Tank->mBox.x = TankPos->x;
+        Tank->mBox.y = TankPos->y;
+    }
 }
 
 void fire(TankInfo* Tank){

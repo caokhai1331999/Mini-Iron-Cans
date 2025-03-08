@@ -51,24 +51,28 @@ struct Game{
     MENUCHOICE chosen_option = NONE;
     // NOTE: Manually set Init game stats here!!!
 
-    Tile tileSet[TOTAL_TILES];   
-    Position* TankPos = nullptr;
-    TankInfo* userTank = nullptr;
-    TankInfo* enemyTank = nullptr;
+    Tile* tileSet;   
+    Position* TankPos;
+    TankInfo* userTank;
+    TankInfo* enemyTank;
     
-    // Game(){
-    //     state = MENU_INIT;
-    //     pointed_option = 0;
-    //     chosen_option = NONE;
-
-    //     tileSet = (Tile*)malloc(sizeof(*tileSet)*TOTAL_TILES);
+    Game(){
+        state = MENU_INIT;
+        pointed_option = 0;
+        chosen_option = NONE;
+        
+        tileSet = nullptr;
+        tileSet = new Tile[TOTAL_TILES]();
        
-    //     userTank = (TankInfo*)malloc(sizeof(*userTank));
+        TankPos = nullptr;
+        TankPos = new Position[TOTAL_ENEMY_TANK]();
 
-    //     TankPos = (Position*)malloc(sizeof(*TankPos)*TOTAL_ENEMY_TANK);
+        userTank = nullptr;
+        userTank = new TankInfo(0 , 0, true);
 
-    //     enemyTank = (TankInfo*)malloc(sizeof(*enemyTank)*TOTAL_ENEMY_TANK);
-    // };
+        enemyTank = nullptr;
+        enemyTank = new TankInfo[TOTAL_ENEMY_TANK]();
+    };
 };
 
 void displayMenu(PlatformP* p, Game* g);

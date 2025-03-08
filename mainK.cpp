@@ -14,31 +14,30 @@ int main( int argc, char* args[] )
 {
     _CrtDumpMemoryLeaks();
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-    // PlatformP* Platform = nullptr;
-    // Platform = new PlatformP;
-    // Game* game = nullptr;
-    // game = new Game;
-    PlatformP Platform = {};
-    Game game = {};
-    // game = (Game*)malloc(sizeof(*game));    
+
+    PlatformP* Platform = nullptr;
+    Platform = new PlatformP();
+
+    Game* game = nullptr;
+    game =  new Game();
+
     bool done = false;
-    // Platform = new PlatformP;
-    if(!Start(&Platform, &game)) {
-            printf("Fail to init &game\n");
+
+    if(!Start(Platform, game)) {
+            printf("Fail to init game\n");
         } else {
-        printf("Init &game successfully\n");
+        printf("Init game successfully\n");
         // NOTE:
-            while(game.state != EMPTY) {                
-                ProcessInput(&game, &done);
-                Update(&game);
-                Render(&Platform, &game);
+            while(game->state != EMPTY) {                
+                ProcessInput(game, &done);
+                Update(game);
+                Render(Platform, game);
             }
-            Close(&Platform, &game);
-            // free(&game);
-            // delete &game;
-            // &game = nullptr;
-    // delete Platform;
-    // Platform = nullptr;
+            Close(Platform, game);
+            delete game;
+            game = nullptr;
+            delete Platform;
+            Platform = nullptr;
     }
 return 0;
 }

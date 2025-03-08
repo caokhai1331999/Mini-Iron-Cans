@@ -40,6 +40,8 @@ const global_variable int BULLET_HEIGHT = 10 ;
 struct Position{
     int x;
     int y;
+    Position():x(0), y(0){
+    };
 };
 
 struct Bullet{
@@ -50,10 +52,10 @@ struct Bullet{
     bool Launched = false;
     SDL_Rect blBox = {};
 
-    // Bullet(int TankX = 0, int TankY = 0, bool launched = false, bool userBelong = false): blBox({TankX, TankY, BULLET_WIDTH, BULLET_HEIGHT}), Launched(launched)
-    // {
-    //     type = userBelong?userB:enemyB;
-    // }
+    Bullet(int TankX = 0, int TankY = 0, bool launched = false, bool userBelong = false): blBox({TankX, TankY, BULLET_WIDTH, BULLET_HEIGHT}), Launched(launched)
+    {
+        type = userBelong?userB:enemyB;
+    }
     
 };
 
@@ -69,10 +71,19 @@ struct TankInfo
     int mVelY = 0;
     TANKFACE face = (TANKFACE)(rand()%3) ;
     int BulletsNumber = TOTAL_BULLET_PER_TANK;
-    Bullet Bullets[TOTAL_BULLET_PER_TANK] = {};
+    Bullet* Bullets;
 
     TankInfo(int x = 0, int y = 0, bool userBelong = false):Belong(userBelong), mBox({x , y, TANK_WIDTH, TANK_HEIGHT}){
-    printf("Size of Bullet set is: %d\n", (int)(sizeof(Bullets)));
+
+        Bullets = nullptr;
+        Bullets = new Bullet[TOTAL_BULLET_PER_TANK]();
+        printf("Size of Bullet set is: %d\n", (int)(sizeof(Bullets)));
+
+        for(int i = 0; i < TOTAL_ENEMY_TANK; i++){        
+            Bullets[i].blBox = {mBox.x, mBox.y, BULLET_WIDTH, BULLET_HEIGHT};
+            Belong?Bullets[i].type = userB:Bullets[i].type = enemyB;
+        }
+
     };
     // NOTE: Bullet created when Tank is created, follow them until being fired
     // after fire, create the second bullet to follow it when the previous is sent
@@ -83,9 +94,9 @@ struct TankInfo
 
 // Randomize Tank Positions that far enough
 void InitializeTankPos(Position* RealTankPos);
-void InitializeTankInfo(Position* Tankpos, TankInfo* Tank);
+void InitializeTankInfo(Position* Tankpos = nullptr, TankInfo* Tank = nullptr);
 
-Position GeneratePosition();
+void GenerateSinglePosition(int* x = nullptr, int* y = nullptr);
 
 //Takes key presses and adjusts the Tank's velocity
 void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank );
