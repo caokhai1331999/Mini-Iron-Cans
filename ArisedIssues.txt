@@ -91,7 +91,13 @@ time drawing from SDL_GetTicks hold game down really much
    **FIXED
 
 ?? Recheck respawn Tank and fx and Then time to move littleGuide fx fixing
-   Time to debug the collision check when the tank near the border of the map
+?? Time to debug the collision check when the tank near the border of the map
    , (Tank disappear + no Explosion + no respawn) - May be I leaked the tank
    destroyed flag somewhere before I could check for hit flag to create respawn
    action
+   ** FIXED: I set the frame to -1 in the start which does not match the flag
+   frame = 0 to do the explosion effect which lead to change destroyed flag
+   it end. Hence it stuck between isHit and !destroyed (No explode and no
+   respawn)
+
+?? Time to make the bot Tank smarter

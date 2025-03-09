@@ -26,7 +26,7 @@ int main( int argc, char* args[] )
     if(!Start(Platform, game)) {
             printf("Fail to init game\n");
         } else {
-        printf("Init game successfully\n");
+        printf("Init Platform successfully\n");
         // NOTE:
             while(game->state != EMPTY) {                
                 ProcessInput(game, &done);
@@ -38,6 +38,7 @@ int main( int argc, char* args[] )
             game = nullptr;
             delete Platform;
             Platform = nullptr;
+            printf("End of Game, Thanks so much for playing my game\n");
     }
 return 0;
 }

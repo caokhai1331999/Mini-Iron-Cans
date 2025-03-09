@@ -45,7 +45,6 @@ enum MENUCHOICE{
 
 struct Game{    
     STATE state = MENU_INIT;
-    float startTime = 0.0f;
     int k = 0;    
     uint8_t pointed_option = 0;
     MENUCHOICE chosen_option = NONE;
@@ -83,7 +82,6 @@ void ProcessInput(Game* g, bool* done);
 void Update(Game* g);
 void resetGame(Game* g);
 
-// TODO: Complete this part
 void runMainScene(Game* g);
 void RenderMainScene(PlatformP* p, Game* g);
 //===========================

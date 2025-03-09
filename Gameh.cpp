@@ -49,9 +49,6 @@ void get_Menu_choice(Game* g, KeyState* currentKey){
                     if(g->chosen_option != g->pointed_option)
                     {
                         g->chosen_option = static_cast<MENUCHOICE>(g->pointed_option);
-                        g->chosen_option == NEW_GAME||g->chosen_option == RESUME?printf("Start enter the game\n"):printf("not yet\n");
-                        // g->chosen_option == NONE?printf("Option doesn't change after hitting enter yet. Why??\n"):printf("Options changed\n");
-                        // g->chosen_option == EXIT?printf("Option is now exit\n"):printf("why option is not exit yet\n");
                     }
                 }
                 break;                                 
@@ -71,14 +68,10 @@ bool Start(PlatformP* p, Game* g){
             }
             else
             {
-                printf("Size of The Temporary Tank info is:%d\n", (int)sizeof(*g->TankPos));;
-
-                
                 GenerateSinglePosition(&g->userTank->mBox.x, &g->userTank->mBox.y);
-
-                int TankNumber = (int)(sizeof(*(g->TankPos))/8);
-                printf("BOT Tank number is : %d\n", TankNumber);                
-                InitializeTankPos(g->TankPos);                                
+                // printf("user Tank position is: %d %d", g->userTank->mBox.x, g->userTank->mBox.y);
+                
+                InitializeTankPos(g->TankPos);
                 InitializeTankInfo(g->TankPos, g->enemyTank);
                 
                 //Level camera
@@ -92,7 +85,7 @@ bool Start(PlatformP* p, Game* g){
                 frame = new uint8_t[5]();
 
                 for(int i = 0; i < 5; i++){
-                    frame[i] = -1;
+                    frame[i] = 0;
                 };
 
                 Ecollided = false;
@@ -108,11 +101,10 @@ void changeState(Game* g, KeyState* key){
         switch(g->state){
             case MENU_INIT:
                 if (g->chosen_option == NEW_GAME){
-                    g->state = GAME_NEW;
+                    g->state = GAME_RELOADED;
                     // Game Constantly reset 
                     g->chosen_option = NONE;
                 } else if (g->chosen_option == EXIT || key->type == SDL_QUIT){
-                    key->type == SDL_QUIT?printf("quit event is triggered\n"):printf("exit option is chosen\n");
                     g->state = EMPTY;
                 }
                 break;
@@ -213,7 +205,6 @@ void runMainScene(Game* g){
     if(!g->userTank->destroyed && !g->userTank->isHit){
         move(false, Ucollided, g->userTank);
     }else{
-        // NOTE:
         if(g->userTank->destroyed){
             respawn(g->userTank);
         };
@@ -244,11 +235,6 @@ void runMainScene(Game* g){
 
             Ecollided = checkCollision(&g->enemyTank[i].mBox, &(g->enemyTank[j].mBox));
 
-                // printf(Ecollided?"EnemyTank collide each other in minor loop\n":"No collision detected\n");                            
-            }
-            // littleGuide(&g->enemyTank[i], g->userTank, collided);
-            // NOTE: BUG lies inside this fx
-            // add the solution to the specific colliding case 
 
         // NOTE: Temporary not use touchwall here
         if(!g->enemyTank[i].isHit && !g->enemyTank[i].destroyed){
@@ -259,15 +245,9 @@ void runMainScene(Game* g){
     }    
     setCamera(camera, g->userTank);        
 }
+}
 
 void Update(Game* g){
-    // NOTE: STILL IN WORK HERE
-    // The fms loop through state is right here
-    // Still haven't figure out how to change state right here
-
-    // NOTE: Put the fsm here to loop through states change
-    // Do I need to jam all stuffs into game : update, render, input process
-    // printf("Start update game based on state \n");
     if (g->state != EMPTY){        
         switch (g->state){
             case MENU_INIT:
@@ -280,11 +260,6 @@ void Update(Game* g){
                 break;
 
             case GAME_NEW:
-                // NOTE: resetGame() contain alot of bugs here!!!!
-                // because we constantly delete and create new game objects
-                // in game loop 
-                // How to tell apart which come from menu_init
-                //================================================
                 runMainScene(g);
                 break;
 
@@ -299,6 +274,7 @@ void Update(Game* g){
 void resetGame(Game*g){
     // Memory allocated using new must be freed by delete
     g->chosen_option = NONE;
+    g->pointed_option = 0;
 
     StartTime = 0.0f;
     EndTime = 0.0f;
@@ -317,9 +293,6 @@ void resetGame(Game*g){
 
     resetTank(g->userTank);
     GenerateSinglePosition(&g->userTank->mBox.x, &g->userTank->mBox.y);
-    // delete []g->TankPos;
-    // g->TankPos = nullptr;
-    // g->TankPos = new Position[TOTAL_ENEMY_TANK];
 
     InitializeTankPos(g->TankPos);    
     InitializeTankInfo(g->TankPos, g->enemyTank);
@@ -335,7 +308,6 @@ void RenderMainScene(PlatformP* p, Game* g){
  {
      //touchesWall(&userTank->mBox, tileSet)
      renderTile( camera, p->gRenderer, g->tileSet[ i ], p->gTileTexture,  p->gTileClips, false);
-     // tileSet[ i ]->render( camera, Platform->GetRenderer(),  Platform->GetgTileTexture(),  Platform->GetgTileClips(), checkCollision(&camera, tileSet[ i ]->getBox()));
  }
 
  if(!g->userTank->isHit){
@@ -416,9 +388,5 @@ void Render (PlatformP* p, Game* g){
         }
         SDL_RenderPresent( p->gRenderer);        
         // NOTE: Else do nothing
-    } else {
-        //??? WHY LOOP ONLY END AFTER I CALL SDL_QUIT IT IN GAME LOOP
-        // Close(g);
-        printf("End of Game, Thanks so much for playing my game\n");
     }    
 }

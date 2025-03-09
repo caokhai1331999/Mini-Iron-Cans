@@ -6,7 +6,7 @@
    $Revision: $
    $Creator: Cao Khai(Casey disciple) $
    $Notice: (C) Copyright 2024 by Cao Khai, Inc. All Rights Reserved. $
-   ======================================================================== */
+w   ======================================================================== */
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -77,7 +77,7 @@ struct TankInfo
 
         Bullets = nullptr;
         Bullets = new Bullet[TOTAL_BULLET_PER_TANK]();
-        printf("Size of Bullet set is: %d\n", (int)(sizeof(Bullets)));
+        // printf("Size of Bullet set is: %d\n", (int)(sizeof(Bullets)));
 
         for(int i = 0; i < TOTAL_ENEMY_TANK; i++){        
             Bullets[i].blBox = {mBox.x, mBox.y, BULLET_WIDTH, BULLET_HEIGHT};

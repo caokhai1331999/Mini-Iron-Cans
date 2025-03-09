@@ -11,16 +11,19 @@
 // Move this function to PlatForm one
 
 void GenerateSinglePosition(int* x, int* y){
-    *x = std::rand()%LEVEL_WIDTH;
-
-    if(*x > LEVEL_WIDTH - TANK_WIDTH){
-        *x = LEVEL_WIDTH - TANK_WIDTH;
+    int a,b;
+    a = std::rand()%LEVEL_WIDTH;
+    
+    if(a > LEVEL_WIDTH - TANK_WIDTH){
+        a = LEVEL_WIDTH - TANK_WIDTH - 20;
     }
-    *y = std::rand()%LEVEL_HEIGHT;
+    *x = a;
+    b = std::rand()%LEVEL_HEIGHT;
 
-    if(*y > LEVEL_HEIGHT - TANK_HEIGHT){
-        *y = LEVEL_HEIGHT - TANK_HEIGHT;                        
+    if(b > LEVEL_HEIGHT - TANK_HEIGHT){
+        b = LEVEL_HEIGHT - TANK_HEIGHT - 20;                        
     }
+    *y = b;
 }
 
 
@@ -35,7 +38,7 @@ void InitializeTankPos(Position* RealTankPos){
         valid = false;
         while (!valid) {
             GenerateSinglePosition(&TempPos->x, &TempPos->y);
-            printf("Temp Tank pos is: [%d, %d]", TempPos->x, TempPos->y);
+            // printf("Temp Tank pos is: [%d, %d]", TempPos->x, TempPos->y);
             for (int p = 0; p < i; p++) {
                 if (((TempPos->x - RealTankPos[p].x) > ( 200)) || (abs(TempPos->y - RealTankPos[p].y) > (150))) {
                     if ( i - p > 1) {
@@ -58,9 +61,7 @@ void InitializeTankPos(Position* RealTankPos){
 
 void InitializeTankInfo(Position* TankPos,TankInfo* Tank){
 
-    int TankNumber = (int)(sizeof(*TankPos)/8);
-    printf("Tank number is : %d\n", TankNumber);
-
+    int TankNumber = Tank->Belong?1:TOTAL_ENEMY_TANK;
     if(TankNumber > 1){
         for(int i = 0; i < TankNumber; i++){        
             Tank[i].mBox = {TankPos[i].x, TankPos[i].y, TANK_WIDTH, TANK_HEIGHT};
@@ -74,22 +75,13 @@ void InitializeTankInfo(Position* TankPos,TankInfo* Tank){
 }
 
 void fire(TankInfo* Tank){
-    // TODO: Initialize bullet and send it fly, send signal when hit
-    // && !Tank->isHit
     if(!Tank->destroyed && !Tank->isHit) {
-            // if(Tank->userBelong){
-            //     printf("Looping through tank bullets\n");
-            // }
         for(int i = 0; i < TOTAL_BULLET_PER_TANK ; i++){
             if(Tank->Bullets[i].Launched)
             {
                 continue;
             } else if (!Tank->Bullets[i].Launched) {
 
-                // TODO: Fix bugs right here
-                // if(Tank->userBelong){
-                //     printf("Bullet chosen\n");
-                // }
 
                 Tank->BulletsNumber--;
                     if(Tank->BulletsNumber < 0){
@@ -103,46 +95,32 @@ void fire(TankInfo* Tank){
                         Tank->Bullets[i].blBox.x = Tank->mBox.x + Tank->mBox.w/2 + 15;
                         Tank->Bullets[i].blBox.y = Tank->mBox.y + 5;
                         Tank->Bullets[i].BlVelY -= BULLET_VEL;
-                        // if(Tank->userBelong){
-                        //     printf("Give bullet veclocity\n");                    
-                        // }                        
                         break; 
+
                     case (int)DOWN:
                         Tank->Bullets[i].blBox.x = Tank->mBox.x + Tank->mBox.w/2 + 15;
                         Tank->Bullets[i].blBox.y = Tank->mBox.y + Tank->mBox.h + 5;
                         Tank->Bullets[i].BlVelY += BULLET_VEL;
-                        // if(Tank->userBelong){
-                        //     printf("Give bullet veclocity\n");                    
-                        // }                                                
                         break; 
+
                     case (int)RIGHT:
                         Tank->Bullets[i].blBox.x = Tank->mBox.x + Tank->mBox.w + 5;
                         Tank->Bullets[i].blBox.y = Tank->mBox.y + Tank->mBox.h/2 + 15;
                         Tank->Bullets[i].BlVelX += BULLET_VEL;
-                        // if(Tank->userBelong){
-                        //     printf("Give bullet veclocity\n");                    
-                        // }                                                
                         break; 
+
                     case (int)LEFT:
                         Tank->Bullets[i].blBox.x = Tank->mBox.x + 5;
                         Tank->Bullets[i].blBox.y = Tank->mBox.y + Tank->mBox.h/2 + 15;
                         Tank->Bullets[i].BlVelX -= BULLET_VEL;
-                        // if(Tank->userBelong){
-                        //     printf("Give bullet veclocity\n");                    
-                        // }                                                
                         break;             
+
                 }
-                // if(Tank->userBelong)
-                // {
-                //     printf("Out of loop\n");                
-                // }
                 Tank->Bullets[i].Launched = true;
                 break;
-                // Tank->Bullets[i].Launched?printf("Bullet Launched\n"):printf("Bullet wasn't launched\n");                
             }
         }
     }
-    // printf("End function\n");    
 }
 
 void respawn(TankInfo* Tank){
@@ -189,128 +167,101 @@ void respawn(TankInfo* Tank){
 }
 
 void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank) {
-    //If a key was pressed
+
     if (Tank->Belong) {
          if( CurrentBut->pressed && CurrentBut->repeat == 0)
         {
             //Adjust the velocity
                 switch( CurrentBut->key )
                 {
-                    // NOTE: Solved conflicted moving input by setting
-                    // Tank Vel = 0 everytime before assign mVelX/Y to new Vel
-                    // to bind it to equal to Tank vel or 0
                     case SDL_SCANCODE_UP: Tank->face = UP;
                         Tank->mVelY = 0; 
                         Tank->mVelY -= TANK_VEL;
-                        // printf("TANK FACE is %f \n", Tank->face);
-                        // printf("Button %d is being pressed\n", CurrentBut->key);
                         break;
                         
                         case SDL_SCANCODE_DOWN: Tank->face = DOWN;
                             Tank->mVelY = 0; 
                             Tank->mVelY += TANK_VEL;
-                            // printf("TANK FACE is %f \n", Tank->face);
-                            // printf("Button %d is being pressed\n", CurrentBut->key);                       
                         break;
-                        case SDL_SCANCODE_RIGHT:
+
+                    case SDL_SCANCODE_RIGHT:
                             Tank->face = RIGHT;
                             Tank->mVelX = 0;                             
                             Tank->mVelX += TANK_VEL;
-                            // printf("TANK FACE is %f \n", Tank->face);                            
-                            // printf("Button %d is being pressed\n", CurrentBut->key);                       
                         break;
-                        case SDL_SCANCODE_LEFT: Tank->face = LEFT;
+
+                    case SDL_SCANCODE_LEFT: Tank->face = LEFT;
                             Tank->mVelX = 0;                             
                             Tank->mVelX -= TANK_VEL;
-                            // printf("TANK FACE is %f \n", Tank->face);
-                            // printf("Button %d being pressed\n", CurrentBut->key);
                         break;
                         
                     case SDL_SCANCODE_SPACE: fire(Tank);
-                        // printf("Button space being pressed button%d \n", CurrentBut->key);
                         break;
                 }
-        }  else if( !CurrentBut->pressed && CurrentBut->repeat == 0)
+                
+        }
+         else if( !CurrentBut->pressed && CurrentBut->repeat == 0)
         {
             //Adjust the velocity
             switch(CurrentBut->key )
             {
-            // printf("Tank is moving up\n", CurrentBut->key);
                 case SDL_SCANCODE_UP:
                     Tank->mVelY += TANK_VEL;
                     break;
-                            // printf("Button %d is released\n", CurrentBut->key);                                           
                                            
                 case SDL_SCANCODE_DOWN:
                     Tank->mVelY -= TANK_VEL;
-                    // printf("Button %d is released\n", CurrentBut->key);
+
                     break;
                 case SDL_SCANCODE_LEFT:
                     Tank->mVelX += TANK_VEL;
-                    // printf("Button %d is released\n", CurrentBut->key);                                                               
                     break;
+
                 case SDL_SCANCODE_RIGHT:
                     Tank->mVelX -= TANK_VEL;
-                    // printf("Button %d is released\n", CurrentBut->key);                                                               
                     break;
             }
         }
     }
 }
 
-//Moves the Tank and check collision against tiles
-// Add one more tank and user tank to check (Tile *tiles[],)
 void move(bool touchesWall, bool collided, TankInfo* Tank) {
 
-    // NOTE: Apply dijkstra's algo here to make bot tank'move more smart
+    if(!Tank->isHit && !Tank->destroyed){
 
-    // checkCollision(Tank->mBox, all current active bullets boxes)
-    if(!Tank->destroyed){
-        // if (Tank->userBelong){
-            // And swivel the tank by the way
-            //||touchesWall
-        //
-        //TODO: Add collision code here
-            Tank->mBox.x += Tank->mVelX;
-            // (Tank->mBox.x < 10)||(Tank->mBox.x + Tank->mBox.w > LEVEL_WIDTH - 50)||
-            if ((Tank->mBox.x < 0)||(Tank->mBox.x  > LEVEL_WIDTH - (TANK_WIDTH + 30)) || collided){
-                    Tank->mBox.x -= Tank->mVelX;
-               }
-                    // printf("Tank Pos X is: %d /n", Tank->mBox.x);                    
+        Tank->mBox.x += Tank->mVelX;
+        if ((Tank->mBox.x < 0)||(Tank->mBox.x  > LEVEL_WIDTH - (TANK_WIDTH + 20)) || collided){
+            Tank->mBox.x -= Tank->mVelX;
+        }
             
-            Tank->mBox.y += Tank->mVelY;
-            // (Tank->mBox.y < 10)||(Tank->mBox.y + Tank->mBox.h > LEVEL_HEIGHT  - 50) ||
-            if ((Tank->mBox.y < 0)||(Tank->mBox.y > LEVEL_HEIGHT - (TANK_HEIGHT + 30)) || collided)
-            {
-                    Tank->mBox.y -= Tank->mVelY;
-                    // printf("Tank Pos Y is: %d /n", Tank->mBox.y);
-            }
+        Tank->mBox.y += Tank->mVelY;
+        if ((Tank->mBox.y < 0)||(Tank->mBox.y > LEVEL_HEIGHT - (TANK_HEIGHT + 20)) || collided)
+        {
+            Tank->mBox.y -= Tank->mVelY;
+        }
             
-             // Move the bullet
-            //TODO: Time to detach the checking function out of moving one
-            // to avoid unwanted duplicated work (WORKING!)
+        for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
 
-            for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
-                if (Tank->Bullets[i].Launched){
-                    Tank->Bullets[i].blBox.x += Tank->Bullets[i].BlVelX;
-                    Tank->Bullets[i].blBox.y += Tank->Bullets[i].BlVelY;
+            if (Tank->Bullets[i].Launched){
+                Tank->Bullets[i].blBox.x += Tank->Bullets[i].BlVelX;
+                Tank->Bullets[i].blBox.y += Tank->Bullets[i].BlVelY;
 
-                    if((Tank->Bullets[i].blBox.x < 0)||(Tank->Bullets[i].blBox.x + Tank->Bullets[i].blBox.w > LEVEL_WIDTH||Tank->Bullets[i].blBox.y < 0)||(Tank->Bullets[i].blBox.y + Tank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
+                if((Tank->Bullets[i].blBox.x < 0)||(Tank->Bullets[i].blBox.x + Tank->Bullets[i].blBox.w > LEVEL_WIDTH||Tank->Bullets[i].blBox.y < 0)||(Tank->Bullets[i].blBox.y + Tank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
 
-                        Tank->BulletsNumber++;
-                        if(Tank->BulletsNumber > TOTAL_BULLET_PER_TANK){
-                            Tank->BulletsNumber = TOTAL_BULLET_PER_TANK;
-                        };
-                        char text [50] = {};
+                    Tank->BulletsNumber++;
+                    if(Tank->BulletsNumber > TOTAL_BULLET_PER_TANK){
+                        Tank->BulletsNumber = TOTAL_BULLET_PER_TANK;
+                    };
+                    // char text [50] = {};
 
-                        if(Tank->Belong){
-                            sprintf(text, "User Tank bullet number is :%d\n", (int)(Tank->BulletsNumber));                    
-                        };
+                    // if(Tank->Belong){
+                    //     sprintf(text, "User Tank bullet number is :%d\n", (int)(Tank->BulletsNumber));                    
+                    // };
 
-                        printf(text);
-                        resetBullet(&Tank->Bullets[i]);
-                    }
+                    // printf(text);
+                    resetBullet(&Tank->Bullets[i]);
                 }
+            }                
         }    
     }
 }
@@ -350,8 +301,7 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided){
 
     // NOTE: The idea is simple: moving the bot Tank toward User's one and fire
     // when it is near
-    // Prioritize the shorter axis first to shoot if any 
-
+    // Prioritize the shorter axis first to shoot 
     // NOTE: Wandering mode
 
     std::srand(std::time(nullptr));
@@ -493,12 +443,14 @@ bool BiTankCheck(TankInfo* ATank, TankInfo* BTank){
     bool TwoTankcollided = false;
     if(!ATank->isHit && !BTank->isHit){
         TwoTankcollided = checkCollision(&ATank->mBox, &BTank->mBox);
-        // printf("Start checking the whether tank or bullet is collided\n");
+
         for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
 
             if (ATank->Bullets[i].Launched && !BTank->isHit){
                 if(checkCollision(&ATank->Bullets[i].blBox,&BTank->mBox) && !BTank->isHit){
                     BTank->isHit = true;
+                    BTank->destroyed = false;
+                    
                     ATank->BulletsNumber++;                
                     if(ATank->BulletsNumber > TOTAL_BULLET_PER_TANK){
                         ATank->BulletsNumber = TOTAL_BULLET_PER_TANK;
@@ -511,6 +463,8 @@ bool BiTankCheck(TankInfo* ATank, TankInfo* BTank){
             
                 if(checkCollision(&BTank->Bullets[i].blBox,&ATank->mBox) && !ATank->isHit){
                     ATank->isHit = true;
+                    ATank->destroyed = false;
+                    
                     BTank->BulletsNumber++;                
                     if(BTank->BulletsNumber > TOTAL_BULLET_PER_TANK){
                         BTank->BulletsNumber = TOTAL_BULLET_PER_TANK;

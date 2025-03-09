@@ -88,50 +88,13 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
 		printf( "Failed to load User tank texture!\n" );
 		success = false;
 	}
-// else {
-
-      // Platform->gSpriteClips[ 0 ].x = 0;
-      // Platform->gSpriteClips[ 0 ].y = 0;
-      // Platform->gSpriteClips[ 0 ].w = 256;
-      // Platform->gSpriteClips[ 0 ].h = 170;
-
-      // Platform->gSpriteClips[ 1 ].x = 256;
-      // Platform->gSpriteClips[ 1 ].y = 0;
-      // Platform->gSpriteClips[ 1 ].w = 256;
-      // Platform->gSpriteClips[ 1 ].h = 170;
-
-      // Platform->gSpriteClips[ 2 ].x = 512;
-      // Platform->gSpriteClips[ 2 ].y = 0;
-      // Platform->gSpriteClips[ 2 ].w = 256;
-      // Platform->gSpriteClips[ 2 ].h = 170;
-
-      // Platform->gSpriteClips[ 3 ].x = 768;
-      // Platform->gSpriteClips[ 3 ].y = 0;
-      // Platform->gSpriteClips[ 3 ].w = 256;
-      // Platform->gSpriteClips[ 3 ].h = 170;
-
-//      gSpriteClips[ 4 ].x = 1000;
-//      gSpriteClips[ 4 ].y = 0;
-//      gSpriteClips[ 4 ].w = 250;
-//      gSpriteClips[ 4 ].h = 170;
-     
-    // }
     
 	if( !loadFromFile( "media/enemyTank.png", Platform->gRenderer, (int)100, (int)100, Platform->gEnemyTankTexture))
 	{
 		printf( "Failed to load Enemy tank texture!\n" );
 		success = false;
-	} // else {
-
-    // NOTE: Prepare a animated background here
-	// if( !Platform->gMenuTexture->loadFromFile( "media/background.png", Platform->gRenderer, (int)100, (int)100))
-	// {
-	// 	printf( "Failed to load menu background texture!\n" );
-	// 	success = false;
-	// } 
-// else {
-
-
+	}
+    
 	//Load tile texture
     if( !loadFromFile( "media/32x32_map_tile v3.1 [MARGINLESS].bmp", Platform->gRenderer, (int)30, (int)30, Platform->gTileTexture) )
 	{
@@ -486,7 +449,7 @@ bool setTiles( Tile *tiles,PlatformP* Platform){
 //Shows the Tank on the screen
 void renderTank(TankInfo* Tank, int frame, SDL_Rect& camera, PlatformP* Platform) {
 
-    if(!Tank->destroyed) {
+    if(!Tank->destroyed && !Tank->isHit) {
     //NOTE: Show the tank and bullet here
     if (Tank->Belong && Platform->gUserTankTexture!=nullptr) {
         // printf("User Tank image is being rendered\n");
@@ -506,8 +469,6 @@ void renderTank(TankInfo* Tank, int frame, SDL_Rect& camera, PlatformP* Platform
 
   }
 else if (!Tank->Belong && Platform->gEnemyTankTexture != nullptr) {
-        // SOMEHOW the enemy tank positions changed to keep in bound while the text one is not
-        // if (((Tank->mBox.x >= camera.x) && (Tank->mBox.x <= camera.x + camera.w)) &&((Tank->mBox.y >= camera.y) && (Tank->mBox.y <= camera.y + camera.w)) ){
     render( Platform->gRenderer ,Tank->mBox.x - camera.x,Tank->mBox.y - camera.y, Platform->gEnemyTankTexture, nullptr, Tank->face);
         if(Platform->gEnemyBulletTexture!=nullptr) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
@@ -516,19 +477,11 @@ else if (!Tank->Belong && Platform->gEnemyTankTexture != nullptr) {
             }
         }
     }        
-        // }
-    }        
-    }//  else {
-    //     Tank->userBelong?printf("user Tank "):printf("Bot Tank ");
-    //     printf("is hit and destroyed\n");
-    // }
-
-    // if(Tank->isHit && !Tank->userBelong){
-    //     //TODO: Run the destroying clip here and then make the tanks disappear
-    // }
-    
+    } 
+}
 }
 
+    
 void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
     
     // NOTE: The reason that I can not use TTF_OpenFont or TTF_Init is
