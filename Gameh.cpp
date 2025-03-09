@@ -215,13 +215,11 @@ void runMainScene(Game* g){
     }else{
         // NOTE:
         if(g->userTank->destroyed){
-            // NOTE: The SDL_GetTicks() give the current time output
-            // So how to calculate right spawn time every time user Tank
-            // is hit
             respawn(g->userTank);
         };
     }
-    
+
+    bool Ecollided = false;
     for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
         // NOTE: a Sole Ecollided is not enough
         // Rewrite the collision check and moving system
@@ -244,24 +242,20 @@ void runMainScene(Game* g){
         // NOTE: AI ways
         for (int j = i+1; j < TOTAL_ENEMY_TANK; j++){
 
-            Ecollided = checkCollision(&g->enemyTank[i].mBox, &(g->enemyTank[j].mBox)) | checkCollision(&g->userTank->mBox, &g->enemyTank[i].mBox);
-                
+            Ecollided = checkCollision(&g->enemyTank[i].mBox, &(g->enemyTank[j].mBox));
+
                 // printf(Ecollided?"EnemyTank collide each other in minor loop\n":"No collision detected\n");                            
             }
             // littleGuide(&g->enemyTank[i], g->userTank, collided);
             // NOTE: BUG lies inside this fx
             // add the solution to the specific colliding case 
-        littleGuide(&g->enemyTank[i], g->userTank, Ecollided);
 
         // NOTE: Temporary not use touchwall here
-        if(!g->enemyTank[i].destroyed){
+        if(!g->enemyTank[i].isHit && !g->enemyTank[i].destroyed){
             move(false, Ecollided, &g->enemyTank[i]);
         }
+        littleGuide(&g->enemyTank[i], g->userTank, Ecollided);
     // ===============================================
-    
-
-        // printf(Ucollided?"EnemyTank collide each other out of minor loop\n":"No collision detected\n");
-
     }    
     setCamera(camera, g->userTank);        
 }

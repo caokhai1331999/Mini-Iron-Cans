@@ -86,4 +86,12 @@ time drawing from SDL_GetTicks hold game down really much
 
    ** FIXED: FOUND OUT THE MEMORY ISSUED. I Constanstly loaded the font value in
       the game loop. (Which should be loaded just one time )
+
+?? The check for bullets reset only work when there still bot tank. My bad.
+   **FIXED
+
 ?? Recheck respawn Tank and fx and Then time to move littleGuide fx fixing
+   Time to debug the collision check when the tank near the border of the map
+   , (Tank disappear + no Explosion + no respawn) - May be I leaked the tank
+   destroyed flag somewhere before I could check for hit flag to create respawn
+   action

@@ -508,13 +508,11 @@ void renderTank(TankInfo* Tank, int frame, SDL_Rect& camera, PlatformP* Platform
 else if (!Tank->Belong && Platform->gEnemyTankTexture != nullptr) {
         // SOMEHOW the enemy tank positions changed to keep in bound while the text one is not
         // if (((Tank->mBox.x >= camera.x) && (Tank->mBox.x <= camera.x + camera.w)) &&((Tank->mBox.y >= camera.y) && (Tank->mBox.y <= camera.y + camera.w)) ){
-    // printf("Tank is being rendered\n");
     render( Platform->gRenderer ,Tank->mBox.x - camera.x,Tank->mBox.y - camera.y, Platform->gEnemyTankTexture, nullptr, Tank->face);
         if(Platform->gEnemyBulletTexture!=nullptr) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){                
                 render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), Platform->gEnemyBulletTexture, nullptr, Tank->face);
-                // printf("Enemy tanks and Bullets %d image is being rendered\n", i);
             }
         }
     }        

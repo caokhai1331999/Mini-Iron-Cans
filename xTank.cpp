@@ -35,6 +35,7 @@ void InitializeTankPos(Position* RealTankPos){
         valid = false;
         while (!valid) {
             GenerateSinglePosition(&TempPos->x, &TempPos->y);
+            printf("Temp Tank pos is: [%d, %d]", TempPos->x, TempPos->y);
             for (int p = 0; p < i; p++) {
                 if (((TempPos->x - RealTankPos[p].x) > ( 200)) || (abs(TempPos->y - RealTankPos[p].y) > (150))) {
                     if ( i - p > 1) {
@@ -293,6 +294,22 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
                 if (Tank->Bullets[i].Launched){
                     Tank->Bullets[i].blBox.x += Tank->Bullets[i].BlVelX;
                     Tank->Bullets[i].blBox.y += Tank->Bullets[i].BlVelY;
+
+                    if((Tank->Bullets[i].blBox.x < 0)||(Tank->Bullets[i].blBox.x + Tank->Bullets[i].blBox.w > LEVEL_WIDTH||Tank->Bullets[i].blBox.y < 0)||(Tank->Bullets[i].blBox.y + Tank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
+
+                        Tank->BulletsNumber++;
+                        if(Tank->BulletsNumber > TOTAL_BULLET_PER_TANK){
+                            Tank->BulletsNumber = TOTAL_BULLET_PER_TANK;
+                        };
+                        char text [50] = {};
+
+                        if(Tank->Belong){
+                            sprintf(text, "User Tank bullet number is :%d\n", (int)(Tank->BulletsNumber));                    
+                        };
+
+                        printf(text);
+                        resetBullet(&Tank->Bullets[i]);
+                    }
                 }
         }    
     }
@@ -455,12 +472,13 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided){
 void resetTank(TankInfo* Tank){
     Tank->mBox.x = -1;
     Tank->mBox.y = -1;
-    Tank->isHit = true;
-    Tank->destroyed = true;
+    Tank->isHit = false;
+    Tank->destroyed = false;
     // NOTE: Forgot to destroy bullet pointer. My bad!!!
     for (int i = 0; i<TOTAL_BULLET_PER_TANK; i++){
         resetBullet(&Tank->Bullets[i]);
     };
+    Tank->BulletsNumber = TOTAL_BULLET_PER_TANK;
 }
 
 void resetBullet(Bullet* bullet){
@@ -475,44 +493,32 @@ bool BiTankCheck(TankInfo* ATank, TankInfo* BTank){
     bool TwoTankcollided = false;
     if(!ATank->isHit && !BTank->isHit){
         TwoTankcollided = checkCollision(&ATank->mBox, &BTank->mBox);
-    // printf("Start checking the whether tank or bullet is collided\n");
-    for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
+        // printf("Start checking the whether tank or bullet is collided\n");
+        for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
 
-        if (ATank->Bullets[i].Launched && !BTank->isHit){
-            if ((ATank->Bullets[i].blBox.x < 0)||(ATank->Bullets[i].blBox.x + ATank->Bullets[i].blBox.w > LEVEL_WIDTH||ATank->Bullets[i].blBox.y < 0)||(ATank->Bullets[i].blBox.y + ATank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
-                resetBullet(&ATank->Bullets[i]);
-            }
-                    
-            if(checkCollision(&ATank->Bullets[i].blBox,&BTank->mBox) && !BTank->isHit){
-                BTank->isHit = true;
-                ATank->BulletsNumber++;                
-                if(ATank->BulletsNumber > TOTAL_BULLET_PER_TANK){
-                    ATank->BulletsNumber = TOTAL_BULLET_PER_TANK;
+            if (ATank->Bullets[i].Launched && !BTank->isHit){
+                if(checkCollision(&ATank->Bullets[i].blBox,&BTank->mBox) && !BTank->isHit){
+                    BTank->isHit = true;
+                    ATank->BulletsNumber++;                
+                    if(ATank->BulletsNumber > TOTAL_BULLET_PER_TANK){
+                        ATank->BulletsNumber = TOTAL_BULLET_PER_TANK;
+                    }
+                    resetBullet(&ATank->Bullets[i]);
                 }
-                resetBullet(&ATank->Bullets[i]);
             }
+
+            if (BTank->Bullets[i].Launched && !ATank->isHit){
+            
+                if(checkCollision(&BTank->Bullets[i].blBox,&ATank->mBox) && !ATank->isHit){
+                    ATank->isHit = true;
+                    BTank->BulletsNumber++;                
+                    if(BTank->BulletsNumber > TOTAL_BULLET_PER_TANK){
+                        BTank->BulletsNumber = TOTAL_BULLET_PER_TANK;
+                    }
+                    resetBullet(&BTank->Bullets[i]);
+                }
+            }        
         }
-
-        if (BTank->Bullets[i].Launched && !ATank->isHit){
-
-            if ((BTank->Bullets[i].blBox.x < 0)||(BTank->Bullets[i].blBox.x + BTank->Bullets[i].blBox.w > LEVEL_WIDTH||BTank->Bullets[i].blBox.y < 0)||(BTank->Bullets[i].blBox.y + BTank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
-                BTank->BulletsNumber++;
-                if(BTank->BulletsNumber > TOTAL_BULLET_PER_TANK){
-                    BTank->BulletsNumber = TOTAL_BULLET_PER_TANK;
-                }
-                resetBullet(&BTank->Bullets[i]);
-            }
-                    
-            if(checkCollision(&BTank->Bullets[i].blBox,&ATank->mBox) && !ATank->isHit){
-                ATank->isHit = true;
-                BTank->BulletsNumber++;                
-                if(BTank->BulletsNumber > TOTAL_BULLET_PER_TANK){
-                    BTank->BulletsNumber = TOTAL_BULLET_PER_TANK;
-                }
-                resetBullet(&BTank->Bullets[i]);
-            }
-        }        
-    }
     }
     return TwoTankcollided;
 }
