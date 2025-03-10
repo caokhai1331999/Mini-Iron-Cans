@@ -32,6 +32,9 @@ struct PlatformP {
     XTexture* gEnemyBulletTexture;
     XTexture* gExplosionTexture;
 
+    int screen_w ;
+    int screen_h ;
+    
 //The window we'll be rendering to
     SDL_Window* gWindow = nullptr;
     SDL_Renderer* gRenderer = nullptr;
@@ -39,6 +42,8 @@ struct PlatformP {
     SDL_Color TextColor = {0 , 0 , 0};
 //The window renderer
     PlatformP(){
+        screen_h = 0;
+        screen_w = 0;
         
         gTileTexture = nullptr;
         gTileTexture = new XTexture();

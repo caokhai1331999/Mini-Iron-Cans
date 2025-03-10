@@ -74,11 +74,12 @@ struct Game{
     };
 };
 
+void resize(int* w, int* h, PlatformP* p);
 void displayMenu(PlatformP* p, Game* g);
 void get_Menu_choice(Game* g, KeyState* key);
 void changeState(Game* g);
 bool Start(PlatformP* p, Game* g);
-void ProcessInput(Game* g, bool* done);
+void ProcessInput(Game* g, PlatformP *p, bool* done);
 void Update(Game* g);
 void resetGame(Game* g);
 

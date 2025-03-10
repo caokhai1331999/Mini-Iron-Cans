@@ -134,5 +134,4 @@ TODO:
   effect. The game loop is already made it run. All I just need to do to set
   conidtion to make it revolving
 
-?? Create and state variable to sum all the memory to be able to handle them
-easier
+* Time to redraw and resized map with concrete wall and reduce tank sprite size 

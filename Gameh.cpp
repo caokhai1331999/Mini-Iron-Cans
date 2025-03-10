@@ -7,21 +7,45 @@
    ======================================================================== */
 #include <Gameh.h>
 // NOTE: Fixed the menu issue
+void resize(int* w, int* h, PlatformP* p){
+    *w *= p->screen_w/DEFAULT_SCREEN_WIDTH;
+    *h *= p->screen_h/DEFAULT_SCREEN_HEIGHT;
+}
+
 void displayMenu(PlatformP* p, Game* g){
-    float scale = 1.0f;
+
+    float scaleW = p->screen_w/DEFAULT_SCREEN_WIDTH;
+    float scaleH = p->screen_h/DEFAULT_SCREEN_HEIGHT;
+    
+    int wD = 0;
+    int hD = 0;
     for(uint8_t i = 0; i < 4; ++i){
 
         // NOTE: Scale up the text whenever it is pointed to
-        if(g->pointed_option == i+1){            
-            scale = 1.5f;   
+        if(g->pointed_option == i+1){
+            if (scaleH == p->screen_w/DEFAULT_SCREEN_WIDTH
+                ,scaleW == p->screen_w/DEFAULT_SCREEN_WIDTH){                
+                scaleH *= 1.5f;   
+                scaleW *= 1.5f;   
+            }
         } else {
-            scale = 1.0f;
+            if (scaleH > p->screen_w/DEFAULT_SCREEN_WIDTH
+                ,scaleW > p->screen_w/DEFAULT_SCREEN_WIDTH){                
+                scaleH /= 1.5f;   
+                scaleW /= 1.5f;   
+            }            
         }
             
-        if (!loadFromRenderedText(Menu[i], scale, p->TextColor, p->gFont, p->gRenderer, p->gMenuTexture)) {
+        if (!loadFromRenderedText(Menu[i], scaleW, scaleH, p->TextColor, p->gFont, p->gRenderer, p->gMenuTexture)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );
         } else{
-            render(p->gRenderer, 100, 30 + i*50, p->gMenuTexture);
+            // How to exactly put these sprite betweeen the screen
+            wD = (int) ((0.2f)*(p->screen_w));
+            hD = (int) ((i*((0.2f)*(p->screen_h))));
+            
+            // printf("Screen Width is :%d\n", p->screen_w);
+            // printf("SCreen Height is :%d\n", p->screen_h);
+            render(p->gRenderer, wD, hD, p->gMenuTexture);
         }
     }    
 }
@@ -75,7 +99,7 @@ bool Start(PlatformP* p, Game* g){
                 InitializeTankInfo(g->TankPos, g->enemyTank);
                 
                 //Level camera
-                camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+                camera = { 0, 0, p->screen_w, p->screen_h};
 
                 if(frame != nullptr){
                     delete []frame;
@@ -143,7 +167,7 @@ void changeState(Game* g, KeyState* key){
     }    
 }
 
-void ProcessInput(Game* g, bool* done){
+void ProcessInput(Game* g, PlatformP *p, bool* done){
     // printf("Start process input \n");
     SDL_Event e = {};
     SDL_zero(e);
@@ -155,7 +179,15 @@ void ProcessInput(Game* g, bool* done){
         //User requests quit
         // Modulize this part to reuse it
         //===================================================
-
+        if(e.type == SDL_WINDOWEVENT)
+        {
+            if(e.window.event == SDL_WINDOWEVENT_RESIZED){                
+                p->screen_w = (int)e.window.data1;
+                p->screen_h = (int)e.window.data2;
+                printf("Screen width and height now are:%d %d\n", p->screen_w, p->screen_h);
+            }
+        }
+        
         // NOTE: If I have time try to apply FSM to this input filter
         if ((e.key.state == SDL_PRESSED || e.key.state == SDL_RELEASED) && e.key.keysym.scancode != SDL_SCANCODE_UNKNOWN || e.type == SDL_QUIT){                        
             // NOTE: Forgot to add SDL_QUIT to filter conditions
@@ -306,11 +338,13 @@ void RenderMainScene(PlatformP* p, Game* g){
      // NOTE: Render main scene
  for( int i = 0; i < TOTAL_TILES; ++i )
  {
+     // resize(&g->tileSet[i].mBox.w, g->tileSet[i].mBox.h, p);
      //touchesWall(&userTank->mBox, tileSet)
      renderTile( camera, p->gRenderer, g->tileSet[ i ], p->gTileTexture,  p->gTileClips, false);
  }
 
  if(!g->userTank->isHit){
+     // resize(&g->userTank.mBox.w, &g->userTank->mBox.h, p);     
      renderTank(g->userTank, Uframe, camera, p);
  }else{
      // The additional loop just make the explostion clip run incredibly faster
@@ -326,6 +360,7 @@ void RenderMainScene(PlatformP* p, Game* g){
  k = 0;
  while(k < TOTAL_ENEMY_TANK)
  {
+     resize(&g->enemyTank[k].mBox.w, &g->enemyTank[k].mBox.h, p);
      if(!g->enemyTank[k].isHit && !g->enemyTank[k].destroyed){
          renderTank(&g->enemyTank[k], frame[k], camera, p);                        
      } else {
@@ -379,10 +414,30 @@ void Render (PlatformP* p, Game* g){
         SDL_SetRenderDrawColor( p->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
         // printf("Render accordingly to state\n");    
         if (g->state == MENU_INIT || g->state == PAUSE){
+
+            // if(p->screen_w != DEFAULT_SCREEN_WIDTH){
+            //     p->screen_w = DEFAULT_SCREEN_WIDTH;
+            // }
+
+            // if(p->screen_h != DEFAULT_SCREEN_HEIGHT){
+            //     p->screen_h = DEFAULT_SCREEN_HEIGHT;
+            // }
+            // SDL_SetWindowSize(p->gWindow, p->screen_w, p->screen_h);
+
+
+            
             // NOTE: The render part is already in the menu fx. So what will I put in this one???
             displayMenu(p, g);
         } else if (g->state == GAME_NEW || g->state == GAME_RELOADED){
 
+            if(p->screen_w != 2*DEFAULT_SCREEN_WIDTH){
+                p->screen_w = 2*DEFAULT_SCREEN_WIDTH;
+            }
+
+            if(p->screen_h != 2*DEFAULT_SCREEN_HEIGHT){
+                p->screen_h = 2*DEFAULT_SCREEN_HEIGHT;
+            }
+            SDL_SetWindowSize(p->gWindow, p->screen_w, p->screen_h);            
             RenderMainScene(p, g);
             
         }

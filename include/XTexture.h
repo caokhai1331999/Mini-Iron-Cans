@@ -22,8 +22,8 @@
 #define real32 float
 
 //Screen dimension constants
-global_variable int SCREEN_WIDTH = 450;
-global_variable int SCREEN_HEIGHT = 300;
+global_variable int DEFAULT_SCREEN_WIDTH = 450;
+global_variable int DEFAULT_SCREEN_HEIGHT = 300;
 
 //The dimensions of the level
 const global_variable int LEVEL_WIDTH = 1800;
@@ -126,7 +126,7 @@ bool loadFromFile( std::string path, SDL_Renderer* gRenderer, int Width = 0, int
 		
 #if defined(SDL_TTF_MAJOR_VERSION)
 //Creates image from font string
-bool loadFromRenderedText(char* textureText = nullptr, float Scale = 1.0f, SDL_Color textColor = {0, 0, 0}, TTF_Font* gFont = nullptr, SDL_Renderer* gRenderer = nullptr, XTexture* texture = nullptr);
+bool loadFromRenderedText(char* textureText = nullptr, float scaleW = 1.0f, float scaleH = 1.0f, SDL_Color textColor = {0, 0, 0}, TTF_Font* gFont = nullptr, SDL_Renderer* gRenderer = nullptr, XTexture* texture = nullptr);
 #endif
 
 //Set color modulation

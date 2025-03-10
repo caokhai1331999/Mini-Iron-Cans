@@ -55,7 +55,7 @@ bool loadFromFile( std::string path, SDL_Renderer* gRenderer, int Width, int Hei
 }
 
 #if defined(SDL_TTF_MAJOR_VERSION)
-bool loadFromRenderedText(char* textureText, float Scale, SDL_Color textColor, TTF_Font* gFont , SDL_Renderer* gRenderer, XTexture* texture)
+bool loadFromRenderedText(char* textureText, float ScaleW, float ScaleH, SDL_Color textColor, TTF_Font* gFont , SDL_Renderer* gRenderer, XTexture* texture)
 {
 	//Get rid of preexisting texture
 	xfree(texture);
@@ -73,14 +73,9 @@ bool loadFromRenderedText(char* textureText, float Scale, SDL_Color textColor, T
 		}
 		else
 		{
-                if(Scale != 1.0f){
-                    texture->mWidth = (int)(textSurface->w)* Scale;
-                    texture->mHeight = (int)(textSurface->h)* Scale;                
-                } else {
-                    texture->mWidth = textSurface->w;
-                    texture->mHeight = textSurface->h;                
-                }
-		}
+                    texture->mWidth = (int)(textSurface->w)* ScaleW;
+                    texture->mHeight = (int)(textSurface->h)* ScaleH;
+ 		}
 
 		//Get rid of old surface
 		SDL_FreeSurface( textSurface );
