@@ -361,7 +361,7 @@ void RenderMainScene(PlatformP* p, Game* g){
  k = 0;
  while(k < TOTAL_ENEMY_TANK)
  {
-     resize(&g->enemyTank[k].mBox.w, &g->enemyTank[k].mBox.h, p);
+     // resize(&g->enemyTank[k].mBox.w, &g->enemyTank[k].mBox.h, p);
      if(!g->enemyTank[k].isHit && !g->enemyTank[k].destroyed){
          renderTank(&g->enemyTank[k], frame[k], camera, p);                        
      } else {
@@ -381,7 +381,7 @@ void RenderMainScene(PlatformP* p, Game* g){
 }
 
 
-void Close(PlatformPtformP* p, Game* g){
+void Close(PlatformP* p, Game* g){
     delete []frame;
     frame = nullptr;    
 
