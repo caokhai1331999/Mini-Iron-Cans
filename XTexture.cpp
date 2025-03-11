@@ -125,16 +125,13 @@ void setAlpha( Uint8 alpha, XTexture* texture )
 void render( SDL_Renderer* gRenderer, int x, int y, XTexture* texture, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
 	//Set rendering space and render to screen
-
 	SDL_Rect renderQuad = { x, y, texture->mWidth, texture->mHeight };
-
 	//Set clip rendering dimensions
 	if( clip != nullptr )
 	{
 		renderQuad.w = clip->w;
 		renderQuad.h = clip->h;
 	}
-
 	//Render to screen
 	SDL_RenderCopyEx( gRenderer, texture->mTexture, clip, &renderQuad, angle, center, flip );
 }
