@@ -7,10 +7,11 @@
    ======================================================================== */
 #include <Gameh.h>
 // NOTE: Fixed the menu issue
-void resize(int* w, int* h, PlatformP* p){
-    *w *= p->screen_w/DEFAULT_SCREEN_WIDTH;
-    *h *= p->screen_h/DEFAULT_SCREEN_HEIGHT;
-}
+// NOTE: *= is a dangerous operator. If I don't know exactly what it will bring
+// void resize(int* w, int* h, PlatformP* p){
+//     *w = default_w*(p->screen_w/DEFAULT_SCREEN_WIDTH);
+//     *h = default_h*(p->screen_h/DEFAULT_SCREEN_HEIGHT);
+// }
 
 void displayMenu(PlatformP* p, Game* g){
 
@@ -380,7 +381,7 @@ void RenderMainScene(PlatformP* p, Game* g){
 }
 
 
-void Close(PlatformP* p, Game* g){
+void Close(PlatformPtformP* p, Game* g){
     delete []frame;
     frame = nullptr;    
 

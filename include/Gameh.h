@@ -74,7 +74,7 @@ struct Game{
     };
 };
 
-void resize(int* w, int* h, PlatformP* p);
+// void resize(int* w, int* h, PlatformP* p);
 void displayMenu(PlatformP* p, Game* g);
 void get_Menu_choice(Game* g, KeyState* key);
 void changeState(Game* g);
