@@ -22,41 +22,26 @@
 #define real32 float
 
 //Screen dimension constants
-global_variable int DEFAULT_SCREEN_WIDTH = 450;
-global_variable int DEFAULT_SCREEN_HEIGHT = 300;
+global_variable int DEFAULT_SCREEN_WIDTH = 270;
+global_variable int DEFAULT_SCREEN_HEIGHT = 180;
 
 //The dimensions of the level
-const global_variable int LEVEL_WIDTH = 1800;
-const global_variable int LEVEL_HEIGHT = 1200;
+const global_variable int LEVEL_WIDTH = 1080;
+const global_variable int LEVEL_HEIGHT = 720;
 
-global_variable int TEXT_W = 200;
-global_variable int TEXT_H = 200;
+global_variable int TEXT_W = 120;
+global_variable int TEXT_H = 120;
 
 //Tile constants
 const global_variable int TOTAL_TILES = 2400;
 const global_variable int TOTAL_TILE_SPRITES = 13;
 
 //Tile constants
-const global_variable int BIG_TILE_WIDTH = 80;
-const global_variable int BIG_TILE_HEIGHT = 80;
+const global_variable int BIG_TILE_WIDTH = 48;
+const global_variable int BIG_TILE_HEIGHT = 48;
 
-const global_variable int SMALL_TILE_WIDTH = 30;
-const global_variable int SMALL_TILE_HEIGHT = 30;
-
-//The different tile sprites(LAZYFOO's map)
-// const global_variable int TILE_RED = 0;
-// const global_variable int TILE_GREEN = 1;
-// const global_variable int TILE_BLUE = 2;
-// const global_variable int TILE_CENTER = 3;
-// const global_variable int TILE_TOP = 4;
-// const global_variable int TILE_TOPRIGHT = 5;
-// const global_variable int TILE_RIGHT = 6;
-// const global_variable int TILE_BOTTOMRIGHT = 7;
-// const global_variable int TILE_BOTTOM = 8;
-// const global_variable int TILE_BOTTOMLEFT = 9;
-// const global_variable int TILE_LEFT = 10;
-// const global_variable int TILE_TOPLEFT = 11;
-
+const global_variable int SMALL_TILE_WIDTH = 18;
+const global_variable int SMALL_TILE_HEIGHT = 18;
 
 //The different tile sprites(Different map)
 // const global_variable int BIG_GRASS_TILE = 0;
@@ -77,19 +62,8 @@ const global_variable int SMALL_WATER_2 = 11;
 
 const global_variable int SMALL_WOOD_PATH_1 = 12;
 
-// const global_variable int TILE_GREEN = 1;
-// const global_variable int TILE_BLUE = 2;
-// const global_variable int TILE_CENTER = 3;
-// const global_variable int TILE_TOP = 4;
-// const global_variable int TILE_TOPRIGHT = 5;
-// const global_variable int TILE_RIGHT = 6;
-// const global_variable int TILE_BOTTOMRIGHT = 7;
-// const global_variable int TILE_BOTTOM = 8;
-// const global_variable int TILE_BOTTOMLEFT = 9;
-// const global_variable int TILE_LEFT = 10;
-// const global_variable int TILE_TOPLEFT = 11;
-
-const int ANIMATING_FRAMES = 10;
+const int EXPLOSION_FRAMES = 10;
+const int MOVING_FRAMES = 2;
 
 struct KeyState{
     bool pressed;

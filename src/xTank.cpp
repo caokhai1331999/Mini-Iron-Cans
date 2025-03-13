@@ -125,6 +125,7 @@ void fire(TankInfo* Tank){
 
 void respawn(TankInfo* Tank){
     if(Tank->destroyed){
+
         real32 respawnStartTime = 0.0f;
         real32 respawnEndTime = 0.0f;        
         real32 respawnTime = 0.0f;
@@ -268,6 +269,7 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
 
 //Centers the camera over the Tank
 void setCamera( SDL_Rect& camera, TankInfo* UserTank ){
+
     // Initialize the collision box
 	camera.x = ( UserTank->mBox.x + TANK_WIDTH / 2 ) - camera.w/2;
     // Give a fair distance between the camera and the main tank

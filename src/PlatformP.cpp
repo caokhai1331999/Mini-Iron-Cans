@@ -83,13 +83,13 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
 
 	//Load dot texture
     // NOTE: The Bugs lied here
-	if( !loadFromFile( "media/myTank.png", Platform->gRenderer, (int)100, (int)100, Platform->gUserTankTexture) )
-	{
+	if( !loadFromFile( "media/blue/blue_Tank(transparent).png", Platform->gRenderer, (int)18, (int)18, Platform->gUserTankTexture) )
+	{s
 		printf( "Failed to load User tank texture!\n" );
 		success = false;
 	}
     
-	if( !loadFromFile( "media/enemyTank.png", Platform->gRenderer, (int)100, (int)100, Platform->gEnemyTankTexture))
+	if( !loadFromFile( "media/red/red_tank(transparent).png", Platform->gRenderer, (int)18, (int)18, Platform->gEnemyTankTexture))
 	{
 		printf( "Failed to load Enemy tank texture!\n" );
 		success = false;
@@ -102,20 +102,20 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
 		success = false;
 	}
     
-	if( !loadFromFile( "media/myBullet.png", Platform->gRenderer, (int)20, (int)20, Platform->gUserBulletTexture) )
+	if( !loadFromFile( "media/explosion/shot/up.png", Platform->gRenderer, (int)12, (int)12, Platform->gUserBulletTexture) )
 	{
 		printf( "Failed to load user bullet set texture!\n" );
 		success = false;
 	}
     
-	if( !loadFromFile( "media/EnemyBullet.png", Platform->gRenderer, (int)20, (int)20, Platform->gEnemyBulletTexture) )
+	if( !loadFromFile( "media/EnemyBullet.png", Platform->gRenderer, (int)12, (int)12, Platform->gEnemyBulletTexture) )
 	{
 		printf( "Failed to load enemy bullet set texture!\n" );
 		success = false;
 	}
     
 	//Load explosion texture
-	if( !loadFromFile( "media/explosion3(background removed).png", Platform->gRenderer, (int)100, (int)100, Platform->gExplosionTexture) )
+	if( !loadFromFile( "media/explosion3(background removed).png", Platform->gRenderer, (int)60, (int)60, Platform->gExplosionTexture) )
 	{
 		printf( "Failed to load explosion texture!\n" );
 		success = false;

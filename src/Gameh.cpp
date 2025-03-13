@@ -201,7 +201,7 @@ void ProcessInput(Game* g, PlatformP *p, bool* done){
         {
             if(e.window.event == SDL_WINDOWEVENT_RESIZED){                
                 SDL_GetWindowSize(p->gWindow, &p->screen_w, &p->screen_h);
-                printf("Screen width and height now are:%d %d\n", p->screen_w, p->screen_h);
+                // printf("Screen width and height now are:%d %d\n", p->screen_w, p->screen_h);
             }
         }
         
@@ -429,13 +429,21 @@ void Render (PlatformP* p, Game* g){
     if (g->state != EMPTY){
         SDL_RenderClear( p->gRenderer);
         SDL_SetRenderDrawColor( p->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-        // printf("Render accordingly to state\n");    
+        // printf("Render accordingly to state\n");
+        if(camera.w != p->screen_w){
+            camera.w = p->screen_w;
+        }
+
+        if(camera.h != p->screen_h){
+            camera.h = p->screen_h;
+        }
+
         if (g->state == MENU_INIT || g->state == PAUSE){
 
             if (g->stateChange == CHANGED){
+                g->stateChange = NOT_YET;
                 SDL_SetWindowSize(p->gWindow, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);                
                 SDL_SetWindowPosition(p->gWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-                g->stateChange = NOT_YET;
                 SDL_GetWindowSize(p->gWindow, &p->screen_w, &p->screen_h);
             }
             

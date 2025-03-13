@@ -21,8 +21,9 @@
 
 struct PlatformP {
     
-   SDL_Rect gExplosionClips [ANIMATING_FRAMES];
-   SDL_Rect gTileClips [TOTAL_TILE_SPRITES];
+    SDL_Rect gExplosionClips [EXPLOSION_FRAMES];
+    SDL_Rect gMovingClips [MOVING_FRAMES];
+    SDL_Rect gTileClips [TOTAL_TILE_SPRITES];
     XTexture* gTileTexture;
     XTexture* gMenuTexture;
     XTexture* gTextTexture;

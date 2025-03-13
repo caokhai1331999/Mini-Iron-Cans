@@ -27,9 +27,9 @@ using namespace std;
 
 enum BulletType{enemyB, userB};
 
-const global_variable int TANK_VEL = 10 ;
-const global_variable int TANK_WIDTH = 20;
-const global_variable int TANK_HEIGHT = 20;
+const global_variable int TANK_VEL = 10;
+const global_variable int TANK_WIDTH = 30;
+const global_variable int TANK_HEIGHT = 30;
 const global_variable int TOTAL_ENEMY_TANK = 3 ;
 const global_variable int TOTAL_BULLET_PER_TANK = 10 ;
 
