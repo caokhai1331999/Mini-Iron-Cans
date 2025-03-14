@@ -63,7 +63,7 @@ const global_variable int SMALL_WATER_2 = 11;
 const global_variable int SMALL_WOOD_PATH_1 = 12;
 
 const int EXPLOSION_FRAMES = 10;
-const int MOVING_FRAMES = 2;
+const int MOVING_FRAMES = 8;
 
 struct KeyState{
     bool pressed;

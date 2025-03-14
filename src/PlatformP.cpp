@@ -83,39 +83,54 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
 
 	//Load dot texture
     // NOTE: The Bugs lied here
-	if( !loadFromFile( "media/blue/blue_Tank(transparent).png", Platform->gRenderer, (int)18, (int)18, Platform->gUserTankTexture) )
-	{s
+	if( !loadFromFile( "./media/blue/blue_Tank(transparent).png", Platform->gRenderer, (int)18, (int)18, Platform->gUserTankTexture) )
+	{
 		printf( "Failed to load User tank texture!\n" );
 		success = false;
 	}
     
-	if( !loadFromFile( "media/red/red_tank(transparent).png", Platform->gRenderer, (int)18, (int)18, Platform->gEnemyTankTexture))
+	if( !loadFromFile( "./media/red/red_tank(transparent).png", Platform->gRenderer, (int)18, (int)18, Platform->gEnemyTankTexture))
 	{
 		printf( "Failed to load Enemy tank texture!\n" );
 		success = false;
-	}
+	} else {
+        if (success = true){
+            int horizontal_distance = 10;
+            int vertical_distance = 8;
+            int frame_w_h = 16;
+            
+           Platform->gMovingClips[mUP-1] = {(mUP-1)*horizontal_distance, (mUP-1)*vertical_distance, frame_w_h, frame_w_h};
+           Platform->gMovingClips[mUP] = {(mUP)*horizontal_distance, (mUP)*vertical_distance, frame_w_h, frame_w_h};
+           Platform->gMovingClips[mDOWN-1] = {(mDOWN-1)*horizontal_distance, (mDOWN-1)*vertical_distance, frame_w_h, frame_w_h};
+           Platform->gMovingClips[mDOWN] = {(mDOWN)*horizontal_distance, (mDOWN)*vertical_distance, frame_w_h, frame_w_h};
+           Platform->gMovingClips[mRIGHT-1] = {(mRIGHT-1)*horizontal_distance, (mRIGHT-1)*vertical_distance, frame_w_h, frame_w_h};
+           Platform->gMovingClips[mRIGHT] = {(mRIGHT)*horizontal_distance, (mRIGHT)*vertical_distance, frame_w_h, frame_w_h}; 
+           Platform->gMovingClips[mLEFT-1] = {(mUP-1)*horizontal_distance, (mUP-1)*vertical_distance, frame_w_h, frame_w_h};
+           Platform->gMovingClips[mLEFT] ={(mLEFT)*horizontal_distance, (mLEFT)*vertical_distance, frame_w_h, frame_w_h};
+        }
+    }
     
 	//Load tile texture
-    if( !loadFromFile( "media/32x32_map_tile v3.1 [MARGINLESS].bmp", Platform->gRenderer, (int)30, (int)30, Platform->gTileTexture) )
+    if( !loadFromFile( "./media/32x32_map_tile v3.1 [MARGINLESS].bmp", Platform->gRenderer, (int)30, (int)30, Platform->gTileTexture) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
 	}
     
-	if( !loadFromFile( "media/explosion/shot/up.png", Platform->gRenderer, (int)12, (int)12, Platform->gUserBulletTexture) )
+	if( !loadFromFile( "./media/explosions/shot/up.png", Platform->gRenderer, (int)12, (int)12, Platform->gUserBulletTexture) )
 	{
 		printf( "Failed to load user bullet set texture!\n" );
 		success = false;
 	}
     
-	if( !loadFromFile( "media/EnemyBullet.png", Platform->gRenderer, (int)12, (int)12, Platform->gEnemyBulletTexture) )
+	if( !loadFromFile( "./media/EnemyBullet.png", Platform->gRenderer, (int)12, (int)12, Platform->gEnemyBulletTexture) )
 	{
 		printf( "Failed to load enemy bullet set texture!\n" );
 		success = false;
 	}
     
 	//Load explosion texture
-	if( !loadFromFile( "media/explosion3(background removed).png", Platform->gRenderer, (int)60, (int)60, Platform->gExplosionTexture) )
+	if( !loadFromFile( "./media/explosion3(background removed).png", Platform->gRenderer, (int)60, (int)60, Platform->gExplosionTexture) )
 	{
 		printf( "Failed to load explosion texture!\n" );
 		success = false;
@@ -264,7 +279,7 @@ bool init(PlatformP* Platform)
                 if(Platform->gFont != nullptr){
                     Platform->gFont = nullptr;
                 }
-                Platform->gFont = TTF_OpenFont( "Roboto.ttf", 28 );
+                Platform->gFont = TTF_OpenFont( "Roboto-Medium.ttf", 28 );
                 Platform->TextColor = {249 ,166 ,2};
                 // SDL_Color TextColor = {0 ,0 ,0};
 			}
@@ -449,13 +464,46 @@ bool setTiles( Tile *tiles,PlatformP* Platform){
 }
 
 //Shows the Tank on the screen
-void renderTank(TankInfo* Tank, int frame, SDL_Rect& camera, PlatformP* Platform) {
+void renderTank(TankInfo* Tank, uint8_t* MovingFrame, SDL_Rect& camera, PlatformP* Platform) {
 
     if(!Tank->destroyed && !Tank->isHit) {
     //NOTE: Show the tank and bullet here
+        switch((int)Tank->face){
+            case (int)UP:
+                if(*MovingFrame > mUP-1){
+                    *MovingFrame = mUP-1;
+                } else {
+                    *MovingFrame += *MovingFrame/5;
+                };
+                break;
+
+            case (int)DOWN:
+                if(*MovingFrame > mDOWN || *MovingFrame < mDOWN-1){
+                    *MovingFrame = mDOWN-1;
+                } else {
+                    *MovingFrame += *MovingFrame/5;
+                };
+                break;
+
+            case (int)RIGHT:
+                if(*MovingFrame < mRIGHT-1 || *MovingFrame > mRIGHT){
+                    *MovingFrame = mRIGHT -1;
+                } else {
+                    *MovingFrame += *MovingFrame/5;
+                };
+                break;
+
+            case (int)LEFT:
+                if(*MovingFrame < mLEFT-1 || *MovingFrame > mLEFT){
+                    *MovingFrame = mLEFT-1;
+                } else {
+                    *MovingFrame += *MovingFrame/5;
+                };
+                break;
+        }
     if (Tank->Belong && Platform->gUserTankTexture!=nullptr) {
         // printf("User Tank image is being rendered\n");
-        render( Platform->gRenderer ,(Tank->mBox.x - camera.x), (Tank->mBox.y - camera.y), Platform->gUserTankTexture, nullptr,Tank->face);
+        render( Platform->gRenderer ,(Tank->mBox.x - camera.x), (Tank->mBox.y - camera.y), Platform->gUserTankTexture, &Platform->gMovingClips[*MovingFrame], Tank->face);
 
         // NOTE: Now the bullets
         // TODO: The bullet not show, Time to check this one
@@ -471,7 +519,7 @@ void renderTank(TankInfo* Tank, int frame, SDL_Rect& camera, PlatformP* Platform
 
   }
 else if (!Tank->Belong && Platform->gEnemyTankTexture != nullptr) {
-    render( Platform->gRenderer ,Tank->mBox.x - camera.x,Tank->mBox.y - camera.y, Platform->gEnemyTankTexture, nullptr, Tank->face);
+    render( Platform->gRenderer ,Tank->mBox.x - camera.x,Tank->mBox.y - camera.y, Platform->gEnemyTankTexture,&Platform->gMovingClips[*MovingFrame], Tank->face);
         if(Platform->gEnemyBulletTexture!=nullptr) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){                
@@ -538,13 +586,13 @@ void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera 
              frame[frameIndex] = 0;
          }
 
-         if(frame[frameIndex]/12 < ANIMATING_FRAMES+1 && frame[frameIndex]/12 != -1){
+         if(frame[frameIndex]/12 < EXPLOSION_FRAMES+1 && frame[frameIndex]/12 != -1){
              render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), Platform->gExplosionTexture, &Platform->gExplosionClips[frame[frameIndex]/9]);            
 
              (frame[frameIndex])++;
          }
 
-         if(frame[frameIndex]/12 == ANIMATING_FRAMES+1){
+         if(frame[frameIndex]/12 == EXPLOSION_FRAMES+1){
              frame[frameIndex] = -1;
              Tank->destroyed = true;
          };

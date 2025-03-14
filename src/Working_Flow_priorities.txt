@@ -1,5 +1,5 @@
 working flow priorities
-0.9 Time to create moving object in tank.cpp
+0.9 Time to create moving effect for tank.cpp (Buggy somewhere)
 1. adjust game map and tank object size
 2. redraw map in order to make it prettier (Src files lied in lap. Maybe later)
 3. Don't forget to rewrite the littleGuide fx( Bot tanks now look really dumb) we talked about this before

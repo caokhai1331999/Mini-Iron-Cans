@@ -6,7 +6,7 @@
    $Revision: $
    $Creator: Cao Khai(Casey disciple) $
    $Notice: (C) Copyright 2024 by Cao Khai, Inc. All Rights Reserved. $
-w   ======================================================================== */
+   ======================================================================== */
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -24,6 +24,10 @@ using namespace std;
 #define DOWN 180.0
 #define RIGHT 90.0
 #define LEFT 270.0
+
+enum MOVING_FRAME_NAME{
+    mUP = (uint8_t)1, mDOWN = (uint8_t)3, mRIGHT = (uint8_t)5, mLEFT = (uint8_t)7
+};
 
 enum BulletType{enemyB, userB};
 
