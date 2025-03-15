@@ -40,16 +40,16 @@ REM List all .cpp files in the current directory
 setlocal enabledelayedexpansion
 
 rem Compile the project
-for %%f in (..\src\*.cpp) do (
-   set FILES=!FILES! %%f
- )
+rem for %%f in (..\src\*.cpp) do (
+rem    set FILES=!FILES! %%f
+rem  )
 
 REM Add DLL directory to PATH for runtime
 set PATH=%DLL_DIR%;%PATH%
 
 REM /subsystem:consoles
 REM The reason why the compile the subsystem:consoles may solved the undebug problem. /fsanitize=address /FORCE:MULTIPLE /PDB:TANK_%hr%%min%%sec%_%dd%%mm%%yr%.pdb /LD
-cl %FILES% %COMMON_COMPILER_FLAG% /I %DEFAULT_INCLUDE_DIR% /I %SDL_INCLUDE_DIR%  /link /LIBPATH:%SDL_LIB_DIR% /subsystem:console %INHERENT_LIB% /DEBUG /OUT:%OUT_EXE%
+cl ..\src\*.cpp %COMMON_COMPILER_FLAG% /I %DEFAULT_INCLUDE_DIR% /I %SDL_INCLUDE_DIR% /link /LIBPATH:%SDL_LIB_DIR% /subsystem:console %INHERENT_LIB% /DEBUG /OUT:%OUT_EXE%
 
 if %ERRORLEVEL% EQU 0 (
    @echo Announce: compilation succeeded "(^ w ^)" at %time%
