@@ -13,6 +13,17 @@
 //     *h = default_h*(p->screen_h/DEFAULT_SCREEN_HEIGHT);
 // }
 
+#if _WIN32
+#include "windows.h"
+BOOL WINAPI DllMain(
+    HINSTANCE hinstDLL,  // handle to DLL module
+    DWORD fdwReason,     // reason for calling function
+    LPVOID lpReserved )  // reserved
+{
+    return (TRUE);  // Successful DLL_PROCESS_ATTACH.
+}
+#endif
+
 void displayMenu(PlatformP* p, Game* g){
 
     float scaleW = p->screen_w/DEFAULT_SCREEN_WIDTH;

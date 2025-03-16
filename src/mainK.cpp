@@ -7,30 +7,48 @@
    ======================================================================== */
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
-#include "libloaderapi.h"
+// #include "libloaderapi.h"
+#include "windows.h"
 #include "Gameh.h"
 
 // NOTE: This is all about calling the function in the Xinput.h without the noticing from the compiler
+#define PROCESSINPUT(name) void name(Game * g, PlatformP * p, bool* done)
+typedef PROCESSINPUT(PROCESS_INPUT);
+typedef PROCESS_INPUT(process_input);
 
-// #define GET_PLATFORM(name) void name(PlatformP* platform)
-// typedef GET_GAME_PLATFORM(get_platform);
+#define UPDATE(name) void name(Game * g)
+typedef UPDATE(UPDATE_);
+typedef UPDATE_(update_);
 
-// #define GET_GAME(name) void name(Game* game)
-// typedef GET_GAME_PLATFORM(get_game);
+#define RENDER(name) void name(PlatformP * p, Game* g)
+typedef RENDER(RENDER_);
+typedef RENDER_(render_);
 
-// get_platform(getgameplatform) {
-// };
+#define CLOSE(name) void name(PlatformP * p, Game* g)
+typedef CLOSE(CLOSE_);
+typedef CLOSE_(close_);
 
-// void Get_Game_Code(PlatformP* platform, Game* game){
-//     HMODULE Game_Source_Dll = LoadLibraryA("game_source.dll");
-//     if (Game_Source_Dll) {
-//         platform = (PlatformP*)GetProcAddress(Game_Source_Dll, "Platform");
-//         game = (Game*)GetProcAddress(Game_Source_Dll, "Game");
-//         return true;
-//     } else {
-//         printf("Can not not code from DLL\n");
-//     }
-// }
+HMODULE Game_Source_Dll;
+
+bool Get_Game_Code(PlatformP* platform, Game* game){
+    Game_Source_Dll = LoadLibraryA("game_source.dll");
+    // PlatformP* platform = nullptr;
+    // Game* game = nullptr;
+
+    if (Game_Source_Dll) {
+        platform = (PlatformP*)GetProcAddress(Game_Source_Dll, "PlatformP");
+        game = (Game*)GetProcAddress(Game_Source_Dll, "Game");
+
+        process_input = (ProcessInput* )GetProcAddress(Game_Source_Dll, "ProcessInput");
+        update_ = (Update* )GetProcAddress(Game_Source_Dll, "Update");
+        render_ = (Render* )GetProcAddress(Game_Source_Dll, "Render");
+        close_ = (Close* )GetProcAddress(Game_Source_Dll, "Close");
+
+        return true;
+    } else {
+        printf("Can not not code from DLL\n");
+    }
+}
 
 int main( int argc, char* args[] )
 {
@@ -39,34 +57,42 @@ int main( int argc, char* args[] )
 
     PlatformP* platform = nullptr;
     Game* game = nullptr;
+    
+    Get_Game_Code(platform, game);
     platform = new PlatformP();
-    game =  new Game();        
-
-
-    // if(Get_Game_Code(platform, game)){
-    // }
-
+    game =  new Game();
 
     bool done = false;
-
-    if(!Start(platform, game)) {
+    if(!Get_Game_Code(platform, game)){
+        printf("Couldn't load game code\n");
+    } else {
+        if(!Start(platform, game)) {
             printf("Fail to init game\n");
         } else {
-        printf("Init platform successfully\n");
-        // NOTE:
-            while(game->state != EMPTY) {                
-                ProcessInput(game, platform, &done);
-                Update(game);
-                Render(platform, game);
+            printf("Init platform successfully\n");
+            // NOTE:
+            int count = 0;
+            while(game->state != EMPTY) {
+
+                if(count == 120){
+                    FreeLibrary(Game_Source_Dll);
+                    get_game_code(platform, game);
+                } 
+                process_input(game, platform, &done);
+                update_(game);
+                render_(platform, game);
+                count++;
             }
-            Close(platform, game);
+            close_(platform, game);
             delete game;
             game = nullptr;
             delete platform;
             platform = nullptr;
             printf("End of Game, Thanks so much for playing my game\n");
+        }        
     }
-return 0;
+
+    return 0;
 }
 
 // Enable memory leak detection
