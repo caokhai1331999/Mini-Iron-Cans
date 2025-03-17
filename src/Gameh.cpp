@@ -8,9 +8,9 @@
 #include <Gameh.h>
 // NOTE: Fixed the menu issue
 // NOTE: *= is a dangerous operator. If I don't know exactly what it will bring
-// void resize(int* w, int* h, PlatformP* p){
-//     *w = default_w*(p->screen_w/DEFAULT_SCREEN_WIDTH);
-//     *h = default_h*(p->screen_h/DEFAULT_SCREEN_HEIGHT);
+// void resize(int* w, int* h, g->platformlatformP* p){
+//     *w = default_w*(g->platform->screen_w/DEFAULT_SCREEN_WIDTH);
+//     *h = default_h*(g->platform->screen_h/DEFAULT_SCREEN_HEIGHT);
 // }
 
 #if _WIN32
@@ -24,10 +24,15 @@ BOOL WINAPI DllMain(
 }
 #endif
 
-void displayMenu(PlatformP* p, Game* g){
+// Exported function
+extern "C" __declspec(dllexport) void GameFunction() {
+    std::cout << "Game code exported!\n";
+}
 
-    float scaleW = p->screen_w/DEFAULT_SCREEN_WIDTH;
-    float scaleH = p->screen_h/DEFAULT_SCREEN_HEIGHT;
+void displayMenu(Game* g){
+
+    float scaleW = g->platform->screen_w/DEFAULT_SCREEN_WIDTH;
+    float scaleH = g->platform->screen_h/DEFAULT_SCREEN_HEIGHT;
     
     int wD = 0;
     int hD = 0;
@@ -35,29 +40,29 @@ void displayMenu(PlatformP* p, Game* g){
 
         // NOTE: Scale up the text whenever it is pointed to
         if(g->pointed_option == i+1){
-            if (scaleH == p->screen_w/DEFAULT_SCREEN_WIDTH
-                ,scaleW == p->screen_w/DEFAULT_SCREEN_WIDTH){                
+            if (scaleH == g->platform->screen_w/DEFAULT_SCREEN_WIDTH
+                ,scaleW == g->platform->screen_w/DEFAULT_SCREEN_WIDTH){                
                 scaleH *= 1.5f;   
                 scaleW *= 1.5f;   
             }
         } else {
-            if (scaleH > p->screen_w/DEFAULT_SCREEN_WIDTH
-                ,scaleW > p->screen_w/DEFAULT_SCREEN_WIDTH){                
+            if (scaleH > g->platform->screen_w/DEFAULT_SCREEN_WIDTH
+                ,scaleW > g->platform->screen_w/DEFAULT_SCREEN_WIDTH){                
                 scaleH /= 1.5f;   
                 scaleW /= 1.5f;   
             }            
         }
             
-        if (!loadFromRenderedText(Menu[i], scaleW, scaleH, p->TextColor, p->gFont, p->gRenderer, p->gMenuTexture)) {
+        if (!loadFromRenderedText(Menu[i], scaleW, scaleH, g->platform->TextColor, g->platform->gFont, g->platform->gRenderer, g->platform->gMenuTexture)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );
         } else{
             // How to exactly put these sprite betweeen the screen
-            wD = (int) ((0.2f)*(p->screen_w));
-            hD = (int) ((i*((0.2f)*(p->screen_h))));
+            wD = (int) ((0.2f)*(g->platform->screen_w));
+            hD = (int) ((i*((0.2f)*(g->platform->screen_h))));
             
-            // printf("Screen Width is :%d\n", p->screen_w);
-            // printf("SCreen Height is :%d\n", p->screen_h);
-            render(p->gRenderer, wD, hD, p->gMenuTexture);
+            // printf("Screen Width is :%d\n", g->platform->screen_w);
+            // printf("SCreen Height is :%d\n", g->platform->screen_h);
+            render(g->platform->gRenderer, wD, hD, g->platform->gMenuTexture);
         }
     }    
 }
@@ -92,12 +97,12 @@ void get_Menu_choice(Game* g, KeyState* currentKey){
     }
 }
 
-bool Start(PlatformP* p, Game* g){
-        if(!init(p)){
+bool Start(Game* g){
+        if(!init(g->platform)){
             return false;
         }else{
                 
-            if( !LoadMedia(g->tileSet, p) )
+            if( !LoadMedia(g->tileSet, g->platform) )
             {
                 printf( "Failed to load media!\n" );
                 return false;
@@ -111,7 +116,7 @@ bool Start(PlatformP* p, Game* g){
                 InitializeTankInfo(g->TankPos, g->enemyTank);
                 
                 //Level camera
-                camera = { 0, 0, p->screen_w, p->screen_h};
+                camera = { 0, 0, g->platform->screen_w, g->platform->screen_h};
 
                 if(ExplosionFrame != nullptr){
                     delete []ExplosionFrame;
@@ -203,7 +208,7 @@ void changeState(Game* g, KeyState* key){
     }
 }
 
-void ProcessInput(Game* g, PlatformP *p, bool* done){
+void ProcessInput(Game* g, bool* done){
     // printf("Start process input \n");
     SDL_Event e = {};
     SDL_zero(e);
@@ -218,8 +223,8 @@ void ProcessInput(Game* g, PlatformP *p, bool* done){
         if(e.type == SDL_WINDOWEVENT)
         {
             if(e.window.event == SDL_WINDOWEVENT_RESIZED){                
-                SDL_GetWindowSize(p->gWindow, &p->screen_w, &p->screen_h);
-                // printf("Screen width and height now are:%d %d\n", p->screen_w, p->screen_h);
+                SDL_GetWindowSize(g->platform->gWindow, &g->platform->screen_w, &g->platform->screen_h);
+                // printf("Screen width and height now are:%d %d\n", g->platform->screen_w, g->platform->screen_h);
             }
         }
         
@@ -369,28 +374,28 @@ void resetGame(Game*g){
 
 }        
 
-void RenderMainScene(PlatformP* p, Game* g){
+void RenderMainScene(Game* g){
     EndTime = SDL_GetTicks();
     int k = 0;
  //Clear screen
      // NOTE: Render main scene
  for( int i = 0; i < TOTAL_TILES; ++i )
  {
-     // resize(&g->tileSet[i].mBox.w, g->tileSet[i].mBox.h, p);
+     // resize(&g->tileSet[i].mBox.w, g->tileSet[i].mBox.h, g->platform);
      //touchesWall(&userTank->mBox, tileSet)
-     renderTile( camera, p->gRenderer, g->tileSet[ i ], p->gTileTexture,  p->gTileClips, false);
+     renderTile( camera, g->platform->gRenderer, g->tileSet[ i ], g->platform->gTileTexture,  g->platform->gTileClips, false);
  }
 
  if(!g->userTank->isHit){
-     // resize(&g->userTank.mBox.w, &g->userTank->mBox.h, p);     
-     renderTank(g->userTank, &MovingFrame[4], camera, p);
+     // resize(&g->userTank.mBox.w, &g->userTank->mBox.h, g->platform);     
+     renderTank(g->userTank, &MovingFrame[4], camera, g->platform);
  }else{
      // The additional loop just make the explostion clip run incredibly faster
      // I didn't understand the game loop up until now
      // Just need the checking cycle for that explosion effect
      if(g->userTank->isHit && !g->userTank->destroyed){
          if(ExplosionFrame!=nullptr){
-             renderExplosionFrame(g->userTank, p, &camera, ExplosionFrame, 4);
+             renderExplosionFrame(g->userTank, g->platform, &camera, ExplosionFrame, 4);
          }
      }     
  }
@@ -398,27 +403,27 @@ void RenderMainScene(PlatformP* p, Game* g){
  k = 0;
  while(k < TOTAL_ENEMY_TANK)
  {
-     // resize(&g->enemyTank[k].mBox.w, &g->enemyTank[k].mBox.h, p);
+     // resize(&g->enemyTank[k].mBox.w, &g->enemyTank[k].mBox.h, g->platform);
      if(!g->enemyTank[k].isHit && !g->enemyTank[k].destroyed){
-         renderTank(&g->enemyTank[k], &MovingFrame[k], camera, p);                        
+         renderTank(&g->enemyTank[k], &MovingFrame[k], camera, g->platform);                        
      } else {
      if(g->enemyTank[k].isHit && !g->enemyTank[k].destroyed){
          if(ExplosionFrame!=nullptr){
-             renderExplosionFrame(&g->enemyTank[k], p, &camera, ExplosionFrame, k);              
+             renderExplosionFrame(&g->enemyTank[k], g->platform, &camera, ExplosionFrame, k);              
          }
      }
      }
      k++;
  };
                                    
- renderText(FPS, g->userTank, p);
+ renderText(FPS, g->userTank, g->platform);
  TimeElapsed = EndTime - StartTime;
  FPS = 1/(TimeElapsed/1000.0f);
  StartTime = EndTime;         
 }
 
 
-void Close(PlatformP* p, Game* g){
+void Close(Game* g){
     delete []ExplosionFrame;
     ExplosionFrame = nullptr;    
 
@@ -444,48 +449,48 @@ void Close(PlatformP* p, Game* g){
     delete[] g->tileSet;
     g->tileSet = NULL;
     
-    close(p);        
+    close(g->platform);        
 }
 
 
-void Render (PlatformP* p, Game* g){
+void Render (Game* g){
 
     if (g->state != EMPTY){
-        SDL_RenderClear( p->gRenderer);
-        SDL_SetRenderDrawColor( p->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+        SDL_RenderClear( g->platform->gRenderer);
+        SDL_SetRenderDrawColor( g->platform->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
         // printf("Render accordingly to state\n");
-        if(camera.w != p->screen_w){
-            camera.w = p->screen_w;
+        if(camera.w != g->platform->screen_w){
+            camera.w = g->platform->screen_w;
         }
 
-        if(camera.h != p->screen_h){
-            camera.h = p->screen_h;
+        if(camera.h != g->platform->screen_h){
+            camera.h = g->platform->screen_h;
         }
 
         if (g->state == MENU_INIT || g->state == PAUSE){
 
             if (g->stateChange == CHANGED){
                 g->stateChange = NOT_YET;
-                SDL_SetWindowSize(p->gWindow, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);                
-                SDL_SetWindowPosition(p->gWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-                SDL_GetWindowSize(p->gWindow, &p->screen_w, &p->screen_h);
+                SDL_SetWindowSize(g->platform->gWindow, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);                
+                SDL_SetWindowPosition(g->platform->gWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+                SDL_GetWindowSize(g->platform->gWindow, &g->platform->screen_w, &g->platform->screen_h);
             }
             
             // NOTE: The render part is already in the menu fx. So what will I put in this one???
-            displayMenu(p, g);
+            displayMenu(g);
         } else if (g->state == GAME_NEW || g->state == GAME_RELOADED){
 
             if (g->stateChange == CHANGED){
-                SDL_SetWindowSize(p->gWindow, 2 * DEFAULT_SCREEN_WIDTH, 2*DEFAULT_SCREEN_HEIGHT);
-                SDL_SetWindowPosition(p->gWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+                SDL_SetWindowSize(g->platform->gWindow, 2 * DEFAULT_SCREEN_WIDTH, 2*DEFAULT_SCREEN_HEIGHT);
+                SDL_SetWindowPosition(g->platform->gWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
                 g->stateChange = NOT_YET;
-                SDL_GetWindowSize(p->gWindow, &p->screen_w, &p->screen_h);
+                SDL_GetWindowSize(g->platform->gWindow, &g->platform->screen_w, &g->platform->screen_h);
             }
-            RenderMainScene(p, g);
+            RenderMainScene(g);
 
             // NOTE: Set the position too
         }
-        SDL_RenderPresent( p->gRenderer);        
+        SDL_RenderPresent( g->platform->gRenderer);        
         // NOTE: Else do nothing
     }    
 }

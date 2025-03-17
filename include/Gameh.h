@@ -53,7 +53,8 @@ struct Game{
     uint8_t pointed_option = 0;
     MENUCHOICE chosen_option = NONE;
     // NOTE: Manually set Init game stats here!!!
-
+    PlatformP* platform;
+    
     Tile* tileSet;   
     Position* TankPos;
     TankInfo* userTank;
@@ -64,6 +65,9 @@ struct Game{
         pointed_option = 0;
         chosen_option = NONE;
         stateChange = NOT_YET;
+
+        platform = nullptr;
+        platform = new PlatformP;
         
         tileSet = nullptr;
         tileSet = new Tile[TOTAL_TILES]();
@@ -80,18 +84,18 @@ struct Game{
 };
 
 // void resize(int* w, int* h, PlatformP* p);
-void displayMenu(PlatformP* p, Game* g);
+void displayMenu(Game* g);
 void get_Menu_choice(Game* g, KeyState* key);
 void changeState(Game* g);
-bool Start(PlatformP* p, Game* g);
-void ProcessInput(Game* g, PlatformP *p, bool* done);
+bool Start(Game* g);
+void ProcessInput(Game* g, bool* done);
 void Update(Game* g);
 void resetGame(Game* g);
 
 void runMainScene(Game* g);
-void RenderMainScene(PlatformP* p, Game* g);
+void RenderMainScene(Game* g);
 //===========================
-void Render(PlatformP* p, Game* g);
-void Close(PlatformP* p, Game* g);
+void Render(Game* g);
+void Close(Game* g);
 #define GAME_H
 #endif

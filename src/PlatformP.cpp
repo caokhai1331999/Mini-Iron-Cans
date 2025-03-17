@@ -8,7 +8,6 @@
 #include <PlatformP.h>
 // NOTE: One the way to make Platform in SIMD and Procedure styles.
 
-
 bool IsArrow(SDL_Scancode KeyCode){
     if (KeyCode > (SDL_Scancode)78 && KeyCode < (SDL_Scancode)83){
         return true;
