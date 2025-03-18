@@ -99,5 +99,6 @@ time drawing from SDL_GetTicks hold game down really much
    frame = 0 to do the explosion effect which lead to change destroyed flag
    it end. Hence it stuck between isHit and !destroyed (No explode and no
    respawn)
-
+?? main screen not work while jame platform into game struct
+?? also fix the build command on emacs too
 ?? Time to make the bot Tank smarter
