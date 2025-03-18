@@ -120,19 +120,11 @@ bool Start(Game* g){
                 //Level camera
                 camera = { 0, 0, g->platform->screen_w, g->platform->screen_h};
 
-                if(ExplosionFrame != nullptr){
-                    delete []ExplosionFrame;
-                    ExplosionFrame = nullptr;
-                }
-
-                ExplosionFrame = new uint8_t[5]();
-
                 for(int i = 0; i < 5; i++){
                     ExplosionFrame[i] = 0;
                 };
 
-                MovingFrame = new uint8_t[5]();
-
+                
                 for(int i = 0; i < 5; i++){
                     MovingFrame[i] = 0;
                 };
@@ -397,7 +389,7 @@ void RenderMainScene(Game* g){
      // Just need the checking cycle for that explosion effect
      if(g->userTank->isHit && !g->userTank->destroyed){
          if(ExplosionFrame!=nullptr){
-             renderExplosionFrame(g->userTank, g->platform, &camera, ExplosionFrame, 4);
+             renderExplosionFrame(g->userTank, g->platform, &camera, &ExplosionFrame[4], 4);
          }
      }     
  }
@@ -411,7 +403,7 @@ void RenderMainScene(Game* g){
      } else {
      if(g->enemyTank[k].isHit && !g->enemyTank[k].destroyed){
          if(ExplosionFrame!=nullptr){
-             renderExplosionFrame(&g->enemyTank[k], g->platform, &camera, ExplosionFrame, k);              
+             renderExplosionFrame(&g->enemyTank[k], g->platform, &camera, &ExplosionFrame[k], k);              
          }
      }
      }
@@ -426,11 +418,11 @@ void RenderMainScene(Game* g){
 
 
 void Close(Game* g){
-    delete []ExplosionFrame;
-    ExplosionFrame = nullptr;    
+    // delete []ExplosionFrame;
+    // ExplosionFrame = nullptr;    
 
-    delete []MovingFrame;
-    MovingFrame = nullptr;    
+    // delete []MovingFrame;
+    // MovingFrame = nullptr;    
 
     delete[] g->TankPos;
     g->TankPos = nullptr;

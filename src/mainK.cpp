@@ -12,6 +12,10 @@
 #include "Gameh.h"
 
 // NOTE: This is all about calling the function in the Xinput.h without the noticing from the compiler
+#define START(name) bool name(Game * g)
+typedef START(START_);
+// PROCESS_INPUT(processinputstub){};
+
 #define PROCESSINPUT(name) void name(Game * g,  bool* done)
 typedef PROCESSINPUT(PROCESS_INPUT_);
 // PROCESS_INPUT(processinputstub){};
@@ -28,6 +32,7 @@ typedef RENDER(RENDER_);
 typedef CLOSE(CLOSE_);
 // CLOSE_(closestub){};
 
+static START_* start_;
 static PROCESS_INPUT_* process_input_ ;
 static UPDATE_* update_;
 static RENDER_* render_;
@@ -46,10 +51,11 @@ bool Get_Game_Code(){
 
     if (Game_Source_Dll) {
        process_input_ = (PROCESS_INPUT_* )GetProcAddress(Game_Source_Dll, "ProcessInput");
+       start_ = (START_* )GetProcAddress(Game_Source_Dll, "Start");
        update_ = (UPDATE_* )GetProcAddress(Game_Source_Dll, "Update");
        render_ = (RENDER_* )GetProcAddress(Game_Source_Dll, "Render");
        close_ = (CLOSE_* )GetProcAddress(Game_Source_Dll, "Close");
-        printf("Get Code successfully from DLL with change\n");
+        printf("Get Code successfully from DLL\n");
         return true;
     } else {
         printf("Can not get code from DLL\n");
@@ -71,7 +77,7 @@ int main( int argc, char* args[] )
     if(!Get_Game_Code()){
         printf("Couldn't load game code\n");
     } else {
-        if(!Start(game)) {
+        if(!start_(game)) {
             printf("Fail to init game\n");
         } else {
             printf("Init platform successfully not yet\n");
@@ -79,6 +85,7 @@ int main( int argc, char* args[] )
             int count = 0;
             while(game->state != EMPTY) {
                 if(count == 120){
+                    printf("Load and unload code\n");
                         Unload_Game_Code();
                         Get_Game_Code();
                         count = 0;                        

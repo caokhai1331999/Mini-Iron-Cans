@@ -278,7 +278,7 @@ bool init(PlatformP* Platform)
                 if(Platform->gFont != nullptr){
                     Platform->gFont = nullptr;
                 }
-                Platform->gFont = TTF_OpenFont( "Roboto-Medium.ttf", 28 );
+                Platform->gFont = TTF_OpenFont( "Roboto.ttf", 28 );
                 Platform->TextColor = {249 ,166 ,2};
                 // SDL_Color TextColor = {0 ,0 ,0};
 			}
@@ -298,7 +298,7 @@ bool setTiles( Tile *tiles,PlatformP* Platform){
     //The tile offsets
     int x = 0, y = 0;
 
-    //Open the map
+ //Open the map
     std::ifstream map( "smap.map" );
 
     //If the map couldn't be loaded
