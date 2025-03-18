@@ -37,6 +37,7 @@ HMODULE Game_Source_Dll;
 
 bool Get_Game_Code(){
     // NOTE: while game is running it lock Gameh.dll for hot loading code from it but still can be compile
+
     if (!CopyFile("Gameh.dll", "Gameh(copy).dll", false)){
         printf("Can not copy dll file\n");
     } else {
@@ -45,14 +46,14 @@ bool Get_Game_Code(){
 
 
     if (Game_Source_Dll) {
-       process_input_ = (PROCESS_INPUT_* )GetProcAddress(Game_Source_Dll, "ProcessInput");
-       update_ = (UPDATE_* )GetProcAddress(Game_Source_Dll, "Update");
-       render_ = (RENDER_* )GetProcAddress(Game_Source_Dll, "Render");
-       close_ = (CLOSE_* )GetProcAddress(Game_Source_Dll, "Close");
+        process_input_ = (PROCESS_INPUT_* )GetProcAddress(Game_Source_Dll, "ProcessInput");
+        update_ = (UPDATE_* )GetProcAddress(Game_Source_Dll, "Update");
+        render_ = (RENDER_* )GetProcAddress(Game_Source_Dll, "Render");
+        close_ = (CLOSE_* )GetProcAddress(Game_Source_Dll, "Close");
         printf("Get Code successfully from DLL with change\n");
         return true;
     } else {
-        printf("Can not get code from DLL\n");
+        printf("Can not get code from DLL with change\n");
         return false;
     }
 }
@@ -81,7 +82,8 @@ int main( int argc, char* args[] )
                 if(count == 120){
                         Unload_Game_Code();
                         Get_Game_Code();
-                        count = 0;                        
+                        count = 0;
+                        printf("Check for code change\n");
                 } 
                 process_input_(game, &done);
                 update_(game);

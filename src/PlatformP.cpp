@@ -278,7 +278,7 @@ bool init(PlatformP* Platform)
                 if(Platform->gFont != nullptr){
                     Platform->gFont = nullptr;
                 }
-                Platform->gFont = TTF_OpenFont( "Roboto-Medium.ttf", 28 );
+                Platform->gFont = TTF_OpenFont( "Roboto.ttf", 28 );
                 Platform->TextColor = {249 ,166 ,2};
                 // SDL_Color TextColor = {0 ,0 ,0};
 			}
