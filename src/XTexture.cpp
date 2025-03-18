@@ -74,9 +74,9 @@ bool loadFromRenderedText(char* textureText, float ScaleW, float ScaleH, SDL_Col
 		else
 		{
                     texture->mWidth = (int)(textSurface->w)* ScaleW;
-                    printf("Text Width is : %d\n", texture->mWidth);
+                    // printf("Text Width is : %d\n", texture->mWidth);
                     texture->mHeight = (int)(textSurface->h)* ScaleH;
-                    printf("Text Height is : %d\n", texture->mHeight);
+                    // printf("Text Height is : %d\n", texture->mHeight);
         }
 
 		//Get rid of old surface

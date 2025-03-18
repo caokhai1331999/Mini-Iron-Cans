@@ -47,12 +47,16 @@ bool Get_Game_Code(Game* game){
        update_ = (UPDATE_* )GetProcAddress(Game_Source_Dll, "Update");
        render_ = (RENDER_* )GetProcAddress(Game_Source_Dll, "Render");
        close_ = (CLOSE_* )GetProcAddress(Game_Source_Dll, "Close");
-
+        printf("Get Code successfully from DLL with change\n");
         return true;
     } else {
         printf("Can not get code from DLL\n");
         return false;
     }
+}
+
+void Unload_Game_Code(Game* game){
+    FreeLibrary(Game_Source_Dll);
 }
 
 int main( int argc, char* args[] )
@@ -71,14 +75,15 @@ int main( int argc, char* args[] )
         if(!Start(game)) {
             printf("Fail to init game\n");
         } else {
-            printf("Init platform successfully\n");
+            printf("Init platform successfully not yet\n");
             // NOTE:
             int count = 0;
             while(game->state != EMPTY) {
 
                 if(count == 120){
-                    FreeLibrary(Game_Source_Dll);
+                    Unload_Game_Code(game);
                     Get_Game_Code(game);
+                    count = 0;
                 } 
                 process_input_(game, &done);
                 update_(game);

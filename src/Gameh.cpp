@@ -31,6 +31,8 @@ extern "C" __declspec(dllexport) void GameFunction() {
 
 void displayMenu(Game* g){
 
+    printf("Load Game menu\n");
+    
     float scaleW = g->platform->screen_w/DEFAULT_SCREEN_WIDTH;
     float scaleH = g->platform->screen_h/DEFAULT_SCREEN_HEIGHT;
     
