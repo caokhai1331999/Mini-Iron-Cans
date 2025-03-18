@@ -35,14 +35,16 @@ static CLOSE_* close_;
 
 HMODULE Game_Source_Dll;
 
-bool Get_Game_Code(Game* game){
-    Game_Source_Dll = LoadLibraryA("Gameh.dll");
-    // PlatformP* platform = nullptr;
-    // Game* game = nullptr;
+bool Get_Game_Code(){
+    // NOTE: while game is running it lock Gameh.dll for hot loading code from it but still can be compile
+    if (!CopyFile("Gameh.dll", "Gameh(copy).dll", false)){
+        printf("Can not copy dll file\n");
+    } else {
+        Game_Source_Dll = LoadLibraryA("Gameh(copy).dll");        
+    }
+
 
     if (Game_Source_Dll) {
-        game = (Game*)GetProcAddress(Game_Source_Dll, "Game");
-        
        process_input_ = (PROCESS_INPUT_* )GetProcAddress(Game_Source_Dll, "ProcessInput");
        update_ = (UPDATE_* )GetProcAddress(Game_Source_Dll, "Update");
        render_ = (RENDER_* )GetProcAddress(Game_Source_Dll, "Render");
@@ -55,7 +57,7 @@ bool Get_Game_Code(Game* game){
     }
 }
 
-void Unload_Game_Code(Game* game){
+void Unload_Game_Code(){
     FreeLibrary(Game_Source_Dll);
 }
 
@@ -64,12 +66,9 @@ int main( int argc, char* args[] )
     _CrtDumpMemoryLeaks();
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
     Game* game = nullptr;
-    
-    Get_Game_Code( game);
     game =  new Game();
-
     bool done = false;
-    if(!Get_Game_Code(game)){
+    if(!Get_Game_Code()){
         printf("Couldn't load game code\n");
     } else {
         if(!Start(game)) {
@@ -79,11 +78,10 @@ int main( int argc, char* args[] )
             // NOTE:
             int count = 0;
             while(game->state != EMPTY) {
-
                 if(count == 120){
-                    Unload_Game_Code(game);
-                    Get_Game_Code(game);
-                    count = 0;
+                        Unload_Game_Code();
+                        Get_Game_Code();
+                        count = 0;                        
                 } 
                 process_input_(game, &done);
                 update_(game);
