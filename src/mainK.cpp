@@ -51,20 +51,12 @@ bool Get_Game_Code(){
 
 
     if (Game_Source_Dll) {
-<<<<<<< HEAD
        process_input_ = (PROCESS_INPUT_* )GetProcAddress(Game_Source_Dll, "ProcessInput");
        start_ = (START_* )GetProcAddress(Game_Source_Dll, "Start");
        update_ = (UPDATE_* )GetProcAddress(Game_Source_Dll, "Update");
        render_ = (RENDER_* )GetProcAddress(Game_Source_Dll, "Render");
        close_ = (CLOSE_* )GetProcAddress(Game_Source_Dll, "Close");
         printf("Get Code successfully from DLL\n");
-=======
-        process_input_ = (PROCESS_INPUT_* )GetProcAddress(Game_Source_Dll, "ProcessInput");
-        update_ = (UPDATE_* )GetProcAddress(Game_Source_Dll, "Update");
-        render_ = (RENDER_* )GetProcAddress(Game_Source_Dll, "Render");
-        close_ = (CLOSE_* )GetProcAddress(Game_Source_Dll, "Close");
-        printf("Get Code successfully from DLL with change\n");
->>>>>>> 3630db6128cda88172e81c9fb4cbe1327ee9ab2f
         return true;
     } else {
         printf("Can not get code from DLL with change\n");
