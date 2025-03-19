@@ -117,9 +117,7 @@ bool Start(Game* g){
                 InitializeTankPos(g->TankPos);
                 InitializeTankInfo(g->TankPos, g->enemyTank);
                 
-                //Level camera
-                camera = { 0, 0, g->platform->screen_w, g->platform->screen_h};
-
+                //Level camera                
                 for(int i = 0; i < 5; i++){
                     ExplosionFrame[i] = 0;
                 };
@@ -218,7 +216,6 @@ void ProcessInput(Game* g, bool* done){
         {
             if(e.window.event == SDL_WINDOWEVENT_RESIZED){                
                 SDL_GetWindowSize(g->platform->gWindow, &g->platform->screen_w, &g->platform->screen_h);
-                // printf("Screen width and height now are:%d %d\n", g->platform->screen_w, g->platform->screen_h);
             }
         }
         
@@ -268,6 +265,9 @@ void ProcessInput(Game* g, bool* done){
 
 void runMainScene(Game* g){
 
+    camera.w = g->platform->screen_w;
+    camera.h = g->platform->screen_h;
+    
     if(!g->userTank->destroyed && !g->userTank->isHit){
         move(false, Ucollided, g->userTank);
     }else{
@@ -309,7 +309,7 @@ void runMainScene(Game* g){
         littleGuide(&g->enemyTank[i], g->userTank, Ecollided);
     // ===============================================
     }    
-    setCamera(camera, g->userTank);        
+    setCamera(&camera, g->userTank);        
 }
 }
 
@@ -375,21 +375,21 @@ void RenderMainScene(Game* g){
      // NOTE: Render main scene
  for( int i = 0; i < TOTAL_TILES; ++i )
  {
-     // resize(&g->tileSet[i].mBox.w, g->tileSet[i].mBox.h, g->platform);
+    // NOTE: Resize tile make scene flickering
      //touchesWall(&userTank->mBox, tileSet)
-     renderTile( camera, g->platform->gRenderer, g->tileSet[ i ], g->platform->gTileTexture,  g->platform->gTileClips, false);
+     renderTile( &camera, g->platform->gRenderer, g->tileSet[ i ], g->platform->gTileTexture,  g->platform->gTileClips, false);
  }
 
  if(!g->userTank->isHit){
-     // resize(&g->userTank.mBox.w, &g->userTank->mBox.h, g->platform);     
-     renderTank(g->userTank, &MovingFrame[4], camera, g->platform);
+     renderTank(g->userTank, &MovingFrame[4], &camera, g->platform);
+     // printf("Tank sprite is being rendered\n");
  }else{
      // The additional loop just make the explostion clip run incredibly faster
      // I didn't understand the game loop up until now
      // Just need the checking cycle for that explosion effect
      if(g->userTank->isHit && !g->userTank->destroyed){
          if(ExplosionFrame!=nullptr){
-             renderExplosionFrame(g->userTank, g->platform, &camera, &ExplosionFrame[4], 4);
+             renderExplosionFrame(g->userTank, g->platform, &camera, &ExplosionFrame[4]);
          }
      }     
  }
@@ -397,13 +397,12 @@ void RenderMainScene(Game* g){
  k = 0;
  while(k < TOTAL_ENEMY_TANK)
  {
-     // resize(&g->enemyTank[k].mBox.w, &g->enemyTank[k].mBox.h, g->platform);
      if(!g->enemyTank[k].isHit && !g->enemyTank[k].destroyed){
-         renderTank(&g->enemyTank[k], &MovingFrame[k], camera, g->platform);                        
+         renderTank(&g->enemyTank[k], &MovingFrame[k], &camera, g->platform);                        
      } else {
      if(g->enemyTank[k].isHit && !g->enemyTank[k].destroyed){
          if(ExplosionFrame!=nullptr){
-             renderExplosionFrame(&g->enemyTank[k], g->platform, &camera, &ExplosionFrame[k], k);              
+             renderExplosionFrame(&g->enemyTank[k], g->platform, &camera, &ExplosionFrame[k]);              
          }
      }
      }
@@ -449,22 +448,17 @@ void Close(Game* g){
 
 void Render (Game* g){
 
-    if (g->state != EMPTY){
-        SDL_RenderClear( g->platform->gRenderer);
-        SDL_SetRenderDrawColor( g->platform->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-        // printf("Render accordingly to state\n");
-        if(camera.w != g->platform->screen_w){
-            camera.w = g->platform->screen_w;
-        }
+    SDL_RenderClear( g->platform->gRenderer);
+    SDL_SetRenderDrawColor( g->platform->gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
-        if(camera.h != g->platform->screen_h){
-            camera.h = g->platform->screen_h;
-        }
+    if (g->state != EMPTY){
+        // printf("Render accordingly to state\n");
 
         if (g->state == MENU_INIT || g->state == PAUSE){
 
             if (g->stateChange == CHANGED){
                 g->stateChange = NOT_YET;
+
                 SDL_SetWindowSize(g->platform->gWindow, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);                
                 SDL_SetWindowPosition(g->platform->gWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
                 SDL_GetWindowSize(g->platform->gWindow, &g->platform->screen_w, &g->platform->screen_h);
@@ -475,16 +469,18 @@ void Render (Game* g){
         } else if (g->state == GAME_NEW || g->state == GAME_RELOADED){
 
             if (g->stateChange == CHANGED){
+                g->stateChange = NOT_YET;
+
                 SDL_SetWindowSize(g->platform->gWindow, 2 * DEFAULT_SCREEN_WIDTH, 2*DEFAULT_SCREEN_HEIGHT);
                 SDL_SetWindowPosition(g->platform->gWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-                g->stateChange = NOT_YET;
                 SDL_GetWindowSize(g->platform->gWindow, &g->platform->screen_w, &g->platform->screen_h);
+
             }
             RenderMainScene(g);
 
             // NOTE: Set the position too
         }
-        SDL_RenderPresent( g->platform->gRenderer);        
         // NOTE: Else do nothing
     }    
+        SDL_RenderPresent( g->platform->gRenderer);        
 }

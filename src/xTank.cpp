@@ -268,29 +268,34 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
 }
 
 //Centers the camera over the Tank
-void setCamera( SDL_Rect& camera, TankInfo* UserTank ){
+void setCamera( SDL_Rect* camera, TankInfo* UserTank ){
 
     // Initialize the collision box
-	camera.x = ( UserTank->mBox.x + TANK_WIDTH / 2 ) - camera.w/2;
+	camera->x = ( UserTank->mBox.x + TANK_WIDTH/2 ) - camera->w/2;
     // Give a fair distance between the camera and the main tank
-	camera.y = ( UserTank->mBox.y + TANK_HEIGHT / 2 ) - camera.h/2;    
-        
+	camera->y = ( UserTank->mBox.y + TANK_HEIGHT/2 ) - camera->h/2;
+
+    printf("%d %d\n",camera->w, camera->h);
+    // NOTE: so with this formula why camera pos is alway ahead of (>) userTank one
+    // Why camera w, h turn to 0
+    
 	//Keep the camera in bounds
-	if( camera.x < 0 )
+	if( camera->x < 0 )
 	{ 
-		camera.x = 0;
+		camera->x = 0;
 	}
-	if( camera.y < 0 )
+	if( camera->y < 0 )
 	{
-		camera.y = 0;
+		camera->y = 0;
 	}
-	if( camera.x > LEVEL_WIDTH - camera.w )
+
+	if( camera->x > LEVEL_WIDTH - camera->w )
 	{
-		camera.x = LEVEL_WIDTH - camera.w;
+		camera->x = LEVEL_WIDTH - camera->w;
 	}
-	if( camera.y > LEVEL_HEIGHT - camera.h )
+	if( camera->y > LEVEL_HEIGHT - camera->h )
 	{
-		camera.y = LEVEL_HEIGHT - camera.h;
+		camera->y = LEVEL_HEIGHT - camera->h;
 	}
     
 }

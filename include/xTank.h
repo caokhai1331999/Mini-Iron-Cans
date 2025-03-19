@@ -119,6 +119,6 @@ void resetBullet(Bullet* bullet);
 void resetTank(TankInfo* Tank);
 bool BiTankCheck(TankInfo* ATank, TankInfo* BTank);
 //Centers the camera over the Tank
-void setCamera( SDL_Rect& camera ,TankInfo* UserTank);
+void setCamera( SDL_Rect* camera ,TankInfo* UserTank);
 #define XTANK_H
 #endif

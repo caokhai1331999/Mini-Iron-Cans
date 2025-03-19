@@ -100,10 +100,13 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
             
            Platform->gMovingClips[mUP-1] = {(mUP-1)*horizontal_distance, (mUP-1)*vertical_distance, frame_w_h, frame_w_h};
            Platform->gMovingClips[mUP] = {(mUP)*horizontal_distance, (mUP)*vertical_distance, frame_w_h, frame_w_h};
+
            Platform->gMovingClips[mDOWN-1] = {(mDOWN-1)*horizontal_distance, (mDOWN-1)*vertical_distance, frame_w_h, frame_w_h};
            Platform->gMovingClips[mDOWN] = {(mDOWN)*horizontal_distance, (mDOWN)*vertical_distance, frame_w_h, frame_w_h};
+
            Platform->gMovingClips[mRIGHT-1] = {(mRIGHT-1)*horizontal_distance, (mRIGHT-1)*vertical_distance, frame_w_h, frame_w_h};
            Platform->gMovingClips[mRIGHT] = {(mRIGHT)*horizontal_distance, (mRIGHT)*vertical_distance, frame_w_h, frame_w_h}; 
+
            Platform->gMovingClips[mLEFT-1] = {(mUP-1)*horizontal_distance, (mUP-1)*vertical_distance, frame_w_h, frame_w_h};
            Platform->gMovingClips[mLEFT] ={(mLEFT)*horizontal_distance, (mLEFT)*vertical_distance, frame_w_h, frame_w_h};
         }
@@ -463,66 +466,65 @@ bool setTiles( Tile *tiles,PlatformP* Platform){
 }
 
 //Shows the Tank on the screen
-void renderTank(TankInfo* Tank, uint8_t* MovingFrame, SDL_Rect& camera, PlatformP* Platform) {
+void renderTank(TankInfo* Tank, uint8_t* MovingFrame, SDL_Rect* camera, PlatformP* Platform) {
 
     if(!Tank->destroyed && !Tank->isHit) {
     //NOTE: Show the tank and bullet here
         switch((int)Tank->face){
             case (int)UP:
-                if(*MovingFrame > mUP-1){
-                    *MovingFrame = mUP-1;
+                if((*MovingFrame)/5 > mUP-1){
+                    (*MovingFrame) = (mUP-1)*5;
                 } else {
-                    *MovingFrame += *MovingFrame/5;
+                    (*MovingFrame)++;
                 };
                 break;
 
             case (int)DOWN:
-                if(*MovingFrame > mDOWN || *MovingFrame < mDOWN-1){
-                    *MovingFrame = mDOWN-1;
+                if((*MovingFrame)/5 > mDOWN || (*MovingFrame)/5 < mDOWN-1){
+                    (*MovingFrame) = (mDOWN-1)*5;
                 } else {
-                    *MovingFrame += *MovingFrame/5;
+                    (*MovingFrame)++;
                 };
                 break;
 
             case (int)RIGHT:
-                if(*MovingFrame < mRIGHT-1 || *MovingFrame > mRIGHT){
-                    *MovingFrame = mRIGHT -1;
+                if((*MovingFrame)/5 < mRIGHT-1 || (*MovingFrame)/5 > mRIGHT){
+                    (*MovingFrame) = (mRIGHT -1)*5;
                 } else {
-                    *MovingFrame += *MovingFrame/5;
+                    (*MovingFrame)++;
                 };
                 break;
-
             case (int)LEFT:
-                if(*MovingFrame < mLEFT-1 || *MovingFrame > mLEFT){
-                    *MovingFrame = mLEFT-1;
+
+                if((*MovingFrame)/5 < mLEFT-1 || (*MovingFrame)/5 > mLEFT){
+                    (*MovingFrame) = (mLEFT-1)*5;
                 } else {
-                    *MovingFrame += *MovingFrame/5;
+                    (*MovingFrame)++;
                 };
                 break;
         }
     if (Tank->Belong && Platform->gUserTankTexture!=nullptr) {
-        // printf("User Tank image is being rendered\n");
-        render( Platform->gRenderer ,(Tank->mBox.x - camera.x), (Tank->mBox.y - camera.y), Platform->gUserTankTexture, &Platform->gMovingClips[*MovingFrame], Tank->face);
+        // NOTE: Because of the camera position negative out the position of the
+        // printf("Position tank x camera : %d %d\n", Tank->mBox.x, camera->x);
+        render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), Platform->gUserTankTexture, &Platform->gMovingClips[(*MovingFrame)/5], Tank->face);
 
-        // NOTE: Now the bullets
-        // TODO: The bullet not show, Time to check this one
-        // The bullet stuck with number 0 while get near bot Tank
         if(Platform->gUserBulletTexture!=nullptr) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){                
-                // printf("Bullets %d image is being rendered\n", i);
-                render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), Platform->gUserBulletTexture, nullptr, Tank->face);
+
+                render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera->x), (Tank->Bullets[i].blBox.y - camera->y), Platform->gUserBulletTexture, nullptr, Tank->face);
             }
         }
     }
 
   }
 else if (!Tank->Belong && Platform->gEnemyTankTexture != nullptr) {
-    render( Platform->gRenderer ,Tank->mBox.x - camera.x,Tank->mBox.y - camera.y, Platform->gEnemyTankTexture,&Platform->gMovingClips[*MovingFrame], Tank->face);
-        if(Platform->gEnemyBulletTexture!=nullptr) {             
+    render( Platform->gRenderer ,Tank->mBox.x - camera->x,Tank->mBox.y - camera->y, Platform->gEnemyTankTexture,&Platform->gMovingClips[(*MovingFrame/5)], Tank->face);
+
+    if(Platform->gEnemyBulletTexture!=nullptr) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){                
-                render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera.x), (Tank->Bullets[i].blBox.y - camera.y), Platform->gEnemyBulletTexture, nullptr, Tank->face);
+                render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera->x), (Tank->Bullets[i].blBox.y - camera->y), Platform->gEnemyBulletTexture, nullptr, Tank->face);
             }
         }
     }        
@@ -542,8 +544,8 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
                 
     sprintf(OutPut ,"FPS: %d \n",int(FPS));
 
-    float scaleW = Platform->screen_w!=DEFAULT_SCREEN_WIDTH?Platform->screen_w/DEFAULT_SCREEN_WIDTH:1.0f;  
-    float scaleH = Platform->screen_h!=DEFAULT_SCREEN_HEIGHT?Platform->screen_h/DEFAULT_SCREEN_HEIGHT:1.0f;  
+    float scaleW = Platform->screen_w!=DEFAULT_SCREEN_WIDTH?(Platform->screen_w/DEFAULT_SCREEN_WIDTH):1.0f;  
+    float scaleH = Platform->screen_h!=DEFAULT_SCREEN_HEIGHT?(Platform->screen_h/DEFAULT_SCREEN_HEIGHT):1.0f;  
     // printf(OutPut);
                 
     if (!loadFromRenderedText(OutPut, scaleW, scaleH, Platform->TextColor, Platform->gFont, Platform->gRenderer, Platform->gTextTexture)) {
@@ -558,7 +560,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
         //Update screen
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
         } else {
-            render(Platform->gRenderer, Platform->screen_w - 300*(scaleW), 0, Platform->gTextTexture);                    
+            render(Platform->gRenderer, (250*(scaleW)), 0, Platform->gTextTexture);                    
         }                    
         // printf(OutPut);
     } else {                    
@@ -567,32 +569,29 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
         if (!loadFromRenderedText(OutPut, scaleW, scaleH, Platform->TextColor, Platform->gFont, Platform->gRenderer, Platform->gTextTexture)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
         } else {
-            render(Platform->gRenderer, Platform->screen_w - 200*(scaleH), 0, Platform->gTextTexture);                    
+            render(Platform->gRenderer, (150*(scaleW)), 0, Platform->gTextTexture);                    
         }                    
         // printf(OutPut);
     } 
 }
 
-void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera , uint8_t* frame, int frameIndex){
-
-    // real32 ExploFrameStartTime = 0.0f;
-    // real32 ExploFrameEndTime = 0.0f;
-    // real32 ExploFrameTime = 0.0f; ;
+void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera , uint8_t* frame){
 
          // NOTE: This secure the game check isHit flag first then
          // destroyed one
-         if(frame[frameIndex] == -1){
-             frame[frameIndex] = 0;
+         if(*frame == -1){
+             (*frame) = 0;
          }
 
-         if(frame[frameIndex]/12 < EXPLOSION_FRAMES+1 && frame[frameIndex]/12 != -1){
-             render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), Platform->gExplosionTexture, &Platform->gExplosionClips[frame[frameIndex]/9]);            
+         if((*frame)/12 < EXPLOSION_FRAMES+1 && (*frame)/12 != -1){
+             render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), Platform->gExplosionTexture, &Platform->gExplosionClips[*frame]);            
 
-             (frame[frameIndex])++;
+             (*frame)++;
          }
 
-         if(frame[frameIndex]/12 == EXPLOSION_FRAMES+1){
-             frame[frameIndex] = -1;
+         if((*frame)/12 == EXPLOSION_FRAMES){
+             (*frame) = -1;
              Tank->destroyed = true;
+             Tank->destroyed?printf("Reset tank destroyed flag\n"):printf("Tank destroyed flag not reset yet!!\n");
          };
 }    

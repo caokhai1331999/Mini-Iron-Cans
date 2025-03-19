@@ -73,9 +73,9 @@ bool loadFromRenderedText(char* textureText, float ScaleW, float ScaleH, SDL_Col
 		}
 		else
 		{
-                    texture->mWidth = (int)(textSurface->w)* ScaleW;
+                    texture->mWidth = (int)(textSurface->w/1.5)* ScaleW;
                     // printf("Text Width is : %d\n", texture->mWidth);
-                    texture->mHeight = (int)(textSurface->h)* ScaleH;
+                    texture->mHeight = (int)(textSurface->h/1.5)* ScaleH;
                     // printf("Text Height is : %d\n", texture->mHeight);
         }
 

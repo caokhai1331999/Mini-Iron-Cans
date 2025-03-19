@@ -23,7 +23,7 @@ global_variable uint8_t FPS = 0;
 
 global_variable uint8_t ExplosionFrame[5] = {};
 global_variable uint8_t MovingFrame[5] = {};
-global_variable SDL_Rect camera;
+global_variable SDL_Rect camera = {0, 0, DEFAULT_SCREEN_WIDTH/2, DEFAULT_SCREEN_HEIGHT/2};
 
 global_variable char* Menu[4] = {"NEW GAME", "RESUME", "OPTIONS", "EXIT"};
 const global_variable real32 StandardFPS = 60.0f;

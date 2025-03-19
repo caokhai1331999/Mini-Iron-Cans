@@ -76,8 +76,7 @@ struct PlatformP {
         }
         if(gRenderer = nullptr){
             gRenderer = nullptr;
-        }
-        
+        }        
         };
 };
 
@@ -97,8 +96,8 @@ bool setTiles( Tile *tiles, PlatformP* Platform);
 bool valid(SDL_Event e, KeyState* previousKey, KeyState* currentKey);
 //Shows the Tank on the screen
 void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform);
-void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera,  uint8_t* frame, int frameIndex);
-void renderTank(TankInfo* Tank, uint8_t* MovingFrame, SDL_Rect& camera, PlatformP* Platform);
+void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera,  uint8_t* frame);
+void renderTank(TankInfo* Tank, uint8_t* MovingFrame, SDL_Rect* camera, PlatformP* Platform);
 
 #define PLATFORMP_H
 #endif

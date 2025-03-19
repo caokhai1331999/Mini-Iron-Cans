@@ -85,7 +85,7 @@ int main( int argc, char* args[] )
             // NOTE:
             int count = 0;
             while(game->state != EMPTY) {
-                if(count == 120){
+                if(count == 240){
                     printf("Load and unload code\n");
                         Unload_Game_Code();
                         Get_Game_Code();

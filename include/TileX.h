@@ -31,7 +31,7 @@ struct Tile{
     };
 };
 
-void renderTile( SDL_Rect& camera, SDL_Renderer* gRenderer, Tile tile, XTexture* gTileTexture, SDL_Rect* gTileClips = NULL, bool checkCollision = false);
+void renderTile( SDL_Rect* camera, SDL_Renderer* gRenderer, Tile tile, XTexture* gTileTexture, SDL_Rect* gTileClips = NULL, bool checkCollision = false);
 
 #define TILEX_H
 #endif
