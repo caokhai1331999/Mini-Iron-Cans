@@ -117,7 +117,7 @@ bool Start(Game* g){
                 InitializeTankPos(g->TankPos);
                 InitializeTankInfo(g->TankPos, g->enemyTank);
                 
-                //Level camera                
+                //Level g->Camera                
                 for(int i = 0; i < 5; i++){
                     ExplosionFrame[i] = 0;
                 };
@@ -265,9 +265,6 @@ void ProcessInput(Game* g, bool* done){
 
 void runMainScene(Game* g){
 
-    camera.w = g->platform->screen_w;
-    camera.h = g->platform->screen_h;
-    
     if(!g->userTank->destroyed && !g->userTank->isHit){
         move(false, Ucollided, g->userTank);
     }else{
@@ -309,7 +306,8 @@ void runMainScene(Game* g){
         littleGuide(&g->enemyTank[i], g->userTank, Ecollided);
     // ===============================================
     }    
-    setCamera(&camera, g->userTank);        
+
+        setCamera(&g->Camera, g->userTank);        
 }
 }
 
@@ -377,11 +375,11 @@ void RenderMainScene(Game* g){
  {
     // NOTE: Resize tile make scene flickering
      //touchesWall(&userTank->mBox, tileSet)
-     renderTile( &camera, g->platform->gRenderer, g->tileSet[ i ], g->platform->gTileTexture,  g->platform->gTileClips, false);
+     renderTile( &g->Camera, g->platform->gRenderer, g->tileSet[ i ], g->platform->gTileTexture,  g->platform->gTileClips, false);
  }
 
  if(!g->userTank->isHit){
-     renderTank(g->userTank, &MovingFrame[4], &camera, g->platform);
+     renderTank(g->userTank, &MovingFrame[4], &g->Camera, g->platform);
      // printf("Tank sprite is being rendered\n");
  }else{
      // The additional loop just make the explostion clip run incredibly faster
@@ -389,7 +387,7 @@ void RenderMainScene(Game* g){
      // Just need the checking cycle for that explosion effect
      if(g->userTank->isHit && !g->userTank->destroyed){
          if(ExplosionFrame!=nullptr){
-             renderExplosionFrame(g->userTank, g->platform, &camera, &ExplosionFrame[4]);
+             renderExplosionFrame(g->userTank, g->platform, &g->Camera, &ExplosionFrame[4]);
          }
      }     
  }
@@ -398,11 +396,11 @@ void RenderMainScene(Game* g){
  while(k < TOTAL_ENEMY_TANK)
  {
      if(!g->enemyTank[k].isHit && !g->enemyTank[k].destroyed){
-         renderTank(&g->enemyTank[k], &MovingFrame[k], &camera, g->platform);                        
+         renderTank(&g->enemyTank[k], &MovingFrame[k], &g->Camera, g->platform);                        
      } else {
      if(g->enemyTank[k].isHit && !g->enemyTank[k].destroyed){
          if(ExplosionFrame!=nullptr){
-             renderExplosionFrame(&g->enemyTank[k], g->platform, &camera, &ExplosionFrame[k]);              
+             renderExplosionFrame(&g->enemyTank[k], g->platform, &g->Camera, &ExplosionFrame[k]);              
          }
      }
      }

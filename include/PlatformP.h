@@ -88,6 +88,7 @@ struct PlatformP {
 
 //Frees media and shuts down SDL
 bool init(PlatformP* Platform);    
+SDL_Rect CreateFrame(int VerticalIndex, int HorizontalIndex);
 bool LoadMedia(Tile* tiles, PlatformP* Platform);
 void close(PlatformP* Platform);
 bool IsArrow(SDL_Scancode KeyCode);

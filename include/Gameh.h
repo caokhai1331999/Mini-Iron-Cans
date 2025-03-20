@@ -23,8 +23,8 @@ global_variable uint8_t FPS = 0;
 
 global_variable uint8_t ExplosionFrame[5] = {};
 global_variable uint8_t MovingFrame[5] = {};
-global_variable SDL_Rect camera = {0, 0, DEFAULT_SCREEN_WIDTH/2, DEFAULT_SCREEN_HEIGHT/2};
-
+// NOTE: May be before I set the camera to {} with reset w,h to
+// 0 everytime I reload code
 global_variable char* Menu[4] = {"NEW GAME", "RESUME", "OPTIONS", "EXIT"};
 const global_variable real32 StandardFPS = 60.0f;
 const global_variable uint32 FRAME_DELAY = 1000/60;
@@ -53,6 +53,7 @@ struct Game{
     uint8_t pointed_option = 0;
     MENUCHOICE chosen_option = NONE;
     // NOTE: Manually set Init game stats here!!!
+    SDL_Rect Camera = {0, 0, 100, 100};
     PlatformP* platform;
     
     Tile* tileSet;   

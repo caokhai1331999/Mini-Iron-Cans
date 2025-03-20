@@ -76,13 +76,25 @@ void close( PlatformP* Platform){
 	SDL_Quit();   
 }
 
+
+SDL_Rect CreateFrame(int VerticalIndex, int HorizontalIndex){
+    int frame_w_h = 16;
+    int horizontal_distance = 10;
+    int vertical_distance = 8;
+    int total_horizontal_distance = frame_w_h + horizontal_distance;
+    int total_vertical_distance = frame_w_h + vertical_distance;
+
+    SDL_Rect Frame = {VerticalIndex* total_horizontal_distance, VerticalIndex* total_vertical_distance, frame_w_h, frame_w_h};
+    return Frame;
+};
+
 bool LoadMedia(Tile* tiles,PlatformP* Platform){
 	//Loading success flag
 	bool success = true;
 
 	//Load dot texture
     // NOTE: The Bugs lied here
-	if( !loadFromFile( "./media/blue/blue_Tank(transparent).png", Platform->gRenderer, (int)18, (int)18, Platform->gUserTankTexture) )
+	if( !loadFromFile( "./media/blue/blue_Tank(transparent).png", Platform->gRenderer, (int)30, (int)30, Platform->gUserTankTexture) )
 	{
 		printf( "Failed to load User tank texture!\n" );
 		success = false;
@@ -94,38 +106,34 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
 		success = false;
 	} else {
         if (success = true){
-            int horizontal_distance = 10;
-            int vertical_distance = 8;
-            int frame_w_h = 16;
-            
-           Platform->gMovingClips[mUP-1] = {(mUP-1)*horizontal_distance, (mUP-1)*vertical_distance, frame_w_h, frame_w_h};
-           Platform->gMovingClips[mUP] = {(mUP)*horizontal_distance, (mUP)*vertical_distance, frame_w_h, frame_w_h};
+            Platform->gMovingClips[UP_FIRST] = CreateFrame((int)_FIRST, (int)UP);
+            Platform->gMovingClips[UP_SECOND] = CreateFrame((int)_SECOND, (int)UP);
 
-           Platform->gMovingClips[mDOWN-1] = {(mDOWN-1)*horizontal_distance, (mDOWN-1)*vertical_distance, frame_w_h, frame_w_h};
-           Platform->gMovingClips[mDOWN] = {(mDOWN)*horizontal_distance, (mDOWN)*vertical_distance, frame_w_h, frame_w_h};
+            Platform->gMovingClips[DOWN_FIRST] = CreateFrame((int)_FIRST, (int)DOWN);
+            Platform->gMovingClips[DOWN_SECOND] = CreateFrame((int)_SECOND, (int)DOWN);
 
-           Platform->gMovingClips[mRIGHT-1] = {(mRIGHT-1)*horizontal_distance, (mRIGHT-1)*vertical_distance, frame_w_h, frame_w_h};
-           Platform->gMovingClips[mRIGHT] = {(mRIGHT)*horizontal_distance, (mRIGHT)*vertical_distance, frame_w_h, frame_w_h}; 
+            Platform->gMovingClips[RIGHT_FIRST] = CreateFrame((int)_FIRST, (int)RIGHT);
+            Platform->gMovingClips[RIGHT_SECOND] = CreateFrame((int)_SECOND, (int)RIGHT);
 
-           Platform->gMovingClips[mLEFT-1] = {(mUP-1)*horizontal_distance, (mUP-1)*vertical_distance, frame_w_h, frame_w_h};
-           Platform->gMovingClips[mLEFT] ={(mLEFT)*horizontal_distance, (mLEFT)*vertical_distance, frame_w_h, frame_w_h};
+            Platform->gMovingClips[LEFT_FIRST] = CreateFrame((int)_FIRST, (int)LEFT);
+            Platform->gMovingClips[LEFT_SECOND] = CreateFrame((int)_SECOND, (int)LEFT);
         }
     }
     
 	//Load tile texture
-    if( !loadFromFile( "./media/32x32_map_tile v3.1 [MARGINLESS].bmp", Platform->gRenderer, (int)30, (int)30, Platform->gTileTexture) )
+    if( !loadFromFile( "./media/32x32_map_tile v3.1 [MARGINLESS].bmp", Platform->gRenderer, (int)18, (int)18, Platform->gTileTexture) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
 	}
     
-	if( !loadFromFile( "./media/explosions/shot/up.png", Platform->gRenderer, (int)12, (int)12, Platform->gUserBulletTexture) )
+	if( !loadFromFile( "./media/explosions/shot/up.png", Platform->gRenderer, (int)10, (int)10, Platform->gUserBulletTexture) )
 	{
 		printf( "Failed to load user bullet set texture!\n" );
 		success = false;
 	}
     
-	if( !loadFromFile( "./media/EnemyBullet.png", Platform->gRenderer, (int)12, (int)12, Platform->gEnemyBulletTexture) )
+	if( !loadFromFile( "./media/EnemyBullet.png", Platform->gRenderer, (int)10, (int)10, Platform->gEnemyBulletTexture) )
 	{
 		printf( "Failed to load enemy bullet set texture!\n" );
 		success = false;
@@ -472,47 +480,43 @@ void renderTank(TankInfo* Tank, uint8_t* MovingFrame, SDL_Rect* camera, Platform
     //NOTE: Show the tank and bullet here
         switch((int)Tank->face){
             case (int)UP:
-                if((*MovingFrame)/5 > mUP-1){
-                    (*MovingFrame) = (mUP-1)*5;
-                } else {
-                    (*MovingFrame)++;
+                if((*MovingFrame) > UP_FIRST*5){
+                    (*MovingFrame) = (UP_FIRST)*5;
                 };
                 break;
 
             case (int)DOWN:
-                if((*MovingFrame)/5 > mDOWN || (*MovingFrame)/5 < mDOWN-1){
-                    (*MovingFrame) = (mDOWN-1)*5;
-                } else {
-                    (*MovingFrame)++;
-                };
+                if((*MovingFrame) > DOWN_SECOND*5 || (*MovingFrame) < (DOWN_FIRST)*5){
+                    (*MovingFrame) = (DOWN_FIRST)*5;
+                }
                 break;
 
             case (int)RIGHT:
-                if((*MovingFrame)/5 < mRIGHT-1 || (*MovingFrame)/5 > mRIGHT){
-                    (*MovingFrame) = (mRIGHT -1)*5;
-                } else {
-                    (*MovingFrame)++;
-                };
+                if((*MovingFrame) < (RIGHT_FIRST)*5 || (*MovingFrame) > RIGHT_SECOND*5){
+                    (*MovingFrame) = (RIGHT_FIRST)*5;
+                }
                 break;
             case (int)LEFT:
 
-                if((*MovingFrame)/5 < mLEFT-1 || (*MovingFrame)/5 > mLEFT){
-                    (*MovingFrame) = (mLEFT-1)*5;
-                } else {
-                    (*MovingFrame)++;
-                };
+                if((*MovingFrame) < (LEFT_FIRST)*5 || (*MovingFrame) > LEFT_SECOND*5){
+                    (*MovingFrame) = (LEFT_FIRST)*5;
+                }
                 break;
         }
-    if (Tank->Belong && Platform->gUserTankTexture!=nullptr) {
+
+        if(Tank->isMoving){
+            (*MovingFrame)++;
+        }
+
+        if (Tank->Belong && Platform->gUserTankTexture!=nullptr) {
         // NOTE: Because of the camera position negative out the position of the
         // printf("Position tank x camera : %d %d\n", Tank->mBox.x, camera->x);
-        render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), Platform->gUserTankTexture, &Platform->gMovingClips[(*MovingFrame)/5], Tank->face);
+        render( Platform->gRenderer ,(Tank->mBox.x  - camera->x), (Tank->mBox.y - camera->y), Platform->gUserTankTexture, &Platform->gMovingClips[(*MovingFrame)/5], Tank->face);
 
         if(Platform->gUserBulletTexture!=nullptr) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){                
-
-                render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera->x), (Tank->Bullets[i].blBox.y - camera->y), Platform->gUserBulletTexture, nullptr, Tank->face);
+                render(Platform->gRenderer, Tank->Bullets[i].blBox.x - camera->x, Tank->Bullets[i].blBox.y - camera->y, Platform->gUserBulletTexture, nullptr, Tank->face);
             }
         }
     }
@@ -524,7 +528,7 @@ else if (!Tank->Belong && Platform->gEnemyTankTexture != nullptr) {
     if(Platform->gEnemyBulletTexture!=nullptr) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){                
-                render(Platform->gRenderer, (Tank->Bullets[i].blBox.x - camera->x), (Tank->Bullets[i].blBox.y - camera->y), Platform->gEnemyBulletTexture, nullptr, Tank->face);
+                render(Platform->gRenderer, Tank->Bullets[i].blBox.x, Tank->Bullets[i].blBox.y, Platform->gEnemyBulletTexture, nullptr, Tank->face);
             }
         }
     }        
@@ -569,7 +573,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
         if (!loadFromRenderedText(OutPut, scaleW, scaleH, Platform->TextColor, Platform->gFont, Platform->gRenderer, Platform->gTextTexture)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
         } else {
-            render(Platform->gRenderer, (150*(scaleW)), 0, Platform->gTextTexture);                    
+            render(Platform->gRenderer, (120*(scaleW)), 0, Platform->gTextTexture);                    
         }                    
         // printf(OutPut);
     } 

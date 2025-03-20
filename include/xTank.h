@@ -25,8 +25,21 @@ using namespace std;
 #define RIGHT 90.0
 #define LEFT 270.0
 
-enum MOVING_FRAME_NAME{
-    mUP = (uint8_t)1, mDOWN = (uint8_t)3, mRIGHT = (uint8_t)5, mLEFT = (uint8_t)7
+
+enum INDEX{
+    _FIRST = 0,
+    _SECOND = 1
+};
+
+#define INDEX_ENUM(DIRECTION) \
+    DIRECTION ## _FIRST, \
+    DIRECTION ## _SECOND,
+
+enum {
+    INDEX_ENUM(UP)
+    INDEX_ENUM(DOWN)
+    INDEX_ENUM(RIGHT)
+    INDEX_ENUM(LEFT)
 };
 
 enum BulletType{enemyB, userB};
@@ -37,7 +50,7 @@ const global_variable int TANK_HEIGHT = 30;
 const global_variable int TOTAL_ENEMY_TANK = 3 ;
 const global_variable int TOTAL_BULLET_PER_TANK = 10 ;
 
-const global_variable int BULLET_VEL = 20 ;
+const global_variable int BULLET_VEL = 20;
 const global_variable int BULLET_WIDTH = 10 ;
 const global_variable int BULLET_HEIGHT = 10 ;
 
@@ -67,6 +80,7 @@ struct TankInfo
 {
     // int name;
     bool Belong = true;
+    bool isMoving;
     bool destroyed = false;
     bool isHit = false;
     // NOTE: Don't know why this doesn't trigger default value
@@ -79,6 +93,7 @@ struct TankInfo
 
     TankInfo(int x = 0, int y = 0, bool userBelong = false):Belong(userBelong), mBox({x , y, TANK_WIDTH, TANK_HEIGHT}){
 
+        isMoving = false;
         Bullets = nullptr;
         Bullets = new Bullet[TOTAL_BULLET_PER_TANK]();
         // printf("Size of Bullet set is: %d\n", (int)(sizeof(Bullets)));

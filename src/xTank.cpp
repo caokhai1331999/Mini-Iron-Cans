@@ -199,7 +199,10 @@ void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank) {
                     case SDL_SCANCODE_SPACE: fire(Tank);
                         break;
                 }
-                
+
+                if(!Tank->isMoving){
+                    Tank->isMoving = true;
+                };
         }
          else if( !CurrentBut->pressed && CurrentBut->repeat == 0)
         {
@@ -222,6 +225,10 @@ void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank) {
                     Tank->mVelX -= TANK_VEL;
                     break;
             }
+
+            if(Tank->isMoving){
+                Tank->isMoving = false;
+            };            
         }
     }
 }
@@ -233,12 +240,18 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
         Tank->mBox.x += Tank->mVelX;
         if ((Tank->mBox.x < 0)||(Tank->mBox.x  > LEVEL_WIDTH - (TANK_WIDTH + 20)) || collided){
             Tank->mBox.x -= Tank->mVelX;
+            if(Tank->isMoving){
+                Tank->isMoving = false;
+            };
         }
             
         Tank->mBox.y += Tank->mVelY;
         if ((Tank->mBox.y < 0)||(Tank->mBox.y > LEVEL_HEIGHT - (TANK_HEIGHT + 20)) || collided)
         {
             Tank->mBox.y -= Tank->mVelY;
+            if(Tank->isMoving){
+                Tank->isMoving = false;
+            };
         }
             
         for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
@@ -270,21 +283,24 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
 //Centers the camera over the Tank
 void setCamera( SDL_Rect* camera, TankInfo* UserTank ){
 
+    // NOTE: Center the userTank inside the camera
     // Initialize the collision box
-	camera->x = ( UserTank->mBox.x + TANK_WIDTH/2 ) - camera->w/2;
+	camera->x = ( UserTank->mBox.x + TANK_WIDTH/2 ) - (camera->w)/2;
     // Give a fair distance between the camera and the main tank
-	camera->y = ( UserTank->mBox.y + TANK_HEIGHT/2 ) - camera->h/2;
+	camera->y = ( UserTank->mBox.y + TANK_HEIGHT/2 ) - (camera->h)/2;
 
-    printf("%d %d\n",camera->w, camera->h);
+    printf("User tank pos:%d %d\n",UserTank->mBox.x, UserTank->mBox.y);
+    printf("Camera pos:%d %d\n",camera->x, camera->y);
     // NOTE: so with this formula why camera pos is alway ahead of (>) userTank one
     // Why camera w, h turn to 0
     
 	//Keep the camera in bounds
-	if( camera->x < 0 )
+	if( camera->x < 0)
 	{ 
 		camera->x = 0;
 	}
-	if( camera->y < 0 )
+
+	if( camera->y < 0)
 	{
 		camera->y = 0;
 	}
@@ -297,7 +313,7 @@ void setCamera( SDL_Rect* camera, TankInfo* UserTank ){
 	{
 		camera->y = LEVEL_HEIGHT - camera->h;
 	}
-    
+    printf("Camera size:%d %d\n",camera->w, camera->h);    
 }
 
 void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided){
