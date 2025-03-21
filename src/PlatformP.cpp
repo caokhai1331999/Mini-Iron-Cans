@@ -94,18 +94,19 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
 
 	//Load dot texture
     // NOTE: The Bugs lied here
-	if( !loadFromFile( "./media/blue/blue_Tank(transparent).png", Platform->gRenderer, (int)30, (int)30, Platform->gUserTankTexture) )
+	if( !loadFromFile( "./media/blue/blue_Tank(transparent).png", Platform->gRenderer, TANK_WIDTH, TANK_HEIGHT, Platform->gUserTankTexture) )
 	{
 		printf( "Failed to load User tank texture!\n" );
 		success = false;
 	}
     
-	if( !loadFromFile( "./media/red/red_tank(transparent).png", Platform->gRenderer, (int)18, (int)18, Platform->gEnemyTankTexture))
+	if( !loadFromFile( "./media/red/red_tank(transparent).png", Platform->gRenderer, TANK_WIDTH, TANK_HEIGHT, Platform->gEnemyTankTexture))
 	{
 		printf( "Failed to load Enemy tank texture!\n" );
 		success = false;
 	} else {
         if (success = true){
+
             Platform->gMovingClips[UP_FIRST] = CreateFrame((int)_FIRST, (int)UP);
             Platform->gMovingClips[UP_SECOND] = CreateFrame((int)_SECOND, (int)UP);
 
@@ -117,23 +118,24 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
 
             Platform->gMovingClips[LEFT_FIRST] = CreateFrame((int)_FIRST, (int)LEFT);
             Platform->gMovingClips[LEFT_SECOND] = CreateFrame((int)_SECOND, (int)LEFT);
+
         }
     }
     
 	//Load tile texture
-    if( !loadFromFile( "./media/32x32_map_tile v3.1 [MARGINLESS].bmp", Platform->gRenderer, (int)18, (int)18, Platform->gTileTexture) )
+    if( !loadFromFile( "./media/32x32_map_tile v3.1 [MARGINLESS].bmp", Platform->gRenderer, SMALL_TILE_WIDTH, SMALL_TILE_HEIGHT, Platform->gTileTexture) )
 	{
 		printf( "Failed to load tile set texture!\n" );
 		success = false;
 	}
     
-	if( !loadFromFile( "./media/explosions/shot/up.png", Platform->gRenderer, (int)10, (int)10, Platform->gUserBulletTexture) )
+	if( !loadFromFile( "./media/explosions/shot/up.png", Platform->gRenderer, BULLET_WIDTH, BULLET_HEIGHT, Platform->gUserBulletTexture) )
 	{
 		printf( "Failed to load user bullet set texture!\n" );
 		success = false;
 	}
     
-	if( !loadFromFile( "./media/EnemyBullet.png", Platform->gRenderer, (int)10, (int)10, Platform->gEnemyBulletTexture) )
+	if( !loadFromFile( "./media/EnemyBullet.png", Platform->gRenderer, BULLET_WIDTH, BULLET_HEIGHT, Platform->gEnemyBulletTexture) )
 	{
 		printf( "Failed to load enemy bullet set texture!\n" );
 		success = false;
@@ -308,7 +310,10 @@ bool setTiles( Tile *tiles,PlatformP* Platform){
 
     //The tile offsets
     int x = 0, y = 0;
-
+    int TileSquare = SMALL_TILE_WIDTH * SMALL_TILE_HEIGHT;
+    int TileCount = 0;
+    int FilledSquare = 0;
+    
  //Open the map
     std::ifstream map( "smap.map" );
 
@@ -361,8 +366,14 @@ bool setTiles( Tile *tiles,PlatformP* Platform){
                 // }else{
                 // tiles[ i ] = new Tile( x , y, tileType);                    
                 // }
-                tiles[i].mBox = {x, y, SMALL_TILE_WIDTH, SMALL_TILE_HEIGHT};
+                tiles[i].mBox.x = x;
+                tiles[i].mBox.y = y;
                 tiles[i].mType = tileType;
+
+                TileCount++;
+                FilledSquare += TileSquare;
+
+                printf("Number of Tile Made:%d, Square filled: %d\n", TileCount, FilledSquare);
 			}
 			//If we don't recognize the tile type
 			else
@@ -476,6 +487,9 @@ bool setTiles( Tile *tiles,PlatformP* Platform){
 //Shows the Tank on the screen
 void renderTank(TankInfo* Tank, uint8_t* MovingFrame, SDL_Rect* camera, PlatformP* Platform) {
 
+
+    
+    SDL_SetRenderDrawColor( Platform->gRenderer, 0x49, 0x48, 0x3E, 0xFF);
     if(!Tank->destroyed && !Tank->isHit) {
     //NOTE: Show the tank and bullet here
         switch((int)Tank->face){
@@ -513,22 +527,34 @@ void renderTank(TankInfo* Tank, uint8_t* MovingFrame, SDL_Rect* camera, Platform
         // printf("Position tank x camera : %d %d\n", Tank->mBox.x, camera->x);
         render( Platform->gRenderer ,(Tank->mBox.x  - camera->x), (Tank->mBox.y - camera->y), Platform->gUserTankTexture, &Platform->gMovingClips[(*MovingFrame)/5], Tank->face);
 
+        SDL_RenderDrawLines(Platform->gRenderer, Tank->TankScaffold, 5);
+        SDL_SetRenderDrawColor( Platform->gRenderer, 0xFB, 0x60, 0x60, 0xFF );
+        
         if(Platform->gUserBulletTexture!=nullptr) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
-            if (Tank->Bullets[i].Launched){                
+            if (Tank->Bullets[i].Launched){
+                
                 render(Platform->gRenderer, Tank->Bullets[i].blBox.x - camera->x, Tank->Bullets[i].blBox.y - camera->y, Platform->gUserBulletTexture, nullptr, Tank->face);
+                SDL_RenderDrawLines(Platform->gRenderer, Tank->Bullets[i].BulletScaffold, 5);
             }
         }
     }
-
   }
 else if (!Tank->Belong && Platform->gEnemyTankTexture != nullptr) {
     render( Platform->gRenderer ,Tank->mBox.x - camera->x,Tank->mBox.y - camera->y, Platform->gEnemyTankTexture,&Platform->gMovingClips[(*MovingFrame/5)], Tank->face);
 
+    SDL_SetRenderDrawColor( Platform->gRenderer, 0x49, 0x48, 0x3E, 0xFF);
+    SDL_RenderDrawLines(Platform->gRenderer, Tank->TankScaffold, 5);
+
     if(Platform->gEnemyBulletTexture!=nullptr) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
+
             if (Tank->Bullets[i].Launched){                
+
                 render(Platform->gRenderer, Tank->Bullets[i].blBox.x, Tank->Bullets[i].blBox.y, Platform->gEnemyBulletTexture, nullptr, Tank->face);
+
+                SDL_RenderDrawLines(Platform->gRenderer, Tank->Bullets[i].BulletScaffold, 5);
+                
             }
         }
     }        
