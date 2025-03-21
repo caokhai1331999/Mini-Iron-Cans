@@ -26,6 +26,45 @@ void GenerateSinglePosition(int* x, int* y){
     *y = b;
 }
 
+void ConstructRectJoint(const SDL_Rect* rect, SDL_Point* Joint){
+    for (int i =0; i < 5; i++){
+        switch(i){
+            case 0:
+                Joint[i].x = rect->x;
+                Joint[i].y = rect->y;
+                break;
+
+            case 1:
+                Joint[i].x = rect->x + rect->w;
+                Joint[i].y = rect->y;
+                break;
+
+            case 2:
+                Joint[i].x = rect->x + rect->w;
+                Joint[i].y = rect->y + rect->h;
+                break;
+
+            case 3:
+                Joint[i].x = rect->x;
+                Joint[i].y = rect->y + rect->h;
+                break;
+
+            case 4:
+                Joint[i].x = Joint[0].x;
+                Joint[i].y = Joint[0].y;
+                break;
+        };
+    printf("scaffold points pos %d is %d %d\n", i, Joint[i].x, Joint[i].y);
+    }
+}    
+
+void ConstructTankScaffold(TankInfo* tank){
+        ConstructRectJoint(&tank->mBox, tank->TankScaffold);
+        for(int i= 0; i < TOTAL_BULLET_PER_TANK; i++){
+            ConstructRectJoint(&tank->Bullets[i].blBox, tank->Bullets[i].BulletScaffold);            
+        }
+}
+
 
 void InitializeTankPos(Position* RealTankPos){
     bool valid = true;
@@ -63,9 +102,11 @@ void InitializeTankInfo(Position* TankPos,TankInfo* Tank){
 
     int TankNumber = Tank->Belong?1:TOTAL_ENEMY_TANK;
     if(TankNumber > 1){
-        for(int i = 0; i < TankNumber; i++){        
+        for(int i = 0; i < TankNumber; i++)
+        {        
             Tank[i].mBox = {TankPos[i].x, TankPos[i].y, TANK_WIDTH, TANK_HEIGHT};
             // userBelong?&Tank[i]->Bullets[i].type = userB:&Tank[i]->Bullets[i].type = enemyB;
+            ConstructTankScaffold(&Tank[i]);
         }        
     }
     else {
@@ -92,26 +133,26 @@ void fire(TankInfo* Tank){
                 switch((int)Tank->face)
                 {
                     case (int)UP:
-                        Tank->Bullets[i].blBox.x = Tank->mBox.x + Tank->mBox.w/2 + 15;
-                        Tank->Bullets[i].blBox.y = Tank->mBox.y + 5;
+                        Tank->Bullets[i].blBox.x = Tank->mBox.x + Tank->mBox.w/4;
+                        Tank->Bullets[i].blBox.y = Tank->mBox.y;
                         Tank->Bullets[i].BlVelY -= BULLET_VEL;
                         break; 
 
                     case (int)DOWN:
-                        Tank->Bullets[i].blBox.x = Tank->mBox.x + Tank->mBox.w/2 + 15;
-                        Tank->Bullets[i].blBox.y = Tank->mBox.y + Tank->mBox.h + 5;
+                        Tank->Bullets[i].blBox.x = Tank->mBox.x + Tank->mBox.w/4;
+                        Tank->Bullets[i].blBox.y = Tank->mBox.y + Tank->mBox.h;
                         Tank->Bullets[i].BlVelY += BULLET_VEL;
                         break; 
 
                     case (int)RIGHT:
-                        Tank->Bullets[i].blBox.x = Tank->mBox.x + Tank->mBox.w + 5;
-                        Tank->Bullets[i].blBox.y = Tank->mBox.y + Tank->mBox.h/2 + 15;
+                        Tank->Bullets[i].blBox.x = Tank->mBox.x + Tank->mBox.w;
+                        Tank->Bullets[i].blBox.y = Tank->mBox.y + Tank->mBox.h/4;
                         Tank->Bullets[i].BlVelX += BULLET_VEL;
                         break; 
 
                     case (int)LEFT:
-                        Tank->Bullets[i].blBox.x = Tank->mBox.x + 5;
-                        Tank->Bullets[i].blBox.y = Tank->mBox.y + Tank->mBox.h/2 + 15;
+                        Tank->Bullets[i].blBox.x = Tank->mBox.x;
+                        Tank->Bullets[i].blBox.y = Tank->mBox.y + Tank->mBox.h/4;
                         Tank->Bullets[i].BlVelX -= BULLET_VEL;
                         break;             
 
@@ -238,41 +279,58 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
     if(!Tank->isHit && !Tank->destroyed){
 
         Tank->mBox.x += Tank->mVelX;
-        if ((Tank->mBox.x < 0)||(Tank->mBox.x  > LEVEL_WIDTH - (TANK_WIDTH + 20)) || collided){
+
+        for(int i = 0; i < 5; i++){
+            Tank->TankScaffold[i].x += Tank->mVelX;   
+        }
+
+        if ((Tank->mBox.x < 0)||(Tank->mBox.x  > LEVEL_WIDTH - (TANK_WIDTH)) || collided){
             Tank->mBox.x -= Tank->mVelX;
+            for(int i = 0; i < 5; i++){
+                Tank->TankScaffold[i].x -= Tank->mVelX;   
+            }
             if(Tank->isMoving){
                 Tank->isMoving = false;
             };
         }
             
         Tank->mBox.y += Tank->mVelY;
-        if ((Tank->mBox.y < 0)||(Tank->mBox.y > LEVEL_HEIGHT - (TANK_HEIGHT + 20)) || collided)
+        for(int i = 0; i < 5; i++){
+            Tank->TankScaffold[i].y += Tank->mVelY;   
+        }
+
+        if ((Tank->mBox.y < 0)||(Tank->mBox.y > LEVEL_HEIGHT - (TANK_HEIGHT)) || collided)
         {
             Tank->mBox.y -= Tank->mVelY;
+            for(int i = 0; i < 5; i++){
+                Tank->TankScaffold[i].y -= Tank->mVelY;   
+            }
             if(Tank->isMoving){
                 Tank->isMoving = false;
             };
         }
-            
+
+
+        
         for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
 
             if (Tank->Bullets[i].Launched){
+                
                 Tank->Bullets[i].blBox.x += Tank->Bullets[i].BlVelX;
                 Tank->Bullets[i].blBox.y += Tank->Bullets[i].BlVelY;
 
+                for(int j = 0; j < 5; i++){
+                    Tank->Bullets[i].BulletScaffold[j].x += Tank->Bullets[i].BlVelX;   
+                    Tank->Bullets[i].BulletScaffold[j].y += Tank->Bullets[i].BlVelY;   
+                }
+                
                 if((Tank->Bullets[i].blBox.x < 0)||(Tank->Bullets[i].blBox.x + Tank->Bullets[i].blBox.w > LEVEL_WIDTH||Tank->Bullets[i].blBox.y < 0)||(Tank->Bullets[i].blBox.y + Tank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
 
                     Tank->BulletsNumber++;
                     if(Tank->BulletsNumber > TOTAL_BULLET_PER_TANK){
                         Tank->BulletsNumber = TOTAL_BULLET_PER_TANK;
                     };
-                    // char text [50] = {};
 
-                    // if(Tank->Belong){
-                    //     sprintf(text, "User Tank bullet number is :%d\n", (int)(Tank->BulletsNumber));                    
-                    // };
-
-                    // printf(text);
                     resetBullet(&Tank->Bullets[i]);
                 }
             }                
@@ -289,8 +347,8 @@ void setCamera( SDL_Rect* camera, TankInfo* UserTank ){
     // Give a fair distance between the camera and the main tank
 	camera->y = ( UserTank->mBox.y + TANK_HEIGHT/2 ) - (camera->h)/2;
 
-    printf("User tank pos:%d %d\n",UserTank->mBox.x, UserTank->mBox.y);
-    printf("Camera pos:%d %d\n",camera->x, camera->y);
+    // printf("User tank pos:%d %d\n",UserTank->mBox.x, UserTank->mBox.y);
+    // printf("Camera pos:%d %d\n",camera->x, camera->y);
     // NOTE: so with this formula why camera pos is alway ahead of (>) userTank one
     // Why camera w, h turn to 0
     
@@ -313,7 +371,7 @@ void setCamera( SDL_Rect* camera, TankInfo* UserTank ){
 	{
 		camera->y = LEVEL_HEIGHT - camera->h;
 	}
-    printf("Camera size:%d %d\n",camera->w, camera->h);    
+    // printf("Camera size:%d %d\n",camera->w, camera->h);    
 }
 
 void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided){
@@ -447,6 +505,9 @@ void resetTank(TankInfo* Tank){
     Tank->mBox.y = -1;
     Tank->isHit = false;
     Tank->destroyed = false;
+
+    ConstructTankScaffold(Tank);
+        
     // NOTE: Forgot to destroy bullet pointer. My bad!!!
     for (int i = 0; i<TOTAL_BULLET_PER_TANK; i++){
         resetBullet(&Tank->Bullets[i]);

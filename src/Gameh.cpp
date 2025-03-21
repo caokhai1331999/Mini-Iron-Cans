@@ -113,9 +113,12 @@ bool Start(Game* g){
             {
                 GenerateSinglePosition(&g->userTank->mBox.x, &g->userTank->mBox.y);
                 // printf("user Tank position is: %d %d", g->userTank->mBox.x, g->userTank->mBox.y);
-                
+
+                ConstructTankScaffold(g->userTank);
+
                 InitializeTankPos(g->TankPos);
                 InitializeTankInfo(g->TankPos, g->enemyTank);
+                
                 
                 //Level g->Camera                
                 for(int i = 0; i < 5; i++){
@@ -426,12 +429,22 @@ void Close(Game* g){
 
     delete[] g->userTank->Bullets;
     g->userTank->Bullets = nullptr;
+
+    delete[] g->userTank->TankScaffold;
+    g->userTank->TankScaffold = nullptr;
+
     delete g->userTank;
     g->userTank = nullptr;
 
     for(int i = 0; i < TOTAL_ENEMY_TANK; i++){
+        for(int j = 0; j < TOTAL_BULLET_PER_TANK; i++){            
+            delete[] g->enemyTank[i].Bullets[j].BulletScaffold;
+            g->enemyTank[i].Bullets[j].BulletScaffold = nullptr;
+        }
         delete[] g->enemyTank[i].Bullets;
-        g->enemyTank[i].Bullets = nullptr;      
+        g->enemyTank[i].Bullets = nullptr;
+        delete[] g->enemyTank[i].TankScaffold;
+        g->enemyTank[i].TankScaffold = nullptr;
     }
 
     delete[] g->enemyTank;

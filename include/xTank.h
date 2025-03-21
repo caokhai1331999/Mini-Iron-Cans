@@ -45,8 +45,8 @@ enum {
 enum BulletType{enemyB, userB};
 
 const global_variable int TANK_VEL = 10;
-const global_variable int TANK_WIDTH = 30;
-const global_variable int TANK_HEIGHT = 30;
+const global_variable int TANK_WIDTH = 20;
+const global_variable int TANK_HEIGHT = 20;
 const global_variable int TOTAL_ENEMY_TANK = 3 ;
 const global_variable int TOTAL_BULLET_PER_TANK = 10 ;
 
@@ -67,10 +67,12 @@ struct Bullet{
     int BlVelX = 0;
     int BlVelY = 0;
     bool Launched = false;
+    SDL_Point* BulletScaffold = nullptr;
     SDL_Rect blBox = {};
 
     Bullet(int TankX = 0, int TankY = 0, bool launched = false, bool userBelong = false): blBox({TankX, TankY, BULLET_WIDTH, BULLET_HEIGHT}), Launched(launched)
     {
+        BulletScaffold = new SDL_Point[5];
         type = userBelong?userB:enemyB;
     }
     
@@ -85,6 +87,9 @@ struct TankInfo
     bool isHit = false;
     // NOTE: Don't know why this doesn't trigger default value
     SDL_Rect mBox;
+
+    SDL_Point* TankScaffold = nullptr;
+
     int mVelX = 0;
     int mVelY = 0;
     TANKFACE face = (TANKFACE)(rand()%3) ;
@@ -93,6 +98,7 @@ struct TankInfo
 
     TankInfo(int x = 0, int y = 0, bool userBelong = false):Belong(userBelong), mBox({x , y, TANK_WIDTH, TANK_HEIGHT}){
 
+        TankScaffold = new SDL_Point[5];
         isMoving = false;
         Bullets = nullptr;
         Bullets = new Bullet[TOTAL_BULLET_PER_TANK]();
@@ -111,6 +117,9 @@ struct TankInfo
 
 // bool OtherReleased(SDL_KeyboardEvent key);
 
+
+void ConstructRectJoint(const SDL_Rect* rect, SDL_Point* Joint);
+void ConstructTankScaffold(TankInfo* tank);
 // Randomize Tank Positions that far enough
 void InitializeTankPos(Position* RealTankPos);
 void InitializeTankInfo(Position* Tankpos = nullptr, TankInfo* Tank = nullptr);
