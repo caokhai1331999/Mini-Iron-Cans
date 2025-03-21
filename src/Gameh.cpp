@@ -145,7 +145,6 @@ void changeState(Game* g, KeyState* key){
             case MENU_INIT:
                 if (g->chosen_option == NEW_GAME){
                     g->state = GAME_RELOADED;
-                    // Game Constantly reset 
                     g->chosen_option = NONE;
                     if(!g->stateChange){
                         g->stateChange = CHANGED;

@@ -26,6 +26,7 @@ void GenerateSinglePosition(int* x, int* y){
     *y = b;
 }
 
+
 void ConstructRectJoint(const SDL_Rect* rect, SDL_Point* Joint){
     for (int i =0; i < 5; i++){
         switch(i){
@@ -54,7 +55,7 @@ void ConstructRectJoint(const SDL_Rect* rect, SDL_Point* Joint){
                 Joint[i].y = Joint[0].y;
                 break;
         };
-    printf("scaffold points pos %d is %d %d\n", i, Joint[i].x, Joint[i].y);
+    printf("scaffold points of %d is %d %d\n", i, Joint[i].x, Joint[i].y);
     }
 }    
 
@@ -103,9 +104,11 @@ void InitializeTankInfo(Position* TankPos,TankInfo* Tank){
     int TankNumber = Tank->Belong?1:TOTAL_ENEMY_TANK;
     if(TankNumber > 1){
         for(int i = 0; i < TankNumber; i++)
-        {        
+        {
             Tank[i].mBox = {TankPos[i].x, TankPos[i].y, TANK_WIDTH, TANK_HEIGHT};
             // userBelong?&Tank[i]->Bullets[i].type = userB:&Tank[i]->Bullets[i].type = enemyB;
+            // How to pass a pointer to tankInfo in this fx
+            // is the &Tank[i] right
             ConstructTankScaffold(&Tank[i]);
         }        
     }
@@ -113,6 +116,7 @@ void InitializeTankInfo(Position* TankPos,TankInfo* Tank){
         Tank->mBox.x = TankPos->x;
         Tank->mBox.y = TankPos->y;
     }
+
 }
 
 void fire(TankInfo* Tank){

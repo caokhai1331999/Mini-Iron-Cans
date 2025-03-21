@@ -205,7 +205,6 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
 		printf( "Failed to load tile set!\n" );
 		success = false;
 	}
-
 	return success;
 }
 
@@ -553,8 +552,7 @@ else if (!Tank->Belong && Platform->gEnemyTankTexture != nullptr) {
 
                 render(Platform->gRenderer, Tank->Bullets[i].blBox.x, Tank->Bullets[i].blBox.y, Platform->gEnemyBulletTexture, nullptr, Tank->face);
 
-                SDL_RenderDrawLines(Platform->gRenderer, Tank->Bullets[i].BulletScaffold, 5);
-                
+                SDL_RenderDrawLines(Platform->gRenderer, Tank->Bullets[i].BulletScaffold, 5);                
             }
         }
     }        
