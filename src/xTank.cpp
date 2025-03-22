@@ -26,44 +26,6 @@ void GenerateSinglePosition(int* x, int* y){
     *y = b;
 }
 
-
-void ConstructRectJoint(const SDL_Rect* rect, SDL_Point* Joint){
-    if (Joint)
-    {    for (int i =0; i < 5; i++){
-        switch(i){
-            case 0:
-                Joint[i].x = rect->x;
-                Joint[i].y = rect->y;
-                break;
-
-            case 1:
-                Joint[i].x = rect->x + rect->w;
-                Joint[i].y = rect->y;
-                break;
-
-            case 2:
-                Joint[i].x = rect->x + rect->w;
-                Joint[i].y = rect->y + rect->h;
-                break;
-
-            case 3:
-                Joint[i].x = rect->x;
-                Joint[i].y = rect->y + rect->h;
-                break;
-
-            case 4:
-                Joint[i].x = Joint[0].x;
-                Joint[i].y = Joint[0].y;
-                break;
-        };
-    printf("scaffold points of %d is %d %d\n", i, Joint[i].x, Joint[i].y);
-    }
-    } else {
-        printf("Joint ptr is NULL\n");
-    }
-}    
-
-
 void InitializeTankPos(Position* RealTankPos){
     bool valid = true;
     std::srand(std::time(nullptr));
@@ -104,12 +66,8 @@ void InitializeTankInfo(Position* TankPos,TankInfo* Tank){
         {
             Tank[i].mBox = {TankPos[i].x, TankPos[i].y, TANK_WIDTH, TANK_HEIGHT};
             // userBelong?&Tank[i]->Bullets[i].type = userB:&Tank[i]->Bullets[i].type = enemyB;
-<<<<<<< HEAD
             // How to pass a pointer to tankInfo in this fx
             // is the &Tank[i] right
-            ConstructTankScaffold(&Tank[i]);
-=======
->>>>>>> 5d4e3af (latest update)
         }        
     }
     else {
@@ -305,13 +263,13 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
             };
         }
 
-        ConstructRectJoint(&Tank->mBox, TankScaffold);
+        // ConstructRectJoint(&Tank->mBox, TankScaffoldS);
         
         for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
 
             if (Tank->Bullets[i].Launched){
 
-                ConstructRectJoint(&Tank->Bullets[i].blBox, BulletScaffold);                
+                // ConstructRectJoint(&Tank->Bullets[i].blBox, BulletScaffold);                
                 Tank->Bullets[i].blBox.x += Tank->Bullets[i].BlVelX;
                 Tank->Bullets[i].blBox.y += Tank->Bullets[i].BlVelY;
                 
@@ -369,6 +327,7 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided){
     // TODO: This function is a little AI that use Dijktra algorithm to drive every
     // bot tank
 
+    targetTank->MovingWaitTime++;
     int distance = sqrt(pow(targetTank->mBox.x - UserTank->mBox.x,2) + pow(targetTank->mBox.y - UserTank->mBox.y,2));
 
     // NOTE: The idea is simple: moving the bot Tank toward User's one and fire
@@ -393,16 +352,16 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided){
                 break;
         }
     }
-    
-    if (targetTank->mBox.x < 0 || targetTank->mBox.x  > LEVEL_WIDTH - TANK_WIDTH -30 || targetTank->mBox.y < 0 || targetTank->mBox.y > LEVEL_HEIGHT - TANK_HEIGHT - 30 || collided){
-        if(targetTank->face < 180){
-            targetTank->face += 180.0f;
-        } else {
-            targetTank->face -= 180.0f;
-        };        
-        targetTank->mVelX = -targetTank->mVelX;
-        targetTank->mVelY = -targetTank->mVelY;
-    }
+
+        if (targetTank->mBox.x < 0 || targetTank->mBox.x  > LEVEL_WIDTH - TANK_WIDTH -30 || targetTank->mBox.y < 0 || targetTank->mBox.y > LEVEL_HEIGHT - TANK_HEIGHT - 30 || collided){
+            if(targetTank->face < 180){
+                targetTank->face += 180.0f;
+            } else {
+                targetTank->face -= 180.0f;
+            };        
+            targetTank->mVelX = -targetTank->mVelX;
+            targetTank->mVelY = -targetTank->mVelY;
+        }
 
     // distance > 250 && 
     if (!collided){

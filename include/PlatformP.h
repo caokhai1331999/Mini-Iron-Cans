@@ -96,11 +96,11 @@ bool IsArrow(SDL_Scancode KeyCode);
 bool setTiles( Tile *tiles, PlatformP* Platform);
 bool valid(SDL_Event e, KeyState* previousKey, KeyState* currentKey);
 //Shows the Tank on the screen
-
+void ConstructRectJoint(const SDL_Rect* rect, SDL_Point* Joint);
 void DrawScaffold(SDL_Point(*Scaffold)[5], const SDL_Rect* Camera);
 void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform);
 void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera,  uint8_t* frame);
-void renderTank(TankInfo* Tank, uint8_t* MovingFrame, SDL_Rect* camera, PlatformP* Platform);
+void renderTank(TankInfo* Tank, int index, uint8_t* MovingFrame, SDL_Rect* camera, PlatformP* Platform);
 
 #define PLATFORMP_H
 #endif

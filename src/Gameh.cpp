@@ -114,8 +114,12 @@ bool Start(Game* g){
                 GenerateSinglePosition(&g->userTank->mBox.x, &g->userTank->mBox.y);
                 // printf("user Tank position is: %d %d", g->userTank->mBox.x, g->userTank->mBox.y);
 
-                TankScaffold = new SDL_Point[5]();
-                BulletScaffold = new SDL_Point[5]();
+                // if(TankScaffold && BulletScaffold){
+                //     TankScaffold = nullptr;
+                //     BulletScaffold = nullptr;
+                //     TankScaffold = new SDL_Point[5]();
+                //     BulletScaffold = new SDL_Point[5]();
+                // }
                 
                 InitializeTankPos(g->TankPos);
                 InitializeTankInfo(g->TankPos, g->enemyTank);
@@ -304,9 +308,15 @@ void runMainScene(Game* g){
 
         // NOTE: Temporary not use touchwall here
         if(!g->enemyTank[i].isHit && !g->enemyTank[i].destroyed){
+            g->enemyTank[i].MovingWaitTime++;
             move(false, Ecollided, &g->enemyTank[i]);
-        }
-        littleGuide(&g->enemyTank[i], g->userTank, Ecollided);
+            printf("Bullet number of bot tank %d is %d\n", i, g->enemyTank[i].BulletsNumber);
+            if (g->enemyTank[i].MovingWaitTime > 240){        
+                littleGuide(&g->enemyTank[i], g->userTank, Ecollided);
+                g->enemyTank[i].MovingWaitTime = 0;
+            }
+       }
+
     // ===============================================
     }    
 
@@ -382,7 +392,7 @@ void RenderMainScene(Game* g){
  }
 
  if(!g->userTank->isHit){
-     renderTank(g->userTank, &MovingFrame[4], &g->Camera, g->platform);
+     renderTank(g->userTank, 0, &MovingFrame[4], &g->Camera, g->platform);
      // printf("Tank sprite is being rendered\n");
  }else{
      // The additional loop just make the explostion clip run incredibly faster
@@ -399,7 +409,7 @@ void RenderMainScene(Game* g){
  while(k < TOTAL_ENEMY_TANK)
  {
      if(!g->enemyTank[k].isHit && !g->enemyTank[k].destroyed){
-         renderTank(&g->enemyTank[k], &MovingFrame[k], &g->Camera, g->platform);                        
+         renderTank(&g->enemyTank[k], k, &MovingFrame[k], &g->Camera, g->platform);                        
      } else {
      if(g->enemyTank[k].isHit && !g->enemyTank[k].destroyed){
          if(ExplosionFrame!=nullptr){
@@ -430,11 +440,11 @@ void Close(Game* g){
     delete[] g->userTank->Bullets;
     g->userTank->Bullets = nullptr;
 
-    delete[] TankScaffold;
-    TankScaffold = nullptr;
+    // delete[] TankScaffold;
+    // TankScaffold = nullptr;
 
-    delete[] BulletScaffold;
-    BulletScaffold = nullptr;
+    // delete[] BulletScaffold;
+    // BulletScaffold = nullptr;
 
     
     delete g->userTank;

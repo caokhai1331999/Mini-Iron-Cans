@@ -483,13 +483,49 @@ bool setTiles( Tile *tiles,PlatformP* Platform){
     return tilesLoaded;    
 }
 
+void ConstructRectJoint(const SDL_Rect* rect, SDL_Point* Joint){
+    if (Joint)
+    {    for (int i =0; i < 5; i++){
+        switch(i){
+            case 0:
+                Joint[i].x = rect->x;
+                Joint[i].y = rect->y;
+                break;
+
+            case 1:
+                Joint[i].x = rect->x + rect->w;
+                Joint[i].y = rect->y;
+                break;
+
+            case 2:
+                Joint[i].x = rect->x + rect->w;
+                Joint[i].y = rect->y + rect->h;
+                break;
+
+            case 3:
+                Joint[i].x = rect->x;
+                Joint[i].y = rect->y + rect->h;
+                break;
+
+            case 4:
+                Joint[i].x = Joint[0].x;
+                Joint[i].y = Joint[0].y;
+                break;
+        };
+    printf("scaffold points pos %d is %d %d\n", i, Joint[i].x, Joint[i].y);
+    }
+    } else {
+        printf("Joint ptr is NULL\n");
+    }
+}    
+
 void DrawScaffold(SDL_Renderer* renderer, SDL_Point *Scaffold, const SDL_Rect* Camera){
 
     if(Scaffold){        
         for(int i = 0; i < TOTAL_SCAFFOLD_JOINT; i++){
             Scaffold[i].x -= Camera->x;
             Scaffold[i].y -= Camera->y;
-            printf("Camera pos: %d %d\n", Camera->x, Camera->y);
+            // printf("Camera pos: %d %d\n", Camera->x, Camera->y);
             printf("Scaffold pos: %d %d\n", Scaffold[i].x, Scaffold[i].y);
         }
     } else {
@@ -501,7 +537,7 @@ void DrawScaffold(SDL_Renderer* renderer, SDL_Point *Scaffold, const SDL_Rect* C
 
 
 //Shows the Tank on the screen
-void renderTank(TankInfo* Tank, uint8_t* MovingFrame, SDL_Rect* camera, PlatformP* Platform) {
+void renderTank(TankInfo* Tank, int index, uint8_t* MovingFrame, SDL_Rect* camera, PlatformP* Platform) {
     
     SDL_SetRenderDrawColor( Platform->gRenderer, 0x49, 0x48, 0x3E, 0xFF);
     if(!Tank->destroyed && !Tank->isHit) {
@@ -540,8 +576,8 @@ void renderTank(TankInfo* Tank, uint8_t* MovingFrame, SDL_Rect* camera, Platform
         // NOTE: Because of the camera position negative out the position of the
         // printf("Position tank x camera : %d %d\n", Tank->mBox.x, camera->x);
         render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), Platform->gUserTankTexture, &Platform->gMovingClips[(*MovingFrame)/5], Tank->face);
-        ConstructRectJoint(&Tank->mBox ,TankScaffold);
-        DrawScaffold(Platform->gRenderer, TankScaffold, camera);
+        ConstructRectJoint(&Tank->mBox ,TankScaffoldS[0].TankScaffold);
+        DrawScaffold(Platform->gRenderer, TankScaffoldS[0].TankScaffold, camera);
         // This TankScaffold is an address to an array
         
         if(Platform->gUserBulletTexture!=nullptr) {             
@@ -550,16 +586,16 @@ void renderTank(TankInfo* Tank, uint8_t* MovingFrame, SDL_Rect* camera, Platform
                 
                 render(Platform->gRenderer, Tank->Bullets[i].blBox.x - camera->x, Tank->Bullets[i].blBox.y - camera->y, Platform->gUserBulletTexture, nullptr, Tank->face);
                 SDL_SetRenderDrawColor( Platform->gRenderer, 0x49, 0x48, 0x3E, 0xFF);
-                ConstructRectJoint(&Tank->Bullets[i].blBox ,BulletScaffold);
-                DrawScaffold(Platform->gRenderer, BulletScaffold, camera);                                
+                ConstructRectJoint(&Tank->Bullets[i].blBox ,TankScaffoldS[0].BulletScaffold);
+                DrawScaffold(Platform->gRenderer, TankScaffoldS[0].BulletScaffold, camera);                                
             }
         }
     }
   }
 else if (!Tank->Belong && Platform->gEnemyTankTexture != nullptr) {
     render( Platform->gRenderer ,Tank->mBox.x - camera->x,Tank->mBox.y - camera->y, Platform->gEnemyTankTexture,&Platform->gMovingClips[(*MovingFrame/5)], Tank->face);
-    
-    DrawScaffold(Platform->gRenderer, TankScaffold, camera);
+    ConstructRectJoint(&Tank->mBox , TankScaffoldS[index].TankScaffold);    
+    DrawScaffold(Platform->gRenderer, TankScaffoldS[index].TankScaffold, camera);
     if(Platform->gEnemyBulletTexture!=nullptr) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
 
@@ -567,12 +603,9 @@ else if (!Tank->Belong && Platform->gEnemyTankTexture != nullptr) {
 
                 render(Platform->gRenderer, Tank->Bullets[i].blBox.x, Tank->Bullets[i].blBox.y, Platform->gEnemyBulletTexture, nullptr, Tank->face);
 
-<<<<<<< HEAD
-                SDL_RenderDrawLines(Platform->gRenderer, Tank->Bullets[i].BulletScaffold, 5);                
-=======
                 SDL_SetRenderDrawColor( Platform->gRenderer, 0x49, 0x48, 0x3E, 0xFF);
-                DrawScaffold(Platform->gRenderer, BulletScaffold, camera);                                
->>>>>>> 5d4e3af (latest update)
+                ConstructRectJoint(&Tank->Bullets[i].blBox ,TankScaffoldS[index].BulletScaffold);
+                DrawScaffold(Platform->gRenderer, TankScaffoldS[index].BulletScaffold, camera);                                
             }
         }
     }        

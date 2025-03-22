@@ -65,9 +65,17 @@ const global_variable int SMALL_WOOD_PATH_1 = 12;
 const int EXPLOSION_FRAMES = 10;
 const int MOVING_FRAMES = 8;
 
-global_variable SDL_Point* TankScaffold = new SDL_Point[5]();
-global_variable SDL_Point* BulletScaffold = new SDL_Point[5]();
-
+struct Scaffold {
+SDL_Point* TankScaffold;
+SDL_Point* BulletScaffold;
+    Scaffold(){
+        TankScaffold = nullptr;
+        BulletScaffold = nullptr;
+        TankScaffold = new SDL_Point[5]();
+        BulletScaffold = new SDL_Point[5]();        
+    };
+};
+global_variable Scaffold TankScaffoldS[5] = {};
 
 struct KeyState{
     bool pressed;
