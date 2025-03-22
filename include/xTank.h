@@ -49,8 +49,9 @@ const global_variable int TANK_WIDTH = 20;
 const global_variable int TANK_HEIGHT = 20;
 const global_variable int TOTAL_ENEMY_TANK = 3 ;
 const global_variable int TOTAL_BULLET_PER_TANK = 10 ;
+const global_variable int TOTAL_SCAFFOLD_JOINT = 5 ;
 
-const global_variable int BULLET_VEL = 20;
+const global_variable int BULLET_VEL = 5;
 const global_variable int BULLET_WIDTH = 10 ;
 const global_variable int BULLET_HEIGHT = 10 ;
 
@@ -67,8 +68,12 @@ struct Bullet{
     int BlVelX = 0;
     int BlVelY = 0;
     bool Launched = false;
+<<<<<<< HEAD
     // SDL_Point BulletScaffold[5] = {};
     SDL_Point* BulletScaffold = new SDL_Point[5]();
+=======
+    // SDL_Point *BulletScaffold = new SDL_Point[5]();
+>>>>>>> 5d4e3af (latest update)
     SDL_Rect blBox = {};
 
     Bullet(int TankX = 0, int TankY = 0, bool launched = false, bool userBelong = false): blBox({TankX, TankY, BULLET_WIDTH, BULLET_HEIGHT}), Launched(launched)
@@ -89,8 +94,12 @@ struct TankInfo
     // NOTE: Don't know why this doesn't trigger default value
     SDL_Rect mBox;
 
+<<<<<<< HEAD
     // SDL_Point TankScaffold[5] = {};
     SDL_Point* TankScaffold = nullptr;
+=======
+    // SDL_Point* TankScaffold = new SDL_Point[5]();
+>>>>>>> 5d4e3af (latest update)
 
     int mVelX = 0;
     int mVelY = 0;
@@ -100,7 +109,14 @@ struct TankInfo
 
     TankInfo(int x = 0, int y = 0, bool userBelong = false):Belong(userBelong), mBox({x , y, TANK_WIDTH, TANK_HEIGHT}){
 
+<<<<<<< HEAD
         TankScaffold = new SDL_Point[5]();
+=======
+    // if(!TankScaffold){
+    //     TankScaffold = ;
+    // }
+        
+>>>>>>> 5d4e3af (latest update)
         isMoving = false;
         Bullets = nullptr;
         Bullets = new Bullet[TOTAL_BULLET_PER_TANK]();
@@ -120,8 +136,12 @@ struct TankInfo
 // bool OtherReleased(SDL_KeyboardEvent key);
 
 
+<<<<<<< HEAD
 void ConstructRectJoint(const SDL_Rect* rect, SDL_Point(*Joint)[5]);
 void ConstructTankScaffold(TankInfo* tank);
+=======
+void ConstructRectJoint(const SDL_Rect* rect, SDL_Point* Joint);
+>>>>>>> 5d4e3af (latest update)
 // Randomize Tank Positions that far enough
 void InitializeTankPos(Position* RealTankPos);
 void InitializeTankInfo(Position* Tankpos = nullptr, TankInfo* Tank = nullptr);

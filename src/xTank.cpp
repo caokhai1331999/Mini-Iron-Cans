@@ -28,7 +28,8 @@ void GenerateSinglePosition(int* x, int* y){
 
 
 void ConstructRectJoint(const SDL_Rect* rect, SDL_Point* Joint){
-    for (int i =0; i < 5; i++){
+    if (Joint)
+    {    for (int i =0; i < 5; i++){
         switch(i){
             case 0:
                 Joint[i].x = rect->x;
@@ -57,14 +58,10 @@ void ConstructRectJoint(const SDL_Rect* rect, SDL_Point* Joint){
         };
     printf("scaffold points of %d is %d %d\n", i, Joint[i].x, Joint[i].y);
     }
+    } else {
+        printf("Joint ptr is NULL\n");
+    }
 }    
-
-void ConstructTankScaffold(TankInfo* tank){
-        ConstructRectJoint(&tank->mBox, tank->TankScaffold);
-        for(int i= 0; i < TOTAL_BULLET_PER_TANK; i++){
-            ConstructRectJoint(&tank->Bullets[i].blBox, tank->Bullets[i].BulletScaffold);            
-        }
-}
 
 
 void InitializeTankPos(Position* RealTankPos){
@@ -107,9 +104,12 @@ void InitializeTankInfo(Position* TankPos,TankInfo* Tank){
         {
             Tank[i].mBox = {TankPos[i].x, TankPos[i].y, TANK_WIDTH, TANK_HEIGHT};
             // userBelong?&Tank[i]->Bullets[i].type = userB:&Tank[i]->Bullets[i].type = enemyB;
+<<<<<<< HEAD
             // How to pass a pointer to tankInfo in this fx
             // is the &Tank[i] right
             ConstructTankScaffold(&Tank[i]);
+=======
+>>>>>>> 5d4e3af (latest update)
         }        
     }
     else {
@@ -283,50 +283,37 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
     if(!Tank->isHit && !Tank->destroyed){
 
         Tank->mBox.x += Tank->mVelX;
-
-        for(int i = 0; i < 5; i++){
-            Tank->TankScaffold[i].x += Tank->mVelX;   
-        }
-
         if ((Tank->mBox.x < 0)||(Tank->mBox.x  > LEVEL_WIDTH - (TANK_WIDTH)) || collided){
             Tank->mBox.x -= Tank->mVelX;
-            for(int i = 0; i < 5; i++){
-                Tank->TankScaffold[i].x -= Tank->mVelX;   
-            }
+            // for(int i = 0; i < 5; i++){
+            //     Tank->TankScaffold[i].x -= Tank->mVelX;   
+            // }
             if(Tank->isMoving){
                 Tank->isMoving = false;
             };
         }
             
-        Tank->mBox.y += Tank->mVelY;
-        for(int i = 0; i < 5; i++){
-            Tank->TankScaffold[i].y += Tank->mVelY;   
-        }
-
+        Tank->mBox.y += Tank->mVelY;        
         if ((Tank->mBox.y < 0)||(Tank->mBox.y > LEVEL_HEIGHT - (TANK_HEIGHT)) || collided)
         {
             Tank->mBox.y -= Tank->mVelY;
-            for(int i = 0; i < 5; i++){
-                Tank->TankScaffold[i].y -= Tank->mVelY;   
-            }
+            // for(int i = 0; i < 5; i++){
+            //     Tank->TankScaffold[i].y -= Tank->mVelY;   
+            // }
             if(Tank->isMoving){
                 Tank->isMoving = false;
             };
         }
 
-
+        ConstructRectJoint(&Tank->mBox, TankScaffold);
         
         for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
 
             if (Tank->Bullets[i].Launched){
-                
+
+                ConstructRectJoint(&Tank->Bullets[i].blBox, BulletScaffold);                
                 Tank->Bullets[i].blBox.x += Tank->Bullets[i].BlVelX;
                 Tank->Bullets[i].blBox.y += Tank->Bullets[i].BlVelY;
-
-                for(int j = 0; j < 5; i++){
-                    Tank->Bullets[i].BulletScaffold[j].x += Tank->Bullets[i].BlVelX;   
-                    Tank->Bullets[i].BulletScaffold[j].y += Tank->Bullets[i].BlVelY;   
-                }
                 
                 if((Tank->Bullets[i].blBox.x < 0)||(Tank->Bullets[i].blBox.x + Tank->Bullets[i].blBox.w > LEVEL_WIDTH||Tank->Bullets[i].blBox.y < 0)||(Tank->Bullets[i].blBox.y + Tank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
 
@@ -508,10 +495,7 @@ void resetTank(TankInfo* Tank){
     Tank->mBox.x = -1;
     Tank->mBox.y = -1;
     Tank->isHit = false;
-    Tank->destroyed = false;
-
-    ConstructTankScaffold(Tank);
-        
+    Tank->destroyed = false;        
     // NOTE: Forgot to destroy bullet pointer. My bad!!!
     for (int i = 0; i<TOTAL_BULLET_PER_TANK; i++){
         resetBullet(&Tank->Bullets[i]);

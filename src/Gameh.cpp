@@ -114,8 +114,9 @@ bool Start(Game* g){
                 GenerateSinglePosition(&g->userTank->mBox.x, &g->userTank->mBox.y);
                 // printf("user Tank position is: %d %d", g->userTank->mBox.x, g->userTank->mBox.y);
 
-                ConstructTankScaffold(g->userTank);
-
+                TankScaffold = new SDL_Point[5]();
+                BulletScaffold = new SDL_Point[5]();
+                
                 InitializeTankPos(g->TankPos);
                 InitializeTankInfo(g->TankPos, g->enemyTank);
                 
@@ -409,7 +410,7 @@ void RenderMainScene(Game* g){
      k++;
  };
                                    
- renderText(FPS, g->userTank, g->platform);
+ // renderText(FPS, g->userTank, g->platform);
  TimeElapsed = EndTime - StartTime;
  FPS = 1/(TimeElapsed/1000.0f);
  StartTime = EndTime;         
@@ -429,21 +430,25 @@ void Close(Game* g){
     delete[] g->userTank->Bullets;
     g->userTank->Bullets = nullptr;
 
-    delete[] g->userTank->TankScaffold;
-    g->userTank->TankScaffold = nullptr;
+    delete[] TankScaffold;
+    TankScaffold = nullptr;
 
+    delete[] BulletScaffold;
+    BulletScaffold = nullptr;
+
+    
     delete g->userTank;
     g->userTank = nullptr;
 
     for(int i = 0; i < TOTAL_ENEMY_TANK; i++){
-        for(int j = 0; j < TOTAL_BULLET_PER_TANK; i++){            
-            delete[] g->enemyTank[i].Bullets[j].BulletScaffold;
-            g->enemyTank[i].Bullets[j].BulletScaffold = nullptr;
-        }
+        // for(int j = 0; j < TOTAL_BULLET_PER_TANK; j++){            
+        //     delete[] g->enemyTank[i].Bullets[j].BulletScaffold;
+        //     g->enemyTank[i].Bullets[j].BulletScaffold = nullptr;
+        // }
         delete[] g->enemyTank[i].Bullets;
         g->enemyTank[i].Bullets = nullptr;
-        delete[] g->enemyTank[i].TankScaffold;
-        g->enemyTank[i].TankScaffold = nullptr;
+        // delete[] g->enemyTank[i].TankScaffold;
+        // g->enemyTank[i].TankScaffold = nullptr;
     }
 
     delete[] g->enemyTank;
