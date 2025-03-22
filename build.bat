@@ -18,7 +18,7 @@ set yr=%yr: =0%
 REM Define paths to SDL include, library, and DLL directories
 set DEFAULT_INCLUDE_DIR="..\include"
 set COMMON_COMPILER_FLAG=/FC /MD /Zi /FD /EHsc
-set EXPORT_=/EXPORT:ProcessInput /EXPORT:Update /EXPORT:Render /EXPORT:Close
+set EXPORT_=/EXPORT:Start /EXPORT:ProcessInput /EXPORT:Update /EXPORT:Render /EXPORT:Close
 
 set INHERENT_LIB=SDL2.lib SDL2main.lib SDL2_image.lib SDL2_mixer.lib SDL2_ttf.lib shlwapi.lib Shell32.lib
 set SDL_INCLUDE_DIR="C:\Users\klove\Downloads\External_Libraries\SDL2\SDL2-2.30.2\include"
@@ -58,7 +58,7 @@ set PDB_name=main_%hr%%min%%sec%_%dd%%mm%%yr%.pdb
 cl /LD ..\src\Gameh.cpp ..\src\GamePhysics.cpp ..\src\PlatformP.cpp ..\src\TileX.cpp ..\src\xTank.cpp ..\src\XTexture.cpp %COMMON_COMPILER_FLAG% /I %DEFAULT_INCLUDE_DIR% /I %SDL_INCLUDE_DIR% /link /LIBPATH:%SDL_LIB_DIR% SDL2.lib SDL2_image.lib SDL2_mixer.lib SDL2_ttf.lib shlwapi.lib Shell32.lib /PDB:%PDB_name% %EXPORT_% /DEBUG /OUT:Gameh.dll
 
 ::May be because I remove /PDB or not add mainK.cpp in the dll source code
-cl ..\src\*.cpp %COMMON_COMPILER_FLAG% /I %DEFAULT_INCLUDE_DIR% /I %SDL_INCLUDE_DIR% /link /LIBPATH:%SDL_LIB_DIR% %INHERENT_LIB% /DEBUG /subsystem:console /OUT:%OUT_EXE%
+cl ..\src\*.cpp %COMMON_COMPILER_FLAG% /fsanitize=address /I %DEFAULT_INCLUDE_DIR% /I %SDL_INCLUDE_DIR% /link /LIBPATH:%SDL_LIB_DIR% %INHERENT_LIB% /DEBUG /subsystem:console /OUT:%OUT_EXE%
 
 if %ERRORLEVEL% EQU 0 (
    @echo Announce: compilation succeeded "(^ w ^)" at %time%
