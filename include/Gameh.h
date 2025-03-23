@@ -53,7 +53,7 @@ struct Game{
     uint8_t pointed_option = 0;
     MENUCHOICE chosen_option = NONE;
     // NOTE: Manually set Init game stats here!!!
-    SDL_Rect Camera = {0, 0, 100, 100};
+    SDL_Rect Camera = {0, 0, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT};
     PlatformP* platform;
     
     Tile* tileSet;   
@@ -62,6 +62,7 @@ struct Game{
     TankInfo* enemyTank;
     
     Game(){
+        printf("Camera w and h in struct is %d  %d\n", Camera.w, Camera.h);
         state = MENU_INIT;
         pointed_option = 0;
         chosen_option = NONE;

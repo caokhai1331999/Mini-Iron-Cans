@@ -111,15 +111,9 @@ bool Start(Game* g){
             }
             else
             {
+                // printf("Camera w and h is %d  %d\n", g->Camera.w, g->Camera.h);                
                 GenerateSinglePosition(&g->userTank->mBox.x, &g->userTank->mBox.y);
                 // printf("user Tank position is: %d %d", g->userTank->mBox.x, g->userTank->mBox.y);
-
-                // if(TankScaffold && BulletScaffold){
-                //     TankScaffold = nullptr;
-                //     BulletScaffold = nullptr;
-                //     TankScaffold = new SDL_Point[5]();
-                //     BulletScaffold = new SDL_Point[5]();
-                // }
                 
                 InitializeTankPos(g->TankPos);
                 InitializeTankInfo(g->TankPos, g->enemyTank);
@@ -380,6 +374,7 @@ void resetGame(Game*g){
 }        
 
 void RenderMainScene(Game* g){
+    // printf("Camera w and h is %d  %d\n", g->Camera.w, g->Camera.h);
     EndTime = SDL_GetTicks();
     int k = 0;
  //Clear screen
@@ -428,37 +423,15 @@ void RenderMainScene(Game* g){
 
 
 void Close(Game* g){
-    // delete []ExplosionFrame;
-    // ExplosionFrame = nullptr;    
-
-    // delete []MovingFrame;
-    // MovingFrame = nullptr;    
-
     delete[] g->TankPos;
     g->TankPos = nullptr;
 
     delete[] g->userTank->Bullets;
     g->userTank->Bullets = nullptr;
 
-    // delete[] TankScaffold;
-    // TankScaffold = nullptr;
-
-    // delete[] BulletScaffold;
-    // BulletScaffold = nullptr;
-
-    
-    delete g->userTank;
-    g->userTank = nullptr;
-
     for(int i = 0; i < TOTAL_ENEMY_TANK; i++){
-        // for(int j = 0; j < TOTAL_BULLET_PER_TANK; j++){            
-        //     delete[] g->enemyTank[i].Bullets[j].BulletScaffold;
-        //     g->enemyTank[i].Bullets[j].BulletScaffold = nullptr;
-        // }
         delete[] g->enemyTank[i].Bullets;
         g->enemyTank[i].Bullets = nullptr;
-        // delete[] g->enemyTank[i].TankScaffold;
-        // g->enemyTank[i].TankScaffold = nullptr;
     }
 
     delete[] g->enemyTank;
@@ -495,8 +468,7 @@ void Render (Game* g){
 
             if (g->stateChange == CHANGED){
                 g->stateChange = NOT_YET;
-
-                SDL_SetWindowSize(g->platform->gWindow, 2 * DEFAULT_SCREEN_WIDTH, 2*DEFAULT_SCREEN_HEIGHT);
+                // SDL_SetWindowSize(g->platform->gWindow, 2 * DEFAULT_SCREEN_WIDTH, 2*DEFAULT_SCREEN_HEIGHT);
                 SDL_SetWindowPosition(g->platform->gWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
                 SDL_GetWindowSize(g->platform->gWindow, &g->platform->screen_w, &g->platform->screen_h);
 

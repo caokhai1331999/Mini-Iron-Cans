@@ -68,8 +68,6 @@ struct Bullet{
     int BlVelX = 0;
     int BlVelY = 0;
     bool Launched = false;
-    // SDL_Point BulletScaffold[5] = {};
-    // sdl_Point *BulletScaffold = new SDL_Point[5]();
     SDL_Rect blBox = {};
 
     Bullet(int TankX = 0, int TankY = 0, bool launched = false, bool userBelong = false): blBox({TankX, TankY, BULLET_WIDTH, BULLET_HEIGHT}), Launched(launched)
@@ -113,9 +111,6 @@ struct TankInfo
         }
 
     };
-    // NOTE: Bullet created when Tank is created, follow them until being fired
-    // after fire, create the second bullet to follow it when the previous is sent
-    //flied    
 };
 
 // bool OtherReleased(SDL_KeyboardEvent key);

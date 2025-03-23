@@ -66,15 +66,16 @@ const int EXPLOSION_FRAMES = 10;
 const int MOVING_FRAMES = 8;
 
 struct Scaffold {
-SDL_Point* TankScaffold;
-SDL_Point* BulletScaffold;
-    Scaffold(){
-        TankScaffold = nullptr;
-        BulletScaffold = nullptr;
-        TankScaffold = new SDL_Point[5]();
-        BulletScaffold = new SDL_Point[5]();        
-    };
+    SDL_Point TankScaffold[5] = {};
+    SDL_Point BulletScaffold[5] = {};
+    // Scaffold(){
+    //     TankScaffold = nullptr;
+    //     BulletScaffold = nullptr;
+    //     TankScaffold = new ();
+    //     BulletScaffold = new SDL_Point[5]();        
+    // };
 };
+
 global_variable Scaffold TankScaffoldS[5] = {};
 
 struct KeyState{

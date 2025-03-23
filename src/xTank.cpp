@@ -65,12 +65,10 @@ void InitializeTankInfo(Position* TankPos,TankInfo* Tank){
         for(int i = 0; i < TankNumber; i++)
         {
             Tank[i].mBox = {TankPos[i].x, TankPos[i].y, TANK_WIDTH, TANK_HEIGHT};
-            // userBelong?&Tank[i]->Bullets[i].type = userB:&Tank[i]->Bullets[i].type = enemyB;
-            // How to pass a pointer to tankInfo in this fx
-            // is the &Tank[i] right
         }        
     }
-    else {
+    else
+    {
         Tank->mBox.x = TankPos->x;
         Tank->mBox.y = TankPos->y;
     }
@@ -285,6 +283,7 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
             }                
         }    
     }
+    
 }
 
 //Centers the camera over the Tank
@@ -292,12 +291,12 @@ void setCamera( SDL_Rect* camera, TankInfo* UserTank ){
 
     // NOTE: Center the userTank inside the camera
     // Initialize the collision box
-	camera->x = ( UserTank->mBox.x + TANK_WIDTH/2 ) - (camera->w)/2;
+	camera->x = ( UserTank->mBox.x + (TANK_WIDTH/2) ) - ((camera->w)/2);
+	camera->y = ( UserTank->mBox.y + (TANK_HEIGHT/2) ) - ((camera->h)/2);
     // Give a fair distance between the camera and the main tank
-	camera->y = ( UserTank->mBox.y + TANK_HEIGHT/2 ) - (camera->h)/2;
 
-    // printf("User tank pos:%d %d\n",UserTank->mBox.x, UserTank->mBox.y);
-    // printf("Camera pos:%d %d\n",camera->x, camera->y);
+    printf("User tank pos:%d %d\n",UserTank->mBox.x, UserTank->mBox.y);
+    printf("Camera pos:%d %d\n",camera->x, camera->y);
     // NOTE: so with this formula why camera pos is alway ahead of (>) userTank one
     // Why camera w, h turn to 0
     
