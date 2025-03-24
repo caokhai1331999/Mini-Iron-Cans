@@ -19,7 +19,7 @@
 
 using namespace std;
 
-#define TANKFACE double
+#define FACE double
 #define UP 0.0
 #define DOWN 180.0
 #define RIGHT 90.0
@@ -68,11 +68,15 @@ struct Bullet{
     int BlVelX = 0;
     int BlVelY = 0;
     bool Launched = false;
+    bool destroyed = false;
+    FACE face;
     SDL_Rect blBox = {};
 
     Bullet(int TankX = 0, int TankY = 0, bool launched = false, bool userBelong = false): blBox({TankX, TankY, BULLET_WIDTH, BULLET_HEIGHT}), Launched(launched)
 
     {
+        face = 0.0f;
+        destroyed = false;
         type = userBelong?userB:enemyB;
     }
     
@@ -87,11 +91,12 @@ struct TankInfo
     bool isHit = false;
 
     int MovingWaitTime = 0;
+    int FireWaitTime = 0;
     // NOTE: Don't know why this doesn't trigger default value
     SDL_Rect mBox;
     int mVelX = 0;
     int mVelY = 0;
-    TANKFACE face = (TANKFACE)(rand()%3) ;
+    FACE face ;
     int BulletsNumber = TOTAL_BULLET_PER_TANK;
     Bullet* Bullets;
 
@@ -100,6 +105,11 @@ struct TankInfo
         if(MovingWaitTime!=0){
             MovingWaitTime = 0;
         }
+
+        if(FireWaitTime!=0){
+            FireWaitTime = 0;
+        }
+        face = (FACE)((rand()%3)*90.0f);
         isMoving = false;
         Bullets = nullptr;
         Bullets = new Bullet[TOTAL_BULLET_PER_TANK]();

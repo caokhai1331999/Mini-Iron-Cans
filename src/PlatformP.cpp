@@ -543,26 +543,26 @@ void renderTank(TankInfo* Tank, int index, uint8_t* MovingFrame, SDL_Rect* camer
     //NOTE: Show the tank and bullet here
         switch((int)Tank->face){
             case (int)UP:
-                if((*MovingFrame) > UP_FIRST*5){
-                    (*MovingFrame) = (UP_FIRST)*5;
+                if((*MovingFrame) > UP_FIRST*10){
+                    (*MovingFrame) = (UP_FIRST)*10;
                 };
                 break;
 
             case (int)DOWN:
-                if((*MovingFrame) > DOWN_SECOND*5 || (*MovingFrame) < (DOWN_FIRST)*5){
-                    (*MovingFrame) = (DOWN_FIRST)*5;
+                if((*MovingFrame) > DOWN_SECOND*10 || (*MovingFrame) < (DOWN_FIRST)*10){
+                    (*MovingFrame) = (DOWN_FIRST)*10;
                 }
                 break;
 
             case (int)RIGHT:
-                if((*MovingFrame) < (RIGHT_FIRST)*5 || (*MovingFrame) > RIGHT_SECOND*5){
-                    (*MovingFrame) = (RIGHT_FIRST)*5;
+                if((*MovingFrame) < (RIGHT_FIRST)*10 || (*MovingFrame) > RIGHT_SECOND*10){
+                    (*MovingFrame) = (RIGHT_FIRST)*10;
                 }
                 break;
             case (int)LEFT:
 
-                if((*MovingFrame) < (LEFT_FIRST)*5 || (*MovingFrame) > LEFT_SECOND*5){
-                    (*MovingFrame) = (LEFT_FIRST)*5;
+                if((*MovingFrame) < (LEFT_FIRST)*10 || (*MovingFrame) > LEFT_SECOND*10){
+                    (*MovingFrame) = (LEFT_FIRST)*10;
                 }
                 break;
         }
@@ -574,7 +574,7 @@ void renderTank(TankInfo* Tank, int index, uint8_t* MovingFrame, SDL_Rect* camer
         if (Tank->Belong && Platform->gUserTankTexture!=nullptr) {
         // NOTE: Because of the camera position negative out the position of the
         // printf("Position tank x camera : %d %d\n", Tank->mBox.x, camera->x);
-        render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), Platform->gUserTankTexture, &Platform->gMovingClips[(*MovingFrame)/5], Tank->face);
+        render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), Platform->gUserTankTexture, &Platform->gMovingClips[(*MovingFrame)/10], Tank->face);
         ConstructRectJoint(&Tank->mBox ,TankScaffoldS[0].TankScaffold);
         // SDL_RenderDrawLines(Platform->gRenderer, CameraScaffold, 5);
         ConstructRectJoint(camera, CameraScaffold);
@@ -587,7 +587,7 @@ void renderTank(TankInfo* Tank, int index, uint8_t* MovingFrame, SDL_Rect* camer
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
             if (Tank->Bullets[i].Launched){
                 
-                render(Platform->gRenderer, Tank->Bullets[i].blBox.x - camera->x, Tank->Bullets[i].blBox.y - camera->y, Platform->gUserBulletTexture, nullptr, Tank->face);
+                render(Platform->gRenderer, Tank->Bullets[i].blBox.x - camera->x, Tank->Bullets[i].blBox.y - camera->y, Platform->gUserBulletTexture, nullptr, Tank->Bullets[i].face);
                 SDL_SetRenderDrawColor( Platform->gRenderer, 0x49, 0x48, 0x3E, 0xFF);
                 ConstructRectJoint(&Tank->Bullets[i].blBox ,TankScaffoldS[0].BulletScaffold);
                 DrawScaffold(Platform->gRenderer, TankScaffoldS[0].BulletScaffold, camera);                                

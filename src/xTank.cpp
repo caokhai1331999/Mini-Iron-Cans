@@ -76,6 +76,9 @@ void InitializeTankInfo(Position* TankPos,TankInfo* Tank){
 }
 
 void fire(TankInfo* Tank){
+    if(Tank->FireWaitTime < 10){
+        Tank->FireWaitTime++;
+    }
     if(!Tank->destroyed && !Tank->isHit) {
         for(int i = 0; i < TOTAL_BULLET_PER_TANK ; i++){
             if(Tank->Bullets[i].Launched)
@@ -83,37 +86,36 @@ void fire(TankInfo* Tank){
                 continue;
             } else if (!Tank->Bullets[i].Launched) {
 
-
                 Tank->BulletsNumber--;
                     if(Tank->BulletsNumber < 0){
                         Tank->BulletsNumber = 0;
                     }                    
-
                 
+                    Tank->Bullets[i].face = Tank->face;
                 switch((int)Tank->face)
                 {
                     case (int)UP:
                         Tank->Bullets[i].blBox.x = Tank->mBox.x + Tank->mBox.w/4;
                         Tank->Bullets[i].blBox.y = Tank->mBox.y;
-                        Tank->Bullets[i].BlVelY -= BULLET_VEL;
+                        Tank->Bullets[i].BlVelY = -BULLET_VEL;
                         break; 
 
                     case (int)DOWN:
                         Tank->Bullets[i].blBox.x = Tank->mBox.x + Tank->mBox.w/4;
                         Tank->Bullets[i].blBox.y = Tank->mBox.y + Tank->mBox.h;
-                        Tank->Bullets[i].BlVelY += BULLET_VEL;
+                        Tank->Bullets[i].BlVelY = +BULLET_VEL;
                         break; 
 
                     case (int)RIGHT:
                         Tank->Bullets[i].blBox.x = Tank->mBox.x + Tank->mBox.w;
                         Tank->Bullets[i].blBox.y = Tank->mBox.y + Tank->mBox.h/4;
-                        Tank->Bullets[i].BlVelX += BULLET_VEL;
+                        Tank->Bullets[i].BlVelX = +BULLET_VEL;
                         break; 
 
                     case (int)LEFT:
                         Tank->Bullets[i].blBox.x = Tank->mBox.x;
                         Tank->Bullets[i].blBox.y = Tank->mBox.y + Tank->mBox.h/4;
-                        Tank->Bullets[i].BlVelX -= BULLET_VEL;
+                        Tank->Bullets[i].BlVelX = -BULLET_VEL;
                         break;             
 
                 }
@@ -121,6 +123,7 @@ void fire(TankInfo* Tank){
                 break;
             }
         }
+        Tank->FireWaitTime = 0;
     }
 }
 
@@ -176,7 +179,8 @@ void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank) {
             //Adjust the velocity
                 switch( CurrentBut->key )
                 {
-                    case SDL_SCANCODE_UP: Tank->face = UP;
+                    case SDL_SCANCODE_UP:
+                        Tank->face = UP;
                         Tank->mVelY = 0; 
                         Tank->mVelY -= TANK_VEL;
                         break;
@@ -237,19 +241,16 @@ void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank) {
 void move(bool touchesWall, bool collided, TankInfo* Tank) {
 
     if(!Tank->isHit && !Tank->destroyed){
-
+            
         Tank->mBox.x += Tank->mVelX;
         if ((Tank->mBox.x < 0)||(Tank->mBox.x  > LEVEL_WIDTH - (TANK_WIDTH)) || collided){
             Tank->mBox.x -= Tank->mVelX;
-            // for(int i = 0; i < 5; i++){
-            //     Tank->TankScaffold[i].x -= Tank->mVelX;   
-            // }
             if(Tank->isMoving){
                 Tank->isMoving = false;
             };
         }
             
-        Tank->mBox.y += Tank->mVelY;        
+        Tank->mBox.y += Tank->mVelY;
         if ((Tank->mBox.y < 0)||(Tank->mBox.y > LEVEL_HEIGHT - (TANK_HEIGHT)) || collided)
         {
             Tank->mBox.y -= Tank->mVelY;
@@ -265,11 +266,11 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
         
         for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
 
-            if (Tank->Bullets[i].Launched){
+            if (Tank->Bullets[i].Launched && !Tank->Bullets[i].destroyed){
 
-                // ConstructRectJoint(&Tank->Bullets[i].blBox, BulletScaffold);                
-                Tank->Bullets[i].blBox.x += Tank->Bullets[i].BlVelX;
-                Tank->Bullets[i].blBox.y += Tank->Bullets[i].BlVelY;
+                // ConstructRectJoint(&Tank->Bullets[i].blBox, BulletScaffold);
+                    Tank->Bullets[i].blBox.x += Tank->Bullets[i].BlVelX;
+                    Tank->Bullets[i].blBox.y += Tank->Bullets[i].BlVelY;
                 
                 if((Tank->Bullets[i].blBox.x < 0)||(Tank->Bullets[i].blBox.x + Tank->Bullets[i].blBox.w > LEVEL_WIDTH||Tank->Bullets[i].blBox.y < 0)||(Tank->Bullets[i].blBox.y + Tank->Bullets[i].blBox.h > LEVEL_HEIGHT)){
 
@@ -282,8 +283,7 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
                 }
             }                
         }    
-    }
-    
+    }        
 }
 
 //Centers the camera over the Tank
@@ -295,8 +295,8 @@ void setCamera( SDL_Rect* camera, TankInfo* UserTank ){
 	camera->y = ( UserTank->mBox.y + (TANK_HEIGHT/2) ) - ((camera->h)/2);
     // Give a fair distance between the camera and the main tank
 
-    printf("User tank pos:%d %d\n",UserTank->mBox.x, UserTank->mBox.y);
-    printf("Camera pos:%d %d\n",camera->x, camera->y);
+    // printf("User tank pos:%d %d\n",UserTank->mBox.x, UserTank->mBox.y);
+    // printf("Camera pos:%d %d\n",camera->x, camera->y);
     // NOTE: so with this formula why camera pos is alway ahead of (>) userTank one
     // Why camera w, h turn to 0
     
@@ -326,27 +326,26 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided){
     // TODO: This function is a little AI that use Dijktra algorithm to drive every
     // bot tank
 
-    targetTank->MovingWaitTime++;
+    // targetTank->MovingWaitTime++;
     int distance = sqrt(pow(targetTank->mBox.x - UserTank->mBox.x,2) + pow(targetTank->mBox.y - UserTank->mBox.y,2));
 
     // NOTE: The idea is simple: moving the bot Tank toward User's one and fire
     // when it is near
     // Prioritize the shorter axis first to shoot 
     // NOTE: Wandering mode
-
     std::srand(std::time(nullptr));
     if(targetTank->mVelX == 0 && targetTank->mVelY == 0){        
         switch((int)targetTank->face){
-            case (int)UP: targetTank->mVelY = 0;
+            case (int)UP:
                 targetTank->mVelY = -TANK_VEL;
                 break;
-            case (int)DOWN: targetTank->mVelY = 0;
+            case (int)DOWN:
                 targetTank->mVelY = TANK_VEL;
                 break;
-            case (int)RIGHT: targetTank->mVelX = 0;
+            case (int)RIGHT:
                 targetTank->mVelX = TANK_VEL;
                 break;                
-            case (int)LEFT: targetTank->mVelX = 0;
+            case (int)LEFT:
                 targetTank->mVelX = -TANK_VEL;
                 break;
         }
@@ -463,6 +462,7 @@ void resetTank(TankInfo* Tank){
 
 void resetBullet(Bullet* bullet){
     bullet->Launched = false;
+    bullet->destroyed = false;
     bullet->BlVelX = 0;
     bullet->BlVelY = 0;
 }
@@ -480,7 +480,7 @@ bool BiTankCheck(TankInfo* ATank, TankInfo* BTank){
                 if(checkCollision(&ATank->Bullets[i].blBox,&BTank->mBox) && !BTank->isHit){
                     BTank->isHit = true;
                     BTank->destroyed = false;
-                    
+                    ATank->Bullets[i].destroyed = true;                                        
                     ATank->BulletsNumber++;                
                     if(ATank->BulletsNumber > TOTAL_BULLET_PER_TANK){
                         ATank->BulletsNumber = TOTAL_BULLET_PER_TANK;
@@ -494,8 +494,9 @@ bool BiTankCheck(TankInfo* ATank, TankInfo* BTank){
                 if(checkCollision(&BTank->Bullets[i].blBox,&ATank->mBox) && !ATank->isHit){
                     ATank->isHit = true;
                     ATank->destroyed = false;
-                    
+                    BTank->Bullets[i].destroyed = true;                    
                     BTank->BulletsNumber++;                
+
                     if(BTank->BulletsNumber > TOTAL_BULLET_PER_TANK){
                         BTank->BulletsNumber = TOTAL_BULLET_PER_TANK;
                     }

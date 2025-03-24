@@ -267,11 +267,22 @@ void ProcessInput(Game* g, bool* done){
 void runMainScene(Game* g){
 
     if(!g->userTank->destroyed && !g->userTank->isHit){
-        move(false, Ucollided, g->userTank);
-    }else{
-        if(g->userTank->destroyed){
-            respawn(g->userTank);
-        };
+        if(!g->userTank->isHit && !g->userTank->destroyed) {
+            if(g->userTank->MovingWaitTime >= 3) {            
+                move(false, Ucollided, g->userTank);
+                g->userTank->MovingWaitTime = 0;
+            } else {
+                if(g->userTank->MovingWaitTime < 3){
+                    printf("Count for the UserTank next move : %d\n", g->userTank->MovingWaitTime);                   
+                    g->userTank->MovingWaitTime++;
+                }
+            } 
+        }
+        else{
+            if(g->userTank->destroyed){
+                respawn(g->userTank);
+            };
+        }
     }
 
     bool Ecollided = false;
@@ -300,16 +311,19 @@ void runMainScene(Game* g){
             Ecollided = checkCollision(&g->enemyTank[i].mBox, &(g->enemyTank[j].mBox));
 
 
+            printf("Count for the next move : %d\n",g->enemyTank[i].MovingWaitTime);
         // NOTE: Temporary not use touchwall here
         if(!g->enemyTank[i].isHit && !g->enemyTank[i].destroyed){
-            g->enemyTank[i].MovingWaitTime++;
-            move(false, Ecollided, &g->enemyTank[i]);
-            printf("Bullet number of bot tank %d is %d\n", i, g->enemyTank[i].BulletsNumber);
-            if (g->enemyTank[i].MovingWaitTime > 240){        
+            if(!g->enemyTank[i].Belong && g->enemyTank[i].MovingWaitTime >= 30){            
                 littleGuide(&g->enemyTank[i], g->userTank, Ecollided);
                 g->enemyTank[i].MovingWaitTime = 0;
+            } else {
+                if(g->enemyTank[i].MovingWaitTime < 30){
+                    g->enemyTank[i].MovingWaitTime++;
+                }
             }
-       }
+            move(false, Ecollided, &g->enemyTank[i]);
+        }
 
     // ===============================================
     }    
