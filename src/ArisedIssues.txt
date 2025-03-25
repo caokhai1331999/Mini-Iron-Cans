@@ -99,6 +99,14 @@ time drawing from SDL_GetTicks hold game down really much
    frame = 0 to do the explosion effect which lead to change destroyed flag
    it end. Hence it stuck between isHit and !destroyed (No explode and no
    respawn)
-?? main screen not work while jame platform into game struct
-?? also fix the build command on emacs too
+?? main screen not work while jame platform into game struct (FIXED)
+?? also fix the build command on emacs too (FIXED)
+
+?? Tile background did't fill up the level (May the calulated surface was wrong)
+ ++ No The background did fill up the level but somehow the 
+?? Still I don't understand why object stuck to each other
 ?? Time to make the bot Tank smarter
+
+---------------- Tue, 25 Mar 25: 03:25PM
+Have to handle both the x and y collided one cause tank won't move in y even it
+just collide in x

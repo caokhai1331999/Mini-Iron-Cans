@@ -67,8 +67,10 @@ struct Bullet{
     BulletType type;
     int BlVelX = 0;
     int BlVelY = 0;
+
     bool Launched = false;
     bool destroyed = false;
+
     FACE face;
     SDL_Rect blBox = {};
 
@@ -97,6 +99,7 @@ struct TankInfo
     int mVelX = 0;
     int mVelY = 0;
     FACE face ;
+    bool changeDirect;
     int BulletsNumber = TOTAL_BULLET_PER_TANK;
     Bullet* Bullets;
 
@@ -110,6 +113,7 @@ struct TankInfo
             FireWaitTime = 0;
         }
         face = (FACE)((rand()%3)*90.0f);
+        changeDirect = false;
         isMoving = false;
         Bullets = nullptr;
         Bullets = new Bullet[TOTAL_BULLET_PER_TANK]();

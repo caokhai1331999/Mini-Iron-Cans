@@ -266,24 +266,19 @@ void ProcessInput(Game* g, bool* done){
 
 void runMainScene(Game* g){
 
-    if(!g->userTank->destroyed && !g->userTank->isHit){
         if(!g->userTank->isHit && !g->userTank->destroyed) {
-            if(g->userTank->MovingWaitTime >= 3) {            
+            if(g->userTank->MovingWaitTime >= 5){
                 move(false, Ucollided, g->userTank);
                 g->userTank->MovingWaitTime = 0;
             } else {
-                if(g->userTank->MovingWaitTime < 3){
-                    printf("Count for the UserTank next move : %d\n", g->userTank->MovingWaitTime);                   
-                    g->userTank->MovingWaitTime++;
-                }
-            } 
+                g->userTank->MovingWaitTime++;
+            }
         }
         else{
             if(g->userTank->destroyed){
                 respawn(g->userTank);
             };
         }
-    }
 
     bool Ecollided = false;
     for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
@@ -311,8 +306,10 @@ void runMainScene(Game* g){
             Ecollided = checkCollision(&g->enemyTank[i].mBox, &(g->enemyTank[j].mBox));
 
 
-            printf("Count for the next move : %d\n",g->enemyTank[i].MovingWaitTime);
+            // printf("Count for the next move : %d\n",g->enemyTank[i].MovingWaitTime);
         // NOTE: Temporary not use touchwall here
+            printf("bot tank 0 pos: %d %d\n", g->enemyTank[i].mBox.x, g->enemyTank[i].mBox.y);
+            printf("bot tank 0 face: %d \n", (int)g->enemyTank[i].face);
         if(!g->enemyTank[i].isHit && !g->enemyTank[i].destroyed){
             if(!g->enemyTank[i].Belong && g->enemyTank[i].MovingWaitTime >= 30){            
                 littleGuide(&g->enemyTank[i], g->userTank, Ecollided);

@@ -659,7 +659,6 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
         } else {
             render(Platform->gRenderer, (120*(scaleW)), 0, Platform->gTextTexture);                    
         }                    
-        // printf(OutPut);
     } 
 }
 
@@ -675,6 +674,8 @@ void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera 
              render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), Platform->gExplosionTexture, &Platform->gExplosionClips[*frame]);            
 
              (*frame)++;
+             printf("frame count %d\n", *frame);
+
          }
 
          if((*frame)/12 == EXPLOSION_FRAMES){
