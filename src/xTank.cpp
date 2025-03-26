@@ -235,34 +235,32 @@ void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank) {
 
 void move(bool touchesWall, bool collided, TankInfo* Tank) {
 
-    int collidedCount = 0;
+    // NOTE: System constantly check the blocked face so we don't need to keep old face block at the previous frame.
+    printf("check legit face %d\n",((int)(Tank->collidedFace[0])));
 
-    if(collided){
-        collidedCount++;
-    };
+    Tank->collidedFace[0] = NOPE;
+    Tank->collidedFace[1] = NOPE;
+
     if(!Tank->isHit && !Tank->destroyed){
-
 
         Tank->mBox.x += Tank->mVelX;
 
-        if ((Tank->mBox.x < 0)||(Tank->mBox.x  > LEVEL_WIDTH - (TANK_WIDTH))){
+        if ((Tank->mBox.x < 0)|| (Tank->mBox.x  > LEVEL_WIDTH - (TANK_WIDTH))){
             Tank->mBox.x -= Tank->mVelX;
-            collidedCount++;
-        }
+            Tank->collidedFace[0] =(Tank->mBox.x < 0)?LEFT:RIGHT;
+        };
             
         Tank->mBox.y += Tank->mVelY;
 
         if ((Tank->mBox.y < 0)||(Tank->mBox.y > LEVEL_HEIGHT - (TANK_HEIGHT)))
         {
             Tank->mBox.y -= Tank->mVelY;
-            collidedCount++;
+            Tank->collidedFace[1] =(Tank->mBox.y < 0)?UP:DOWN;
         }
 
-        if((Tank->mVelX == 0 && Tank->mVelY == 0)||collidedCount > 0){
-            if(Tank->isMoving){
+            if(Tank->collidedFace[0]!=NOPE ||Tank->collidedFace[1]!=NOPE){
                 Tank->isMoving = false;
             }
-        }
         
         for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
 
@@ -326,31 +324,25 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided) {
     // TODO: This function is a little AI that use Dijktra algorithm to drive every
     // bot tank
     std::srand(std::time(nullptr));
-    if(!targetTank->isMoving){
+
+    if(targetTank->isMoving){        
         switch((int)targetTank->face){
             case (int)UP:
-                targetTank->mVelY += TANK_VEL;
-                break;
-            case (int)DOWN:
                 targetTank->mVelY -= TANK_VEL;
                 break;
+            case (int)DOWN:
+                targetTank->mVelY += TANK_VEL;
+                break;
             case (int)RIGHT:
-                targetTank->mVelX -= TANK_VEL;
+                targetTank->mVelX += TANK_VEL;
                 break;                
             case (int)LEFT:
-                targetTank->mVelX += TANK_VEL;
+                targetTank->mVelX -= TANK_VEL;
                 break;
-        }                
-
-        // FACE tempface = (FACE)(rand()%3)*90.0;
-        // targetTank->face = (tempface - targetTank->face == 0)?(tempface+(tempface>180.0)?-180.0:180.0):tempface;
-        if((double)targetTank->face >= 180.0){
-            targetTank->face -= 180.0;
-        }else{
-            targetTank->face += 180.0;            
         }
+    } else {
+        targetTank->face +=((double)(targetTank->face)>=180.0)?-180.0:180.0; 
         targetTank->isMoving = true;
-
     }
 
     int distance = sqrt(pow(targetTank->mBox.x - UserTank->mBox.x,2) + pow(targetTank->mBox.y - UserTank->mBox.y,2));
@@ -359,6 +351,7 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided) {
     // when it is near
     // Prioritize the shorter axis first to shoot 
     // NOTE: Wandering mode
+    // The track always
     if(targetTank->isMoving){        
         switch((int)targetTank->face){
             case (int)UP:

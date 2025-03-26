@@ -24,7 +24,7 @@ using namespace std;
 #define DOWN 180.0
 #define RIGHT 90.0
 #define LEFT 270.0
-
+#define NOPE -1.0
 
 enum INDEX{
     _FIRST = 0,
@@ -95,6 +95,8 @@ struct TankInfo
     int MovingWaitTime = 0;
     int FireWaitTime = 0;
     // NOTE: Don't know why this doesn't trigger default value
+
+    FACE collidedFace[3] ={NOPE, NOPE, NOPE};
     SDL_Rect mBox;
     int mVelX = 0;
     int mVelY = 0;
