@@ -236,29 +236,25 @@ void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank) {
 void move(bool touchesWall, bool collided, TankInfo* Tank) {
 
     // NOTE: System constantly check the blocked face so we don't need to keep old face block at the previous frame.
-    printf("check legit face %d\n",((int)(Tank->collidedFace[0])));
-
-    Tank->collidedFace[0] = NOPE;
-    Tank->collidedFace[1] = NOPE;
 
     if(!Tank->isHit && !Tank->destroyed){
 
         Tank->mBox.x += Tank->mVelX;
 
-        if ((Tank->mBox.x < 0)|| (Tank->mBox.x  > LEVEL_WIDTH - (TANK_WIDTH))){
+        if ((Tank->mBox.x <= 0) || (Tank->mBox.x  >= LEVEL_WIDTH - (TANK_WIDTH))){
+            Tank->collidedFace[0] = (Tank->mBox.x <= 0)?LEFT:RIGHT;
             Tank->mBox.x -= Tank->mVelX;
-            Tank->collidedFace[0] =(Tank->mBox.x < 0)?LEFT:RIGHT;
         };
             
         Tank->mBox.y += Tank->mVelY;
 
-        if ((Tank->mBox.y < 0)||(Tank->mBox.y > LEVEL_HEIGHT - (TANK_HEIGHT)))
+        if ((Tank->mBox.y <= 0) || (Tank->mBox.y >= LEVEL_HEIGHT - (TANK_HEIGHT)))
         {
+            Tank->collidedFace[1] =(Tank->mBox.y <= 0)?UP:DOWN;
             Tank->mBox.y -= Tank->mVelY;
-            Tank->collidedFace[1] =(Tank->mBox.y < 0)?UP:DOWN;
         }
 
-            if(Tank->collidedFace[0]!=NOPE ||Tank->collidedFace[1]!=NOPE){
+        if( (Tank->face == Tank->collidedFace[0] || Tank->face == Tank->collidedFace[1]) && Tank->isMoving){
                 Tank->isMoving = false;
             }
         
@@ -320,57 +316,76 @@ void setCamera( SDL_Rect* camera, TankInfo* UserTank ){
     // printf("Camera size:%d %d\n",camera->w, camera->h);    
 }
 
+FACE faceCalculate(SDL_Rect* userBox, SDL_Rect* targetBox){
+    if(targetBox->x - userBox->x >= targetBox->y - userBox->y){
+        if(targetBox->x >= userBox->x){
+                return LEFT;
+            } else {
+                return RIGHT;
+            }
+    }  else {
+            if(targetBox->y >= userBox->y){
+                return UP;
+            } else {
+                return DOWN;
+            }            
+        }
+}
+
 void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided) {
     // TODO: This function is a little AI that use Dijktra algorithm to drive every
     // bot tank
     std::srand(std::time(nullptr));
 
-    if(targetTank->isMoving){        
+    int distance = sqrt(pow(targetTank->mBox.x - UserTank->mBox.x,2) + pow(targetTank->mBox.y - UserTank->mBox.y,2));
+
+    
+    // if(distance >= 70){
+    //     targetTank->face = faceCalculate(&UserTank->mBox, &targetTank->mBox);
+    // }
+    
+    if(!targetTank->isMoving) {
+        printf("AutoReroute the tank \n");
+        // NOTE: Bug used to be here
+        while(targetTank->face == targetTank->collidedFace[0]
+              ||targetTank->face == targetTank->collidedFace[1]){
+            targetTank->face += 90.0;
+            if ((double)targetTank->face >= 360.0){
+                targetTank->face = UP;
+            }
+        }
+            targetTank->isMoving = true;        
+    }
+        // DONE!: Success reroute Tank whenever collided
+    // TODO: Time to make tank smarter
+    
         switch((int)targetTank->face){
             case (int)UP:
-                targetTank->mVelY -= TANK_VEL;
+                targetTank->mVelY = -TANK_VEL;
+                targetTank->mVelX = 0;
                 break;
             case (int)DOWN:
-                targetTank->mVelY += TANK_VEL;
+                targetTank->mVelY = TANK_VEL;
+                targetTank->mVelX = 0;
                 break;
             case (int)RIGHT:
-                targetTank->mVelX += TANK_VEL;
+                targetTank->mVelX = TANK_VEL;
+                targetTank->mVelY = 0;
                 break;                
             case (int)LEFT:
-                targetTank->mVelX -= TANK_VEL;
+                targetTank->mVelX = -TANK_VEL;
+                targetTank->mVelY = 0;
                 break;
         }
-    } else {
-        targetTank->face +=((double)(targetTank->face)>=180.0)?-180.0:180.0; 
-        targetTank->isMoving = true;
-    }
-
-    int distance = sqrt(pow(targetTank->mBox.x - UserTank->mBox.x,2) + pow(targetTank->mBox.y - UserTank->mBox.y,2));
 
     // NOTE: The idea is simple: moving the bot Tank toward User's one and fire
     // when it is near
     // Prioritize the shorter axis first to shoot 
     // NOTE: Wandering mode
     // The track always
-    if(targetTank->isMoving){        
-        switch((int)targetTank->face){
-            case (int)UP:
-                targetTank->mVelY -= TANK_VEL;
-                break;
-            case (int)DOWN:
-                targetTank->mVelY += TANK_VEL;
-                break;
-            case (int)RIGHT:
-                targetTank->mVelX += TANK_VEL;
-                break;                
-            case (int)LEFT:
-                targetTank->mVelX -= TANK_VEL;
-                break;
-        }
-    } 
         // NOTE: How to make bot tank look less stupid when they firing
         // and how to make fire less frequent
-        if(targetTank->FireWaitTime >= 10)
+        if(targetTank->FireWaitTime >= 10 && distance <= 50)
         {
             fire(targetTank);
             targetTank->FireWaitTime = 0;

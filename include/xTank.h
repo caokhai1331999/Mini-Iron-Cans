@@ -139,6 +139,7 @@ void GenerateSinglePosition(int* x = nullptr, int* y = nullptr);
 //Takes key presses and adjusts the Tank's velocity
 void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank );
 
+FACE faceCalculate(SDL_Rect* userBox = nullptr, SDL_Rect* targetBox = nullptr);
 // Bot tanks auto find way using dijstra algorithm
 void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided);
     

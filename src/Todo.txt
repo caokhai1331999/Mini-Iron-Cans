@@ -135,3 +135,10 @@ TODO:
   conidtion to make it revolving
 
 * Time to redraw and resized map with concrete wall and reduce tank sprite size 
+
+---------------- Wed, 26 Mar 25: 09:35AM
+
+
+---------------- Thu, 27 Mar 25: 03:54PM
+
+Time To make Bot Tank Smarter

@@ -596,15 +596,14 @@ void renderTank(TankInfo* Tank, int index, uint8_t* MovingFrame, SDL_Rect* camer
     }
   }
 else if (!Tank->Belong && Platform->gEnemyTankTexture != nullptr) {
-    render( Platform->gRenderer ,Tank->mBox.x - camera->x,Tank->mBox.y - camera->y, Platform->gEnemyTankTexture,&Platform->gMovingClips[(*MovingFrame/5)], Tank->face);
+    render( Platform->gRenderer ,Tank->mBox.x - camera->x,Tank->mBox.y - camera->y, Platform->gEnemyTankTexture,&Platform->gMovingClips[(*MovingFrame/10)], Tank->face);
     ConstructRectJoint(&Tank->mBox , TankScaffoldS[index].TankScaffold);
     SDL_SetRenderDrawColor( Platform->gRenderer, 0xF0, 0x8D, 0x71, 0xFF);
     DrawScaffold(Platform->gRenderer, TankScaffoldS[index].TankScaffold, camera);
     if(Platform->gEnemyBulletTexture!=nullptr) {             
         for (int i = 0; i < TOTAL_BULLET_PER_TANK; i++){
 
-            if (Tank->Bullets[i].Launched){                
-
+            if (Tank->Bullets[i].Launched){
                 render(Platform->gRenderer, Tank->Bullets[i].blBox.x, Tank->Bullets[i].blBox.y, Platform->gEnemyBulletTexture, nullptr, Tank->face);
 
                 SDL_SetRenderDrawColor( Platform->gRenderer, 0x49, 0x48, 0x3E, 0xFF);
@@ -671,10 +670,11 @@ void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera 
          }
 
          if((*frame)/12 < EXPLOSION_FRAMES+1 && (*frame)/12 != -1){
-             render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), Platform->gExplosionTexture, &Platform->gExplosionClips[*frame]);            
+
+             render( Platform->gRenderer ,(Tank->mBox.x - camera->x), (Tank->mBox.y - camera->y), Platform->gExplosionTexture, &Platform->gExplosionClips[*frame/12]);            
 
              (*frame)++;
-             printf("frame count %d\n", *frame);
+             printf("*frame count %d\n", *frame);
 
          }
 

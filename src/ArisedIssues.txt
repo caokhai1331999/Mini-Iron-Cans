@@ -109,4 +109,10 @@ time drawing from SDL_GetTicks hold game down really much
 
 ---------------- Tue, 25 Mar 25: 03:25PM
 Have to handle both the x and y collided one cause tank won't move in y even it
-just collide in x
+just collide in x.
+
+---------------- Wed, 26 Mar 25: 09:34AM
+How to get out of check loop for collided objects.
+ . Give a get out mvel or something else
+
+
