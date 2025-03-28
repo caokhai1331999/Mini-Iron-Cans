@@ -266,9 +266,14 @@ void ProcessInput(Game* g, bool* done){
 
 void runMainScene(Game* g){
 
-        if(!g->userTank->isHit && !g->userTank->destroyed) {
+    bool Ecollided = false;
+    CollisionData* Data = nullptr;
+    Data = new CollisionData();
+
+    if(!g->userTank->isHit && !g->userTank->destroyed) {
             if(g->userTank->MovingWaitTime >= 5){
-                move(false, Ucollided, g->userTank);
+                // printf("Check user Tank collided face 3 outside:%d \n", (int)g->userTank->collidedFace[2]);
+                move(g->userTank);
                 g->userTank->MovingWaitTime = 0;
             } else {
                 g->userTank->MovingWaitTime++;
@@ -280,13 +285,13 @@ void runMainScene(Game* g){
             };
         }
 
-    bool Ecollided = false;
+
     for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
         // NOTE: a Sole Ecollided is not enough
         // Rewrite the collision check and moving system
         
-        Ucollided = BiTankCheck(&g->enemyTank[i], g->userTank);
-
+         Ecollided = BiTankCheck(&g->enemyTank[i], g->userTank);
+         
         // ===============================================================
         // for (int p = 0; p < i; p++){
         //     if (i > 1 && p < i){
@@ -301,19 +306,23 @@ void runMainScene(Game* g){
         //========================================================================
 
         // NOTE: AI ways
-        printf("Bot Tank 0 face and collided one:[%d] %d %d\n", (int)g->enemyTank[0].face, (int)g->enemyTank[0].collidedFace[0], (int)g->enemyTank[0].collidedFace[1]);
+        printf("Bot Tank 0 face and collided one:[%d] %d %d %d\n", (int)g->enemyTank[0].face, (int)g->enemyTank[0].collidedFace[0], (int)g->enemyTank[0].collidedFace[1], (int)g->enemyTank[0].collidedFace[2]);
         printf("Bot Tank 0 position:%d %d\n", g->enemyTank[0].mBox.x, g->enemyTank[0].mBox.y);
         printf("Bot Tank 0 veclocity:%d %d\n", g->enemyTank[0].mVelX, g->enemyTank[0].mVelY);
+
         int count = 0;
         for (int j = i+1; j < TOTAL_ENEMY_TANK; j++){
+            // NOTE: Why zero page. Data or checkCollision
+            *Data = checkCollisionS(&g->enemyTank[i].mBox, &g->enemyTank[j].mBox);
+           g->enemyTank[i].collidedFace[2] = Data->TankAface;
+           g->enemyTank[j].collidedFace[2] = Data->TankBface;
 
-            Ecollided = checkCollision(&g->enemyTank[i].mBox, &(g->enemyTank[j].mBox));
-        // NOTE: Temporary not use touchwall here
+           // NOTE: Temporary not use touchwall here
            if(!g->enemyTank[i].isHit && !g->enemyTank[i].destroyed){
                // NOTE: Cause the loop going to fast cause the veclo pace is too much with the -/+=TANK_VEL formula causing the Tank freezed
                if(g->enemyTank[i].MovingWaitTime >= 30){
-                   littleGuide(&g->enemyTank[i], g->userTank, Ecollided);
-                   move(false, Ecollided, &g->enemyTank[i]);
+                   littleGuide(&g->enemyTank[i], g->userTank);
+                   move( &g->enemyTank[i]);
                    g->enemyTank[i].MovingWaitTime = 0;
                } else {
                    g->enemyTank[i].MovingWaitTime++;                    
@@ -321,8 +330,11 @@ void runMainScene(Game* g){
             }
     // ===============================================
     }
+        // printf("Check face 3 outside:%d %d \n", (int)Data->TankAface, (int)Data->TankAface);
         setCamera(&g->Camera, g->userTank);        
 }
+        delete Data;
+        Data = nullptr;
 }
 
 void Update(Game* g){

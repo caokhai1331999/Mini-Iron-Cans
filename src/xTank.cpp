@@ -233,7 +233,7 @@ void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank) {
     }
 }
 
-void move(bool touchesWall, bool collided, TankInfo* Tank) {
+void move(TankInfo* Tank) {
 
     // NOTE: System constantly check the blocked face so we don't need to keep old face block at the previous frame.
 
@@ -241,20 +241,25 @@ void move(bool touchesWall, bool collided, TankInfo* Tank) {
 
         Tank->mBox.x += Tank->mVelX;
 
-        if ((Tank->mBox.x <= 0) || (Tank->mBox.x  >= LEVEL_WIDTH - (TANK_WIDTH))){
-            Tank->collidedFace[0] = (Tank->mBox.x <= 0)?LEFT:RIGHT;
+        if ((Tank->mBox.x <= 0) || (Tank->mBox.x  >= LEVEL_WIDTH - (TANK_WIDTH)) || Tank->collidedFace[2] == LEFT || Tank->collidedFace[2] == RIGHT){
+
+            if(Tank->collidedFace[2] == NOPE){
+                Tank->collidedFace[0] = (Tank->mBox.x <= 0)?LEFT:RIGHT;
+            }
             Tank->mBox.x -= Tank->mVelX;
         };
             
         Tank->mBox.y += Tank->mVelY;
 
-        if ((Tank->mBox.y <= 0) || (Tank->mBox.y >= LEVEL_HEIGHT - (TANK_HEIGHT)))
+        if ((Tank->mBox.y <= 0) || (Tank->mBox.y >= LEVEL_HEIGHT - (TANK_HEIGHT)) || Tank->collidedFace[2] == UP || Tank->collidedFace[2] == DOWN)
         {
-            Tank->collidedFace[1] =(Tank->mBox.y <= 0)?UP:DOWN;
+            if(Tank->collidedFace[2] == NOPE){
+                Tank->collidedFace[1] = (Tank->mBox.y <= 0)?UP:DOWN;
+            }
             Tank->mBox.y -= Tank->mVelY;
         }
 
-        if( (Tank->face == Tank->collidedFace[0] || Tank->face == Tank->collidedFace[1]) && Tank->isMoving){
+        if( (Tank->face == Tank->collidedFace[0] || Tank->face == Tank->collidedFace[1]|| (Tank->face == Tank->collidedFace[2] )) && Tank->isMoving){
                 Tank->isMoving = false;
             }
         
@@ -332,7 +337,7 @@ FACE faceCalculate(SDL_Rect* userBox, SDL_Rect* targetBox){
         }
 }
 
-void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided) {
+void littleGuide(TankInfo* targetTank, TankInfo* UserTank) {
     // TODO: This function is a little AI that use Dijktra algorithm to drive every
     // bot tank
     std::srand(std::time(nullptr));
@@ -348,7 +353,7 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank, bool collided) {
         printf("AutoReroute the tank \n");
         // NOTE: Bug used to be here
         while(targetTank->face == targetTank->collidedFace[0]
-              ||targetTank->face == targetTank->collidedFace[1]){
+              ||targetTank->face == targetTank->collidedFace[1]||targetTank->face == targetTank->collidedFace[2]){
             targetTank->face += 90.0;
             if ((double)targetTank->face >= 360.0){
                 targetTank->face = UP;
@@ -416,10 +421,15 @@ void resetBullet(Bullet* bullet){
 bool BiTankCheck(TankInfo* ATank, TankInfo* BTank){
     // NOTE: Put this function in the Moving function
     // ON WORK and Experiment
-    bool TwoTankcollided = false;
+    bool Collided = false;
+    CollisionData* Data = nullptr;
+    Data = new CollisionData();
     if(!ATank->isHit && !BTank->isHit){
-        TwoTankcollided = checkCollision(&ATank->mBox, &BTank->mBox);
-
+        *Data = checkCollisionS(&ATank->mBox, &BTank->mBox);
+         ATank->collidedFace[2] = Data->TankAface;
+         BTank->collidedFace[2] = Data->TankBface;
+         Collided = Data->collided;
+         
         for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
 
             if (ATank->Bullets[i].Launched && !BTank->isHit){
@@ -436,7 +446,7 @@ bool BiTankCheck(TankInfo* ATank, TankInfo* BTank){
             }
 
             if (BTank->Bullets[i].Launched && !ATank->isHit){
-            
+
                 if(checkCollision(&BTank->Bullets[i].blBox,&ATank->mBox) && !ATank->isHit){
                     ATank->isHit = true;
                     ATank->destroyed = false;
@@ -451,5 +461,7 @@ bool BiTankCheck(TankInfo* ATank, TankInfo* BTank){
             }        
         }
     }
-    return TwoTankcollided;
+    delete Data;
+    Data = nullptr;
+    return Collided;
 }

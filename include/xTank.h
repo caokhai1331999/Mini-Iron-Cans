@@ -19,13 +19,6 @@
 
 using namespace std;
 
-#define FACE double
-#define UP 0.0
-#define DOWN 180.0
-#define RIGHT 90.0
-#define LEFT 270.0
-#define NOPE -1.0
-
 enum INDEX{
     _FIRST = 0,
     _SECOND = 1
@@ -141,10 +134,10 @@ void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank );
 
 FACE faceCalculate(SDL_Rect* userBox = nullptr, SDL_Rect* targetBox = nullptr);
 // Bot tanks auto find way using dijstra algorithm
-void littleGuide(TankInfo* botTank, TankInfo* UserTank, bool collided);
+void littleGuide(TankInfo* botTank, TankInfo* UserTank);
     
 //Moves the Tank and check collision against tiles
-void move(bool touchesWall = false, bool collided = false, TankInfo* Tank = NULL);
+void move(TankInfo* Tank = NULL);
 
 // Fire a bullet
 void fire(TankInfo* Tank);

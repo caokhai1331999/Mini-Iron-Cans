@@ -11,10 +11,29 @@
 #include <SDL2/SDL_image.h>
 #include "TileX.h"
 // #include "xTank.h"
-// #include "Dot.h"
+
+#define FACE double
+#define UP 0.0
+#define DOWN 180.0
+#define RIGHT 90.0
+#define LEFT 270.0
+#define NOPE -1.0
+
+struct CollisionData{
+    FACE TankAface = NOPE;
+    FACE TankBface = NOPE;
+    bool collided = false;
+    CollisionData(){
+        TankAface = NOPE;
+        TankBface = NOPE;
+        collided = false;
+    };
+};
+
+bool checkCollision( SDL_Rect* a, SDL_Rect* b );
 
 //Box collision detector
-bool checkCollision( SDL_Rect* a, SDL_Rect* b );
+CollisionData checkCollisionS( SDL_Rect* a, SDL_Rect* b );
 
 //Mass Box collision detector
 // bool MassCheckCollision( TankInfo* UserTank, TankInfo* EnemyTanks);
