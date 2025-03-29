@@ -142,3 +142,10 @@ TODO:
 ---------------- Thu, 27 Mar 25: 03:54PM
 
 Time To make Bot Tank Smarter
+
+---------------- Sat, 29 Mar 25: 02:15PM
+
+it's time to know more about gaming loop. Which go linearly with time latency. I
+kind of mess thing up big time when thing come to this. In details, Know what
+should go first what go later to calculate rightly the behavior of the object we
+want to develop
