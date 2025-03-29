@@ -309,9 +309,9 @@ bool setTiles( Tile *tiles,PlatformP* Platform){
 
     //The tile offsets
     int x = 0, y = 0;
-    int TileSquare = SMALL_TILE_WIDTH * SMALL_TILE_HEIGHT;
-    int TileCount = 0;
-    int FilledSquare = 0;
+    // int TileSquare = SMALL_TILE_WIDTH * SMALL_TILE_HEIGHT;
+    // int TileCount = 0;
+    // int FilledSquare = 0;
     
  //Open the map
     std::ifstream map( "smap.map" );
@@ -369,8 +369,8 @@ bool setTiles( Tile *tiles,PlatformP* Platform){
                 tiles[i].mBox.y = y;
                 tiles[i].mType = tileType;
 
-                TileCount++;
-                FilledSquare += TileSquare;
+                // TileCount++;
+                // FilledSquare += TileSquare;
 
 			}
 			//If we don't recognize the tile type
@@ -401,7 +401,7 @@ bool setTiles( Tile *tiles,PlatformP* Platform){
 		//Clip the sprite sheet
 		if( tilesLoaded )
 		{
-                printf("Number of Tile Made:%d, Square filled: %d\n", TileCount, FilledSquare);
+                // printf("Number of Tile Made:%d, Square filled: %d\n", TileCount, FilledSquare);
             // NOTE: TILE_RED or TILE_GREEN is TileTypes
             // printf("Loading Map\n");
 			// Platform->gTileClips[ SMALL_GRASS_TILE ].x = 0;

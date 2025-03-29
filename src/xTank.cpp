@@ -390,13 +390,44 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank) {
     // The track always
         // NOTE: How to make bot tank look less stupid when they firing
         // and how to make fire less frequent
-        if(targetTank->FireWaitTime >= 10 && distance <= 50)
-        {
-            fire(targetTank);
-            targetTank->FireWaitTime = 0;
-        } else {            
-            targetTank->FireWaitTime++;
-        }
+        FACE tempface = NOPE;
+            if(targetTank->FireWaitTime >= 10)
+            {
+                tempface = targetTank->face;
+                if (targetTank->mBox.x + targetTank->mBox.w/2 - BULLET_WIDTH/2 >= UserTank->mBox.x && targetTank->mBox.x + targetTank->mBox.w/2 - BULLET_WIDTH/2 <= UserTank->mBox.x + UserTank->mBox.w){
+                    printf("Time for vertical check\n");
+                    if(targetTank->mBox.y <= UserTank->mBox.y){
+                        if(targetTank->face != DOWN){
+                            targetTank->face = DOWN;
+                        }
+                    }  else {
+                        if(targetTank->face != UP){
+                            targetTank->face = UP;
+                        }
+                    }
+                }
+
+                if(targetTank->mBox.y + targetTank->mBox.h/2 - BULLET_HEIGHT/2 >= UserTank->mBox.y && targetTank->mBox.y + targetTank->mBox.h/2 - BULLET_HEIGHT/2 <= UserTank->mBox.y + UserTank->mBox.h) {
+                    printf("Time for horizontal check\n");                
+                    if(targetTank->mBox.x <= UserTank->mBox.x){
+                        if(targetTank->face != RIGHT){
+                            targetTank->face = RIGHT;
+                        }
+                    }  else {
+                        if(targetTank->face != LEFT){
+                            targetTank->face = LEFT;
+                        }
+                    }                
+                }
+                fire(targetTank);
+                if(tempface != NOPE){
+                    targetTank->face = tempface;
+                }
+                tempface = NOPE;
+                targetTank->FireWaitTime = 0;
+            } else {            
+                targetTank->FireWaitTime++;
+            }
 }
 
 void resetTank(TankInfo* Tank){
