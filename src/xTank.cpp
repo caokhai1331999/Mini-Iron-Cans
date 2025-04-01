@@ -76,6 +76,8 @@ void InitializeTankInfo(Position* TankPos,TankInfo* Tank){
 }
 
 void fire(TankInfo* Tank){
+    FACE tempface = NOPE;
+    tempface = Tank->Belong?Tank->face:Tank->firingface;
     if(!Tank->destroyed && !Tank->isHit) {
         for(int i = 0; i < TOTAL_BULLET_PER_TANK ; i++){
             if(Tank->Bullets[i].Launched)
@@ -88,8 +90,8 @@ void fire(TankInfo* Tank){
                         Tank->BulletsNumber = 0;
                     }                    
                 
-                    Tank->Bullets[i].face = Tank->face;
-                switch((int)Tank->face)
+                    Tank->Bullets[i].face = tempface;
+                switch((int)tempface)
                 {
                     case (int)UP:
                         Tank->Bullets[i].blBox.x = Tank->mBox.x + Tank->mBox.w/4;
@@ -117,6 +119,9 @@ void fire(TankInfo* Tank){
 
                 }
                 Tank->Bullets[i].Launched = true;
+                if(Tank->isFiring){
+                    Tank->isFiring = false;
+                }
                 break;
             }
         }
@@ -363,25 +368,25 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank) {
     }
         // DONE!: Success reroute Tank whenever collided
     // TODO: Time to make tank smarter
-    
-        switch((int)targetTank->face){
-            case (int)UP:
-                targetTank->mVelY = -TANK_VEL;
-                targetTank->mVelX = 0;
-                break;
-            case (int)DOWN:
-                targetTank->mVelY = TANK_VEL;
-                targetTank->mVelX = 0;
-                break;
-            case (int)RIGHT:
-                targetTank->mVelX = TANK_VEL;
-                targetTank->mVelY = 0;
-                break;                
-            case (int)LEFT:
-                targetTank->mVelX = -TANK_VEL;
-                targetTank->mVelY = 0;
-                break;
-        }
+
+    switch((int)targetTank->face){
+        case (int)UP:
+            targetTank->mVelY = -TANK_VEL;
+            targetTank->mVelX = 0;
+            break;
+        case (int)DOWN:
+            targetTank->mVelY = TANK_VEL;
+            targetTank->mVelX = 0;
+            break;
+        case (int)RIGHT:
+            targetTank->mVelX = TANK_VEL;
+            targetTank->mVelY = 0;
+            break;                
+        case (int)LEFT:
+            targetTank->mVelX = -TANK_VEL;
+            targetTank->mVelY = 0;
+            break;
+    }
 
     // NOTE: The idea is simple: moving the bot Tank toward User's one and fire
     // when it is near
@@ -390,41 +395,48 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank) {
     // The track always
         // NOTE: How to make bot tank look less stupid when they firing
         // and how to make fire less frequent
-        FACE tempface = NOPE;
+    bool alert = false;
             if(targetTank->FireWaitTime >= 10)
             {
-                tempface = targetTank->face;
                 if (targetTank->mBox.x + targetTank->mBox.w/2 - BULLET_WIDTH/2 >= UserTank->mBox.x && targetTank->mBox.x + targetTank->mBox.w/2 - BULLET_WIDTH/2 <= UserTank->mBox.x + UserTank->mBox.w){
+                    if(!alert)
+                        alert = true;
+
                     printf("Time for vertical check\n");
                     if(targetTank->mBox.y <= UserTank->mBox.y){
-                        if(targetTank->face != DOWN){
-                            targetTank->face = DOWN;
+                        if(targetTank->firingface != DOWN){
+                            targetTank->firingface = DOWN;
                         }
                     }  else {
-                        if(targetTank->face != UP){
-                            targetTank->face = UP;
+                        if(targetTank->firingface != UP){
+                            targetTank->firingface = UP;
                         }
                     }
                 }
 
                 if(targetTank->mBox.y + targetTank->mBox.h/2 - BULLET_HEIGHT/2 >= UserTank->mBox.y && targetTank->mBox.y + targetTank->mBox.h/2 - BULLET_HEIGHT/2 <= UserTank->mBox.y + UserTank->mBox.h) {
-                    printf("Time for horizontal check\n");                
+                    printf("Time for horizontal check\n");
+                    if(!alert)
+                        alert = true;
+
                     if(targetTank->mBox.x <= UserTank->mBox.x){
-                        if(targetTank->face != RIGHT){
-                            targetTank->face = RIGHT;
+                        if(targetTank->firingface != RIGHT){
+                            targetTank->firingface = RIGHT;
                         }
                     }  else {
-                        if(targetTank->face != LEFT){
-                            targetTank->face = LEFT;
+                        if(targetTank->firingface != LEFT){
+                            targetTank->firingface = LEFT;
                         }
                     }                
                 }
-                fire(targetTank);
-                if(tempface != NOPE){
-                    targetTank->face = tempface;
+                if(alert){
+                    if(!targetTank->isFiring){
+                    targetTank->isFiring = true;
+                    }
+                    fire(targetTank);
+                    targetTank->FireWaitTime = 0;
+                    alert = false;
                 }
-                tempface = NOPE;
-                targetTank->FireWaitTime = 0;
             } else {            
                 targetTank->FireWaitTime++;
             }

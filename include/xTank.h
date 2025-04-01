@@ -84,12 +84,16 @@ struct TankInfo
     bool isMoving;
     bool destroyed = false;
     bool isHit = false;
-
+    bool isFiring = false;
+    
     int MovingWaitTime = 0;
     int FireWaitTime = 0;
-    // NOTE: Don't know why this doesn't trigger default value
 
+    // NOTE: This is for Bot tank only
+    FACE firingface = NOPE;
     FACE collidedFace[3] ={NOPE, NOPE, NOPE};
+    //=======================================
+    
     SDL_Rect mBox;
     int mVelX = 0;
     int mVelY = 0;

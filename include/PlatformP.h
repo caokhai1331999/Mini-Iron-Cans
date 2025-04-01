@@ -19,6 +19,7 @@
 #define real32 float
 #define uint32 uint32_t
 
+static uint8_t rendercountt = 0;
 struct PlatformP {
     
     SDL_Rect gExplosionClips [EXPLOSION_FRAMES];

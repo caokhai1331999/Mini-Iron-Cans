@@ -596,7 +596,7 @@ void renderTank(TankInfo* Tank, int index, uint8_t* MovingFrame, SDL_Rect* camer
     }
   }
 else if (!Tank->Belong && Platform->gEnemyTankTexture != nullptr) {
-    render( Platform->gRenderer ,Tank->mBox.x - camera->x,Tank->mBox.y - camera->y, Platform->gEnemyTankTexture,&Platform->gMovingClips[(*MovingFrame/10)], Tank->face);
+    render( Platform->gRenderer ,Tank->mBox.x - camera->x,Tank->mBox.y - camera->y, Platform->gEnemyTankTexture,&Platform->gMovingClips[(*MovingFrame/10)], !Tank->isFiring?Tank->face:Tank->firingface);
     ConstructRectJoint(&Tank->mBox , TankScaffoldS[index].TankScaffold);
     SDL_SetRenderDrawColor( Platform->gRenderer, 0xF0, 0x8D, 0x71, 0xFF);
     DrawScaffold(Platform->gRenderer, TankScaffoldS[index].TankScaffold, camera);
