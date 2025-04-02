@@ -119,9 +119,6 @@ void fire(TankInfo* Tank){
 
                 }
                 Tank->Bullets[i].Launched = true;
-                if(Tank->isFiring){
-                    Tank->isFiring = false;
-                }
                 break;
             }
         }
@@ -395,51 +392,67 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank) {
     // The track always
         // NOTE: How to make bot tank look less stupid when they firing
         // and how to make fire less frequent
-    bool alert = false;
-            if(targetTank->FireWaitTime >= 10)
-            {
-                if (targetTank->mBox.x + targetTank->mBox.w/2 - BULLET_WIDTH/2 >= UserTank->mBox.x && targetTank->mBox.x + targetTank->mBox.w/2 - BULLET_WIDTH/2 <= UserTank->mBox.x + UserTank->mBox.w){
-                    if(!alert)
-                        alert = true;
+    bool verticalCheck = false;
+    bool horizontalCheck = false;
 
-                    printf("Time for vertical check\n");
-                    if(targetTank->mBox.y <= UserTank->mBox.y){
-                        if(targetTank->firingface != DOWN){
-                            targetTank->firingface = DOWN;
-                        }
-                    }  else {
-                        if(targetTank->firingface != UP){
-                            targetTank->firingface = UP;
-                        }
-                    }
-                }
-
-                if(targetTank->mBox.y + targetTank->mBox.h/2 - BULLET_HEIGHT/2 >= UserTank->mBox.y && targetTank->mBox.y + targetTank->mBox.h/2 - BULLET_HEIGHT/2 <= UserTank->mBox.y + UserTank->mBox.h) {
-                    printf("Time for horizontal check\n");
-                    if(!alert)
-                        alert = true;
-
-                    if(targetTank->mBox.x <= UserTank->mBox.x){
-                        if(targetTank->firingface != RIGHT){
-                            targetTank->firingface = RIGHT;
-                        }
-                    }  else {
-                        if(targetTank->firingface != LEFT){
-                            targetTank->firingface = LEFT;
-                        }
-                    }                
-                }
-                if(alert){
-                    if(!targetTank->isFiring){
-                    targetTank->isFiring = true;
-                    }
-                    fire(targetTank);
-                    targetTank->FireWaitTime = 0;
-                    alert = false;
-                }
-            } else {            
-                targetTank->FireWaitTime++;
+    if (targetTank->mBox.x + targetTank->mBox.w/2 - BULLET_WIDTH/2 >= UserTank->mBox.x && targetTank->mBox.x + targetTank->mBox.w/2 - BULLET_WIDTH/2 <= UserTank->mBox.x + UserTank->mBox.w){
+        if(!verticalCheck){
+            verticalCheck = true;
+        }
+        printf("Time for vertical check\n");
+        if(targetTank->mBox.y <= UserTank->mBox.y){
+            if(targetTank->firingface != DOWN){
+                targetTank->firingface = DOWN;
             }
+        }  else {
+            if(targetTank->firingface != UP){
+                targetTank->firingface = UP;
+            }
+        }
+    } else {
+        if(verticalCheck){
+            verticalCheck = false;
+        }
+    }
+
+    if(targetTank->mBox.y + targetTank->mBox.h/2 - BULLET_HEIGHT/2 >= UserTank->mBox.y && targetTank->mBox.y + targetTank->mBox.h/2 - BULLET_HEIGHT/2 <= UserTank->mBox.y + UserTank->mBox.h) {
+        if(!horizontalCheck){
+            horizontalCheck = true;
+        }
+        printf("Time for horizontal check\n");
+
+        if(targetTank->mBox.x <= UserTank->mBox.x){
+            if(targetTank->firingface != RIGHT){
+                targetTank->firingface = RIGHT;
+            }
+        }  else {
+            if(targetTank->firingface != LEFT){
+                targetTank->firingface = LEFT;
+            }
+        }                
+    } else {                    
+        if(horizontalCheck){
+            horizontalCheck = false;
+        }
+    }
+
+    if(verticalCheck || horizontalCheck){
+        if(!targetTank->isFiring){
+            targetTank->isFiring = true;
+        }
+    }else{
+        if(targetTank->isFiring){
+            targetTank->isFiring = false;
+        }        
+    }
+    
+    if(targetTank->FireWaitTime >= 10)
+    {
+        fire(targetTank);
+        targetTank->FireWaitTime = 0;
+    } else {            
+        targetTank->FireWaitTime++;
+    }
 }
 
 void resetTank(TankInfo* Tank){
