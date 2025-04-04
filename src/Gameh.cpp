@@ -117,7 +117,10 @@ bool Start(Game* g){
                 
                 InitializeTankPos(g->TankPos);
                 InitializeTankInfo(g->TankPos, g->enemyTank);
-                
+
+                for (int i = 0; i < TOTAL_ENEMY_TANK; i++){
+                    printf("Position of Bot tank %d is: %d %d\n", i ,g->enemyTank[i].mBox.x, g->enemyTank[i].mBox.y);
+                }
                 
                 //Level g->Camera                
                 for(int i = 0; i < 5; i++){
@@ -306,17 +309,17 @@ void runMainScene(Game* g){
         //========================================================================
 
         // NOTE: AI ways
-        printf("Bot Tank 0 face and collided one:[%d] %d %d %d\n", (int)g->enemyTank[0].face, (int)g->enemyTank[0].collidedFace[0], (int)g->enemyTank[0].collidedFace[1], (int)g->enemyTank[0].collidedFace[2]);
-        printf("Bot Tank 0 position:%d %d\n", g->enemyTank[0].mBox.x, g->enemyTank[0].mBox.y);
-        printf("Bot Tank 0 veclocity:%d %d\n", g->enemyTank[0].mVelX, g->enemyTank[0].mVelY);
+        // printf("Bot Tank 0 face and collided one:[%d] %d %d %d\n", (int)g->enemyTank[0].face, (int)g->enemyTank[0].collidedFace[0], (int)g->enemyTank[0].collidedFace[1], (int)g->enemyTank[0].collidedFace[2]);
+        // printf("Bot Tank 0 position:%d %d\n", g->enemyTank[0].mBox.x, g->enemyTank[0].mBox.y);
+        // printf("Bot Tank 0 veclocity:%d %d\n", g->enemyTank[0].mVelX, g->enemyTank[0].mVelY);
 
-        int count = 0;
         for (int j = i+1; j < TOTAL_ENEMY_TANK; j++){
             // NOTE: Why zero page. Data or checkCollision
             *Data = checkCollisionS(&g->enemyTank[i].mBox, &g->enemyTank[j].mBox);
            g->enemyTank[i].collidedFace[2] = Data->TankAface;
            g->enemyTank[j].collidedFace[2] = Data->TankBface;
 
+            }
            // NOTE: Temporary not use touchwall here
            if(!g->enemyTank[i].isHit && !g->enemyTank[i].destroyed){
                // NOTE: Cause the loop going to fast cause the veclo pace is too much with the -/+=TANK_VEL formula causing the Tank freezed
@@ -327,7 +330,6 @@ void runMainScene(Game* g){
                } else {
                    g->enemyTank[i].MovingWaitTime++;                    
                }
-            }
     // ===============================================
     }
         // printf("Check face 3 outside:%d %d \n", (int)Data->TankAface, (int)Data->TankAface);
