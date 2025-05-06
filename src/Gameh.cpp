@@ -32,12 +32,16 @@ extern "C" __declspec(dllexport) void GameFunction() {
 void displayMenu(Game* g){
 
     // printf("Load Game menu\n");
+
+    char* menuline = nullptr;
+    menuline = new char;
     
     float scaleW = g->platform->screen_w/DEFAULT_SCREEN_WIDTH;
     float scaleH = g->platform->screen_h/DEFAULT_SCREEN_HEIGHT;
     
     int wD = 0;
     int hD = 0;
+
     for(uint8_t i = 0; i < 4; ++i){
 
         // NOTE: Scale up the text whenever it is pointed to
@@ -54,7 +58,7 @@ void displayMenu(Game* g){
                 scaleW /= 1.5f;   
             }            
         }
-            
+
         if (!loadFromRenderedText(Menu[i], scaleW, scaleH, g->platform->TextColor, g->platform->gFont, g->platform->gRenderer, g->platform->gMenuTexture)) {
             printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );
         } else{
@@ -66,7 +70,7 @@ void displayMenu(Game* g){
             // printf("SCreen Height is :%d\n", g->platform->screen_h);
             render(g->platform->gRenderer, wD, hD, g->platform->gMenuTexture);
         }
-    }    
+    }
 }
 
 void get_Menu_choice(Game* g, KeyState* currentKey){
@@ -132,6 +136,11 @@ bool Start(Game* g){
                     MovingFrame[i] = 0;
                 };
 
+                printf("number of particle: %d\n",(int)sizeof(*g->particles));
+                for(int j = 0; j < TOTAL_PARTICLES; j++){
+                    std::srand(std::time(nullptr));
+                    InitializeParticle(&g->particles[j], g->userTank, g->platform->particlestexture);
+                }
                 
                 Ecollided = false;
                 Ucollided = false;
@@ -402,13 +411,24 @@ void RenderMainScene(Game* g){
      // NOTE: Render main scene
  for( int i = 0; i < TOTAL_TILES; ++i )
  {
-    // NOTE: Resize tile make scene flickering
-     //touchesWall(&userTank->mBox, tileSet)
+     // NOTE: Resize tile make scene flickering
+     // touchesWall(&userTank->mBox, tileSet)
+
      renderTile( &g->Camera, g->platform->gRenderer, g->tileSet[ i ], g->platform->gTileTexture,  g->platform->gTileClips, false);
  }
 
  if(!g->userTank->isHit){
      renderTank(g->userTank, 0, &MovingFrame[4], &g->Camera, g->platform);
+
+     // Show the particles
+     for(int i = 0; i < TOTAL_PARTICLES; i++){
+         if(!isDead(&g->particles[i])){
+             RenderParticle(&g->particles[i], g->platform, g->userTank);
+         } else {
+             // std::srand(std::time(nullptr));
+             InitializeParticle(&g->particles[i], g->userTank, g->platform->particlestexture);
+         }
+     }
      // printf("Tank sprite is being rendered\n");
  }else{
      // The additional loop just make the explostion clip run incredibly faster
@@ -416,7 +436,7 @@ void RenderMainScene(Game* g){
      // Just need the checking cycle for that explosion effect
      if(g->userTank->isHit && !g->userTank->destroyed){
              renderExplosionFrame(g->userTank, g->platform, &g->Camera, &ExplosionFrame[4]);
-     }     
+     }
  }
 
  k = 0;
@@ -436,7 +456,7 @@ void RenderMainScene(Game* g){
      k++;
  };
                                    
- // renderText(FPS, g->userTank, g->platform);
+ renderText(FPS, g->userTank, g->platform);
  TimeElapsed = EndTime - StartTime;
  FPS = 1/(TimeElapsed/1000.0f);
  StartTime = EndTime;         
@@ -446,6 +466,9 @@ void RenderMainScene(Game* g){
 void Close(Game* g){
     delete[] g->TankPos;
     g->TankPos = nullptr;
+
+    delete[] g->particles;
+    g->particles = nullptr;
 
     delete[] g->userTank->Bullets;
     g->userTank->Bullets = nullptr;

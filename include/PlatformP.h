@@ -11,7 +11,7 @@
 #include <SDL2/SDL.h>
 #include "XTexture.h"
 #include "TileX.h"
-#include "xTank.h"
+#include "particle.h"
 
 // TODO: Why the PlatformP won't recognize the Platform variable
 // TODO: Try to figure out how the gDotTexture and gTileTexture is nullptr
@@ -25,6 +25,7 @@ struct PlatformP {
     SDL_Rect gExplosionClips [EXPLOSION_FRAMES];
     SDL_Rect gMovingClips [MOVING_FRAMES];
     SDL_Rect gTileClips [TOTAL_TILE_SPRITES];
+
     XTexture* gTileTexture;
     XTexture* gMenuTexture;
     XTexture* gTextTexture;
@@ -33,6 +34,8 @@ struct PlatformP {
     XTexture* gEnemyTankTexture;
     XTexture* gEnemyBulletTexture;
     XTexture* gExplosionTexture;
+
+    ParticlesTexture* particlestexture;
 
     int screen_w ;
     int screen_h ;
@@ -72,6 +75,9 @@ struct PlatformP {
         gExplosionTexture = nullptr;
         gExplosionTexture = new XTexture();
 
+        particlestexture = nullptr;
+        particlestexture = new ParticlesTexture();
+        
         if(gWindow!=nullptr){
             gWindow = nullptr;
         }
@@ -102,6 +108,8 @@ void DrawScaffold(SDL_Point(*Scaffold)[5], const SDL_Rect* Camera);
 void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform);
 void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera,  uint8_t* frame);
 void renderTank(TankInfo* Tank, int index, uint8_t* MovingFrame, SDL_Rect* camera, PlatformP* Platform);
+
+void RenderParticle(Particle* pa, PlatformP* platform, TankInfo* userTank);
 
 #define PLATFORMP_H
 #endif

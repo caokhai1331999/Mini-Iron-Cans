@@ -123,7 +123,7 @@ void setColor( Uint8 red, Uint8 green, Uint8 blue );
 void setBlendMode( SDL_BlendMode blending );
 
 //Set alpha modulation
-void setAlpha( Uint8 alpha );
+void setAlpha( Uint8 alpha, XTexture* texture);
 		
 //Renders texture at given point
 void render( SDL_Renderer* gRenderer = nullptr, int x = 0, int y = 0, XTexture* texture = nullptr, SDL_Rect* clip = nullptr, double angle = 0.0, SDL_Point* center = nullptr, SDL_RendererFlip flip = SDL_FLIP_NONE);

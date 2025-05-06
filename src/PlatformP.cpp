@@ -61,6 +61,37 @@ void close( PlatformP* Platform){
         delete Platform->gExplosionTexture;
         Platform->gExplosionTexture = nullptr;
 
+        // Free particle texture
+        xfree(Platform->particlestexture->RedTexture);
+        Platform->particlestexture->RedTexture = nullptr;
+        delete Platform->particlestexture->RedTexture;
+        Platform->particlestexture->RedTexture = nullptr;
+
+        xfree(Platform->particlestexture->BlueTexture);
+        Platform->particlestexture->BlueTexture = nullptr;
+        delete Platform->particlestexture->BlueTexture;
+        Platform->particlestexture->BlueTexture = nullptr;
+
+        xfree(Platform->particlestexture->GreenTexture);
+        Platform->particlestexture->GreenTexture = nullptr;
+        delete Platform->particlestexture->GreenTexture;
+        Platform->particlestexture->GreenTexture = nullptr;
+
+        xfree(Platform->particlestexture->ShimmerTexture);
+        Platform->particlestexture->ShimmerTexture = nullptr;
+        delete Platform->particlestexture->ShimmerTexture;
+        Platform->particlestexture->ShimmerTexture = nullptr;
+
+        delete Platform->particlestexture;
+        Platform->particlestexture = nullptr;
+        
+        if(Platform->gExplosionTexture!=nullptr){
+            xfree(Platform->gExplosionTexture);
+            Platform->gExplosionTexture->mTexture = nullptr;   
+        }
+        delete Platform->gExplosionTexture;
+        Platform->gExplosionTexture = nullptr;
+
         
 	//Destroy window	
     SDL_DestroyRenderer(Platform->gRenderer);
@@ -140,6 +171,36 @@ bool LoadMedia(Tile* tiles,PlatformP* Platform){
 		printf( "Failed to load enemy bullet set texture!\n" );
 		success = false;
 	}
+
+    // Load media for particle textures
+	if( !loadFromFile( "./media/blue.bmp", Platform->gRenderer, TANK_WIDTH, TANK_HEIGHT, Platform->particlestexture->BlueTexture) )
+	{
+		printf( "Failed to load blue particle texture!\n" );
+		success = false;
+	}
+
+	if( !loadFromFile( "./media/red.bmp", Platform->gRenderer, TANK_WIDTH, TANK_HEIGHT, Platform->particlestexture->RedTexture) )
+	{
+		printf( "Failed to load red particle texture!\n" );
+		success = false;
+	}
+
+	if( !loadFromFile( "./media/green.bmp", Platform->gRenderer, TANK_WIDTH, TANK_HEIGHT, Platform->particlestexture->GreenTexture) )
+	{
+		printf( "Failed to load green particle texture!\n" );
+		success = false;
+	}
+
+	if( !loadFromFile( "./media/shimmer.bmp", Platform->gRenderer, TANK_WIDTH, TANK_HEIGHT, Platform->particlestexture->ShimmerTexture) )
+	{
+		printf( "Failed to load shimmer particle texture!\n" );
+		success = false;
+	}
+
+    setAlpha(192, Platform->particlestexture->RedTexture); 
+    setAlpha(192, Platform->particlestexture->BlueTexture); 
+    setAlpha(192, Platform->particlestexture->GreenTexture); 
+    setAlpha(150, Platform->particlestexture->ShimmerTexture); 
     
 	//Load explosion texture
 	if( !loadFromFile( "./media/explosion3(background removed).png", Platform->gRenderer, (int)60, (int)60, Platform->gExplosionTexture) )
@@ -299,7 +360,6 @@ bool init(PlatformP* Platform)
     
 	return success;    
 }
-
 
 //Sets tiles from tile map
 bool setTiles( Tile *tiles,PlatformP* Platform){
@@ -627,6 +687,7 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
     // carefull to link, remember to put dll files in system32 folder
                 
     char OutPut[50];
+    // Free the preTexture data for stalling memory leaked
     // NOTE: Somehow The exe file can't find out the TTF_OpenFont and TTF_Solid_Render which is in the ttf lib. Got to find out and fix
                 
     sprintf(OutPut ,"FPS: %d \n",int(FPS));
@@ -634,14 +695,13 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
     float scaleW = Platform->screen_w!=DEFAULT_SCREEN_WIDTH?(Platform->screen_w/DEFAULT_SCREEN_WIDTH):1.0f;  
     float scaleH = Platform->screen_h!=DEFAULT_SCREEN_HEIGHT?(Platform->screen_h/DEFAULT_SCREEN_HEIGHT):1.0f;  
     // printf(OutPut);
-                
     if (!loadFromRenderedText(OutPut, scaleW, scaleH, Platform->TextColor, Platform->gFont, Platform->gRenderer, Platform->gTextTexture)) {
         printf( "Can not Load Text to render! SDL Error: %s\n", SDL_GetError() );                            
     } else {
         render(Platform->gRenderer, 0, 0, Platform->gTextTexture);                    
     }
 
-    if(userTank->BulletsNumber == 0){
+    if(userTank->BulletsNumber == 0) {
         sprintf(OutPut, "Tank Bullets: Loading\n");
         if (!loadFromRenderedText(OutPut, scaleW, scaleH, Platform->TextColor, Platform->gFont, Platform->gRenderer, Platform->gTextTexture)) {
         //Update screen
@@ -658,8 +718,20 @@ void renderText(real32 FPS, const TankInfo* userTank, PlatformP* Platform){
         } else {
             render(Platform->gRenderer, (120*(scaleW)), 0, Platform->gTextTexture);                    
         }                    
-    } 
+    }
 }
+
+
+void RenderParticle(Particle* pa, PlatformP* platform, TankInfo* userTank){    
+    render(platform->gRenderer, pa->mPosX, pa->mPosY, pa->pTexture);
+    // I assign the position to any address
+
+    if(pa->mFrame%2 == 0){
+        render(platform->gRenderer, pa->mPosX, pa->mPosY, platform->particlestexture->ShimmerTexture);
+    };
+
+    pa->mFrame++;
+};
 
 void renderExplosionFrame(TankInfo* Tank, PlatformP* Platform, SDL_Rect* camera , uint8_t* frame){
 

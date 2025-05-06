@@ -10,7 +10,9 @@
 bool loadFromFile( std::string path, SDL_Renderer* gRenderer, int Width, int Height, XTexture* texture)
 {
 	//Get rid of preexisting texture
-	xfree(texture);
+    if(texture != nullptr){
+        xfree(texture);
+    }
 
 	//The final texture
 	SDL_Texture* newTexture = nullptr;
@@ -59,7 +61,10 @@ bool loadFromRenderedText(char* textureText, float ScaleW, float ScaleH, SDL_Col
 {
 	//Get rid of preexisting texture
 	xfree(texture);
-
+    // Test the free data fx here
+    if(texture!=nullptr){
+        SDL_DestroyTexture(texture->mTexture);   
+    }
 	//Render text surface
 	SDL_Surface* textSurface = nullptr;
     textSurface = TTF_RenderText_Solid( gFont, textureText, textColor);
@@ -67,6 +72,7 @@ bool loadFromRenderedText(char* textureText, float ScaleW, float ScaleH, SDL_Col
 	{
 		//Create texture from surface pixels
         texture->mTexture = SDL_CreateTextureFromSurface( gRenderer, textSurface );
+        
 		if( texture->mTexture == nullptr )
 		{
 			printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
@@ -86,7 +92,6 @@ bool loadFromRenderedText(char* textureText, float ScaleW, float ScaleH, SDL_Col
 	{
 		printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
 	}
-
 	
 	//Return success
 	return texture->mTexture != nullptr;

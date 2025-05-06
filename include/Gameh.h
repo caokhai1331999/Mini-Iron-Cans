@@ -60,6 +60,8 @@ struct Game{
     Position* TankPos;
     TankInfo* userTank;
     TankInfo* enemyTank;
+
+    Particle* particles;
     
     Game(){
         printf("Camera w and h in struct is %d  %d\n", Camera.w, Camera.h);
@@ -82,6 +84,9 @@ struct Game{
 
         enemyTank = nullptr;
         enemyTank = new TankInfo[TOTAL_ENEMY_TANK]();
+
+        particles = nullptr;
+        particles = new Particle[TOTAL_PARTICLES]();
     };
 };
 
