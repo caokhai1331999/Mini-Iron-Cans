@@ -202,16 +202,12 @@ void handleEventForTank(KeyState* CurrentBut, TankInfo* Tank) {
                     case SDL_SCANCODE_SPACE: fire(Tank);
                         break;
                 }
-                if(!Tank->isMoving){
-                    Tank->isMoving = true;
-                }
+
         }
             //Adjust the velocity
          else if( !CurrentBut->pressed && CurrentBut->repeat == 0)
         {
-            if(Tank->isMoving){
-                Tank->isMoving = false;
-            }            
+
             //Adjust the velocity
             switch(CurrentBut->key )
             {
@@ -241,30 +237,49 @@ void move(TankInfo* Tank) {
 
     if(!Tank->isHit && !Tank->destroyed){
 
-        Tank->mBox.x += Tank->mVelX;
-
-        if ((Tank->mBox.x <= 0) || (Tank->mBox.x  >= LEVEL_WIDTH - (TANK_WIDTH)) || Tank->collidedFace[2] == LEFT || Tank->collidedFace[2] == RIGHT){
-
-            if(Tank->collidedFace[2] == NOPE){
-                Tank->collidedFace[0] = (Tank->mBox.x <= 0)?LEFT:RIGHT;
-            }
-            Tank->mBox.x -= Tank->mVelX;
-        };
-            
-        Tank->mBox.y += Tank->mVelY;
-
-        if ((Tank->mBox.y <= 0) || (Tank->mBox.y >= LEVEL_HEIGHT - (TANK_HEIGHT)) || Tank->collidedFace[2] == UP || Tank->collidedFace[2] == DOWN)
+        if((!Tank->Belong && Tank->MovingWaitTime >= 10 && !Tank->stuck && Tank->ShouldMove) || Tank->Belong)
         {
-            if(Tank->collidedFace[2] == NOPE){
-                Tank->collidedFace[1] = (Tank->mBox.y <= 0)?UP:DOWN;
-            }
-            Tank->mBox.y -= Tank->mVelY;
+            Tank->mBox.x += Tank->mVelX;
+
+            if ((Tank->mBox.x <= 0) || (Tank->mBox.x  >= LEVEL_WIDTH - (TANK_WIDTH)) || Tank->collidedFace[2] == LEFT || Tank->collidedFace[2] == RIGHT){
+
+                if(Tank->collidedFace[2] == NOPE){
+                    Tank->collidedFace[0] = (Tank->mBox.x <= 0)?LEFT:RIGHT;
+                }
+
+                if(!Tank->stuck){
+                    Tank->stuck = true;
+                }
+
+                Tank->mBox.x -= Tank->mVelX;
+            };
+            
+            Tank->mBox.y += Tank->mVelY;
+
+            if ((Tank->mBox.y <= 0) || (Tank->mBox.y >= LEVEL_HEIGHT - (TANK_HEIGHT)) || Tank->collidedFace[2] == UP || Tank->collidedFace[2] == DOWN)
+            {
+                if(Tank->collidedFace[2] == NOPE){
+                    Tank->collidedFace[1] = (Tank->mBox.y <= 0)?UP:DOWN;
+                }
+
+                if(!Tank->stuck){
+                    Tank->stuck = true;
+                }
+
+                Tank->mBox.y -= Tank->mVelY;
+            }            
+
+        if( (Tank->face == Tank->collidedFace[0] || Tank->face == Tank->collidedFace[1]|| (Tank->face == Tank->collidedFace[2] ))){
+                if(!Tank->stuck){
+                    Tank->stuck = true;
+                }
+        }
+        Tank->MovingWaitTime = 0;
+        }
+        else {
+            Tank->MovingWaitTime++;
         }
 
-        if( (Tank->face == Tank->collidedFace[0] || Tank->face == Tank->collidedFace[1]|| (Tank->face == Tank->collidedFace[2] )) && Tank->isMoving){
-                Tank->isMoving = false;
-            }
-        
         for(int i = 0 ; i < TOTAL_BULLET_PER_TANK; i++) {
 
             if (Tank->Bullets[i].Launched && !Tank->Bullets[i].destroyed){
@@ -283,8 +298,8 @@ void move(TankInfo* Tank) {
                     resetBullet(&Tank->Bullets[i]);
                 }
             }                
-        }    
-    }        
+        }
+    }    
 }
 
 //Centers the camera over the Tank
@@ -346,14 +361,93 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank) {
 
     int distance = sqrt(pow(targetTank->mBox.x - UserTank->mBox.x,2) + pow(targetTank->mBox.y - UserTank->mBox.y,2));
 
+    // Check relative face between bot and user Tank
+    bool verticalCheck = false;
+    bool horizontalCheck = false;
+
+    if (targetTank->mBox.x + targetTank->mBox.w/2 - BULLET_WIDTH/2 >= UserTank->mBox.x && targetTank->mBox.x + targetTank->mBox.w/2 - BULLET_WIDTH/2 <= UserTank->mBox.x + UserTank->mBox.w){
+
+        if(!verticalCheck){
+            verticalCheck = true;
+        }
+        printf("Time for vertical check\n");
+        if(targetTank->mBox.y <= UserTank->mBox.y){
+            if(targetTank->firingface != DOWN){
+                targetTank->firingface = DOWN;
+            }
+        }  else {
+            if(targetTank->firingface != UP){
+                targetTank->firingface = UP;
+            }
+        }
+    } else {
+        if(verticalCheck){
+            verticalCheck = false;
+        }
+    }
+
+    if(targetTank->mBox.y + targetTank->mBox.h/2 - BULLET_HEIGHT/2 >= UserTank->mBox.y && targetTank->mBox.y + targetTank->mBox.h/2 - BULLET_HEIGHT/2 <= UserTank->mBox.y + UserTank->mBox.h) {
+
+        if(!horizontalCheck){
+            horizontalCheck = true;
+        }
+
+        printf("Time for horizontal check\n");
+
+        if(targetTank->mBox.x <= UserTank->mBox.x){
+            if(targetTank->firingface != RIGHT){
+                targetTank->firingface = RIGHT;
+            }
+            
+        }  else {
+            if(targetTank->firingface != LEFT){
+                targetTank->firingface = LEFT;
+            }
+        }
+
+        // NOTE: Run away if needed
+        
+    } else {                    
+        if(horizontalCheck){
+            horizontalCheck = false;
+        }
+    }
+
+    if(verticalCheck || horizontalCheck){
+        if(!targetTank->isFiring){
+            targetTank->isFiring = true;
+        }
+    }else{
+        if(targetTank->isFiring){
+            targetTank->isFiring = false;
+        }        
+    }
     
-    // if(distance >= 70){
-    //     targetTank->face = faceCalculate(&UserTank->mBox, &targetTank->mBox);
-    // }
+    if(targetTank->FireWaitTime >= 10)
+    {
+        fire(targetTank);
+        targetTank->FireWaitTime = 0;
+    } else {            
+        targetTank->FireWaitTime++;
+    }
     
-    if(!targetTank->isMoving) {
+    // NOTE: Try to keep bot Tank in a secure region
+    FACE tempface = targetTank->firingface>=DOWN?targetTank->firingface-180.0:targetTank->firingface+180.0;
+    
+    if(distance <= SECURE_DISTANCE){
+            if(!targetTank->ShouldMove){
+                targetTank->ShouldMove = true;
+            };
+        } else if(distance >= 2 *SECURE_DISTANCE) {
+            if(targetTank->ShouldMove){
+                targetTank->ShouldMove = false;
+            };
+        }    
+    
+    if(targetTank->stuck && targetTank->ShouldMove) {
         printf("AutoReroute the tank \n");
-        // NOTE: Bug used to be here
+        FACE rollfaces[4] = {UP, RIGHT, DOWN, LEFT};
+
         while(targetTank->face == targetTank->collidedFace[0]
               ||targetTank->face == targetTank->collidedFace[1]||targetTank->face == targetTank->collidedFace[2]){
             targetTank->face += 90.0;
@@ -361,9 +455,15 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank) {
                 targetTank->face = UP;
             }
         }
-            targetTank->isMoving = true;        
+        targetTank->stuck = false;
+    }    
+
+    
+    if(tempface != targetTank->face && tempface != targetTank->collidedFace[0] && tempface != targetTank->collidedFace[1] && tempface != targetTank->collidedFace[2]){
+        targetTank->face = tempface;
     }
-        // DONE!: Success reroute Tank whenever collided
+
+    // DONE!: Success reroute Tank whenever collided
     // TODO: Time to make tank smarter
 
     switch((int)targetTank->face){
@@ -388,71 +488,7 @@ void littleGuide(TankInfo* targetTank, TankInfo* UserTank) {
     // NOTE: The idea is simple: moving the bot Tank toward User's one and fire
     // when it is near
     // Prioritize the shorter axis first to shoot 
-    // NOTE: Wandering mode
-    // The track always
-        // NOTE: How to make bot tank look less stupid when they firing
-        // and how to make fire less frequent
-    bool verticalCheck = false;
-    bool horizontalCheck = false;
 
-    if (targetTank->mBox.x + targetTank->mBox.w/2 - BULLET_WIDTH/2 >= UserTank->mBox.x && targetTank->mBox.x + targetTank->mBox.w/2 - BULLET_WIDTH/2 <= UserTank->mBox.x + UserTank->mBox.w){
-        if(!verticalCheck){
-            verticalCheck = true;
-        }
-        printf("Time for vertical check\n");
-        if(targetTank->mBox.y <= UserTank->mBox.y){
-            if(targetTank->firingface != DOWN){
-                targetTank->firingface = DOWN;
-            }
-        }  else {
-            if(targetTank->firingface != UP){
-                targetTank->firingface = UP;
-            }
-        }
-    } else {
-        if(verticalCheck){
-            verticalCheck = false;
-        }
-    }
-
-    if(targetTank->mBox.y + targetTank->mBox.h/2 - BULLET_HEIGHT/2 >= UserTank->mBox.y && targetTank->mBox.y + targetTank->mBox.h/2 - BULLET_HEIGHT/2 <= UserTank->mBox.y + UserTank->mBox.h) {
-        if(!horizontalCheck){
-            horizontalCheck = true;
-        }
-        printf("Time for horizontal check\n");
-
-        if(targetTank->mBox.x <= UserTank->mBox.x){
-            if(targetTank->firingface != RIGHT){
-                targetTank->firingface = RIGHT;
-            }
-        }  else {
-            if(targetTank->firingface != LEFT){
-                targetTank->firingface = LEFT;
-            }
-        }                
-    } else {                    
-        if(horizontalCheck){
-            horizontalCheck = false;
-        }
-    }
-
-    if(verticalCheck || horizontalCheck){
-        if(!targetTank->isFiring){
-            targetTank->isFiring = true;
-        }
-    }else{
-        if(targetTank->isFiring){
-            targetTank->isFiring = false;
-        }        
-    }
-    
-    if(targetTank->FireWaitTime >= 10)
-    {
-        fire(targetTank);
-        targetTank->FireWaitTime = 0;
-    } else {            
-        targetTank->FireWaitTime++;
-    }
 }
 
 void resetTank(TankInfo* Tank){

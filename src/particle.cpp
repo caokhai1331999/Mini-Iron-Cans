@@ -17,17 +17,19 @@ void InitializeParticle(Particle* pa, TankInfo* userTank, ParticlesTexture* part
     printf("current texture position Y address is: %Xh\n", &pa->mPosY);
     printf("Particle pos:%d %d \n", pa->mPosX, pa->mPosY);    
     
-    pa->mPosX = userTank->mBox.x - 5 +(rand()%30);
-    pa->mPosY = userTank->mBox.y - 5 +(rand()%30);
+    pa->mPosX = userTank->mBox.x - 5 +(rand()%65);
+    pa->mPosY = userTank->mBox.y - 5 +(rand()%40);
 
     // Initialize animation
     pa->mFrame = rand()%5;//WHY??
+
     switch(rand()%3){
             case 0 :pa->pTexture = particletextures->RedTexture;break;
             case 1 :pa->pTexture = particletextures->BlueTexture;break;
             case 2 :pa->pTexture = particletextures->GreenTexture;break;
         // default : ;break;
         }
+
 };
 
 bool isDead(Particle* pa){

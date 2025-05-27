@@ -48,6 +48,8 @@ const global_variable int BULLET_VEL = 5;
 const global_variable int BULLET_WIDTH = 10 ;
 const global_variable int BULLET_HEIGHT = 10 ;
 
+const global_variable int SECURE_DISTANCE = 70 ;
+
 struct Position{
     int x;
     int y;
@@ -81,8 +83,11 @@ struct TankInfo
 {
     // int name;
     bool Belong = true;
-    bool isMoving;
+
+    bool ShouldMove;
+    bool stuck;
     bool destroyed = false;
+
     bool isHit = false;
     bool isFiring = false;
     
@@ -113,7 +118,8 @@ struct TankInfo
         }
         face = (FACE)((rand()%3)*90.0f);
         changeDirect = false;
-        isMoving = false;
+        ShouldMove = false;
+        stuck = false;
         Bullets = nullptr;
         Bullets = new Bullet[TOTAL_BULLET_PER_TANK]();
         // printf("Size of Bullet set is: %d\n", (int)(sizeof(Bullets)));

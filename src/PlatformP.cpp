@@ -627,9 +627,7 @@ void renderTank(TankInfo* Tank, int index, uint8_t* MovingFrame, SDL_Rect* camer
                 break;
         }
 
-        if(Tank->isMoving){
-            (*MovingFrame)++;
-        }
+        (*MovingFrame)++;
 
         if (Tank->Belong && Platform->gUserTankTexture!=nullptr) {
         // NOTE: Because of the camera position negative out the position of the
